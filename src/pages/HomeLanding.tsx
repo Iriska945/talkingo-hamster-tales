@@ -1,22 +1,63 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Mic, BookOpen, Trophy, ArrowRight, Sparkles, Volume2, ShieldCheck } from 'lucide-react';
+import {
+  Mic,
+  BookOpen,
+  Trophy,
+  ArrowRight,
+  Sparkles,
+  Volume2,
+  Coffee,
+  Plane,
+  Book,
+  Briefcase,
+  Play,
+  CheckCircle2,
+} from 'lucide-react';
 import { TalkingoLogo } from '../components/TalkingoLogo';
+import { speakWithEdgeNeural, speakWithBrowser, soundEffects } from '../services/voice';
 
 export const HomeLanding: React.FC = () => {
-  const { activeCharacter } = useApp();
+  const { activeCharacter, lang } = useApp();
+  const [isPlayingSample, setIsPlayingSample] = useState(false);
+
+  const handlePlayVoiceSample = async () => {
+    soundEffects.click();
+    setIsPlayingSample(true);
+    const sampleText =
+      lang === 'ru'
+        ? 'Привет! Я твой голосовой компаньон Talkingo. Давай поболтаем о чём угодно или закажем кофе!'
+        : lang === 'kk'
+        ? 'Сәлем! Мен сенің Talkingo серігіңмін. Кел, бірге тіл үйреніп, еркін сөйлесейік!'
+        : "Hello! I'm your Talkingo voice companion. Let's practice speaking naturally and have fun!";
+
+    try {
+      await speakWithEdgeNeural(sampleText, lang);
+    } catch {
+      await speakWithBrowser(sampleText, lang);
+    } finally {
+      setIsPlayingSample(false);
+    }
+  };
+
+  const SCENARIO_LINKS = [
+    { id: 'cafe', title: 'В кафе', desc: 'Заказ напитков и десертов', icon: '☕', link: '/talk?scenario=cafe' },
+    { id: 'airport', title: 'В аэропорту', desc: 'Регистрация и перелёт', icon: '✈️', link: '/talk?scenario=airport' },
+    { id: 'story', title: 'Сказка', desc: 'Интерактивное приключение', icon: '📖', link: '/talk?scenario=story' },
+    { id: 'interview', title: 'Интервью', desc: 'Вопросы о мечтах и хобби', icon: '💼', link: '/talk?scenario=interview' },
+  ];
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden pb-28">
       
       {/* Ambient Atmospheric Light Mesh */}
-      <div className="ambient-glow-orb w-[450px] h-[450px] bg-indigo-600/20 top-[-80px] left-1/2 -translate-x-1/2" />
-      <div className="ambient-glow-orb w-[350px] h-[350px] bg-cyan-600/15 top-[280px] left-[-100px]" />
-      <div className="ambient-glow-orb w-[300px] h-[300px] bg-amber-500/10 top-[400px] right-[-80px]" />
+      <div className="ambient-glow-orb w-[480px] h-[480px] bg-indigo-600/20 top-[-80px] left-1/2 -translate-x-1/2 pointer-events-none" />
+      <div className="ambient-glow-orb w-[380px] h-[380px] bg-cyan-600/15 top-[280px] left-[-100px] pointer-events-none" />
+      <div className="ambient-glow-orb w-[340px] h-[340px] bg-amber-500/10 top-[420px] right-[-80px] pointer-events-none" />
 
       {/* Hero Section */}
-      <div className="relative z-10 max-w-3xl mx-auto px-6 pt-14 pb-16 text-center">
+      <div className="relative z-10 max-w-3xl mx-auto px-6 pt-14 pb-14 text-center">
         
         {/* Open-style Liquid Glass Centerpiece with Ambient Breathing Orb */}
         <div className="flex justify-center mb-10">
@@ -67,18 +108,55 @@ export const HomeLanding: React.FC = () => {
             <ArrowRight className="w-4 h-4 ml-0.5 opacity-70" />
           </Link>
           
-          <Link
-            to="/learn"
-            className="w-full sm:w-auto px-7 py-3.5 liquid-pill-glass flex items-center justify-center gap-2 text-sm"
+          <button
+            onClick={handlePlayVoiceSample}
+            disabled={isPlayingSample}
+            className="w-full sm:w-auto px-6 py-3.5 liquid-pill-glass flex items-center justify-center gap-2 text-sm"
           >
-            <span>План обучения</span>
-          </Link>
+            <Volume2 className={`w-4 h-4 text-amber-400 ${isPlayingSample ? 'animate-pulse' : ''}`} />
+            <span>{isPlayingSample ? 'Говорит...' : 'Голос Хэмми'}</span>
+          </button>
         </div>
 
         {/* Footnote */}
         <p className="mt-5 text-[11px] text-neutral-400 tracking-wide font-light">
           Русский • English • Қазақша • Edge Neural HD Voice
         </p>
+      </div>
+
+      {/* Scenarios Interactive Carousel */}
+      <div className="relative z-10 max-w-4xl mx-auto px-6 pb-12">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <h2 className="text-sm font-medium text-white uppercase tracking-wider">
+              Выбери сценарий практики
+            </h2>
+          </div>
+          <Link to="/talk" className="text-xs text-neutral-400 hover:text-white flex items-center gap-1 font-light">
+            Свободная тема <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {SCENARIO_LINKS.map((item) => (
+            <Link
+              key={item.id}
+              to={item.link}
+              className="liquid-glass p-4 text-left transition-all hover:border-white/30 group active:scale-[0.98] border border-white/10"
+            >
+              <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-xl mb-3 group-hover:scale-105 transition-transform">
+                {item.icon}
+              </div>
+              <h3 className="text-sm font-medium text-white group-hover:text-amber-300 transition-colors">
+                {item.title}
+              </h3>
+              <p className="text-[11px] text-neutral-400 mt-1 font-light leading-snug line-clamp-2">
+                {item.desc}
+              </p>
+            </Link>
+          ))}
+        </div>
       </div>
 
       {/* Feature Cards Grid (Liquid Glass Cards) */}

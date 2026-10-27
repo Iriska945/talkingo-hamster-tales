@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import {
   createSpeechRecognizer,
@@ -38,6 +38,8 @@ const SCENARIOS: Array<{ id: PracticeScenario; label: string; icon: string }> = 
 
 export const TalkPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const initialScenario = (searchParams.get('scenario') as PracticeScenario) || 'free';
   const {
     lang,
     t,
@@ -48,7 +50,11 @@ export const TalkPage: React.FC = () => {
   } = useApp();
 
   const [voiceState, setVoiceState] = useState<VoiceState>('idle');
-  const [scenario, setScenario] = useState<PracticeScenario>('free');
+  const [scenario, setScenario] = useState<PracticeScenario>(
+    ['free', 'cafe', 'airport', 'story', 'interview'].includes(initialScenario)
+      ? initialScenario
+      : 'free'
+  );
   const [voiceSpeed, setVoiceSpeed] = useState<number>(1.0);
   const [coachTip, setCoachTip] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
