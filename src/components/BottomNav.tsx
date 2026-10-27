@@ -45,8 +45,8 @@ export const BottomNav: React.FC = () => {
   ];
 
   return (
-    <nav className="fixed bottom-3 inset-x-0 z-40 px-3 safe-area-bottom pointer-events-none">
-      <div className="max-w-md mx-auto bg-white/90 backdrop-blur-2xl border border-[#EAE6DE] rounded-full px-2 py-1.5 shadow-[0_8px_32px_rgba(28,26,23,0.08)] flex items-center justify-between gap-1 pointer-events-auto">
+    <nav className="fixed bottom-3 inset-x-0 z-40 px-4 safe-area-bottom pointer-events-none">
+      <div className="max-w-md mx-auto bg-black/60 backdrop-blur-3xl border border-white/15 rounded-full p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.85)] flex items-center justify-between gap-1 pointer-events-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
 
@@ -58,16 +58,16 @@ export const BottomNav: React.FC = () => {
                 className={({ isActive }) => `
                   relative flex items-center justify-center
                   w-12 h-12 rounded-full
-                  bg-[#1C1A17] text-[#FAF8F5]
-                  shadow-md hover:bg-black
+                  bg-white text-black
+                  shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:bg-neutral-200
                   active:scale-90 transition-all group
-                  ${isActive ? 'ring-2 ring-[#3F634D] ring-offset-2' : ''}
+                  ${isActive ? 'ring-2 ring-white ring-offset-2 ring-offset-black' : ''}
                 `}
                 title="Начать голосовой диалог"
               >
-                <div className="relative">
-                  <Icon className="w-5 h-5 text-white" />
-                  <span className="absolute -top-1 -right-2 text-[10px] leading-none animate-bounce">
+                <div className="relative flex items-center justify-center">
+                  <Icon className="w-5 h-5 text-black" />
+                  <span className="absolute -top-1.5 -right-2 text-[10px] leading-none animate-bounce">
                     {activeCharacter.emoji}
                   </span>
                 </div>
@@ -82,14 +82,14 @@ export const BottomNav: React.FC = () => {
               className={({ isActive }) => `
                 flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-full transition-all
                 ${isActive
-                  ? 'text-[#1C1A17] font-bold bg-[#F6F3EC]'
-                  : 'text-[#8C877D] hover:text-[#1C1A17] font-medium'
+                  ? 'text-white font-medium bg-white/15 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]'
+                  : 'text-neutral-400 hover:text-white font-normal hover:bg-white/[0.05]'
                 }
               `}
             >
               {({ isActive }) => (
                 <>
-                  <Icon className="w-4 h-4 mb-0.5" strokeWidth={isActive ? 2.3 : 1.8} />
+                  <Icon className="w-4 h-4 mb-0.5" strokeWidth={isActive ? 2.2 : 1.6} />
                   <span className="text-[10px] tracking-tight leading-tight truncate">
                     {item.label}
                   </span>

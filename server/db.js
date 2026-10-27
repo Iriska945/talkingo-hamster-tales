@@ -204,6 +204,48 @@ export const userDb = {
       rank: idx + 1,
       isCurrentUser: item.id === currentUserId
     }));
+  },
+
+  addPhrase(userId, { id, language, phrase, kidExplanation, literalMeaning, sourceBook, example }) {
+    const phraseId = id || 'phrase_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+    db.prepare(`
+      INSERT OR REPLACE INTO dictionary_phrases (id, user_id, language, phrase, kid_explanation, literal_meaning, source_book, example)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(phraseId, userId, language || 'ru', phrase, kidExplanation || '', literalMeaning || '', sourceBook || '', example || '');
+    return phraseId;
+  },
+
+  getPhrases(userId) {
+    return db.prepare('SELECT * FROM dictionary_phrases WHERE user_id = ? ORDER BY created_at DESC').all(userId);
+  },
+
+  syncUser(id, data = {}) {
+    let user = this.getById(id);
+    if (!user) return null;
+
+    const { xp, coins, diamonds, currentStreak, activeCharacterId, unlockedCharacters = [] } = data;
+
+    db.prepare(`
+      UPDATE users
+      SET xp = COALESCE(?, xp),
+          coins = COALESCE(?, coins),
+          diamonds = COALESCE(?, diamonds),
+          current_streak = COALESCE(?, current_streak),
+          active_character_id = COALESCE(?, active_character_id)
+      WHERE id = ?
+    `).run(xp ?? null, coins ?? null, diamonds ?? null, currentStreak ?? null, activeCharacterId ?? null, id);
+
+    if (Array.isArray(unlockedCharacters)) {
+      const stmt = db.prepare('INSERT OR IGNORE INTO user_characters (user_id, character_id) VALUES (?, ?)');
+      for (const charId of unlockedCharacters) {
+        stmt.run(id, charId);
+      }
+    }
+
+    return {
+      ...this.getById(id),
+      unlockedCharacters: this.getUnlockedCharacters(id)
+    };
   }
 };
 

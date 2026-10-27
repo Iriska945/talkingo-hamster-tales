@@ -43,7 +43,7 @@ app.get('/api/health', (req, res) => {
 // 2. High-Quality Free Edge Neural TTS Endpoint
 app.post('/api/tts', async (req, res) => {
   try {
-    const { text, language = 'ru', voiceName } = req.body;
+    const { text, language = 'ru', voiceName, rate = 1.0, pitch = 0 } = req.body;
     if (!text || !text.trim()) {
       return res.status(400).json({ error: 'Text is required' });
     }
@@ -58,7 +58,12 @@ app.post('/api/tts', async (req, res) => {
     const tts = new MsEdgeTTS();
     await tts.setMetadata(selectedVoice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
 
-    const { audioStream } = tts.toStream(cleanText);
+    // Dynamic speech speed control (e.g. 0.8x for slower practice, 1.2x for faster)
+    const ratePercent = Math.round((Number(rate) - 1.0) * 100);
+    const rateStr = ratePercent >= 0 ? `+${ratePercent}%` : `${ratePercent}%`;
+    const pitchStr = pitch ? `${Math.round(pitch * 20)}Hz` : "+0Hz";
+
+    const { audioStream } = tts.toStream(cleanText, { rate: rateStr, pitch: pitchStr });
 
     res.setHeader('Content-Type', 'audio/mpeg');
     res.setHeader('Cache-Control', 'public, max-age=86400');
@@ -163,7 +168,23 @@ app.get('/api/leaderboard', (req, res) => {
   });
 });
 
-// 5. Update user progress from frontend
+// 5. User Progress & State Sync Endpoints
+app.get('/api/user/state', (req, res) => {
+  const userId = req.query.userId || 'demo-user';
+  let user = userDb.getById(userId);
+  if (!user) {
+    user = userDb.getById('demo-user');
+  }
+  const unlocked = userDb.getUnlockedCharacters(user?.id || 'demo-user');
+  res.json({
+    success: true,
+    user: {
+      ...user,
+      unlockedCharacters: unlocked
+    }
+  });
+});
+
 app.post('/api/user/progress', (req, res) => {
   const { userId = 'demo-user', xpGained = 0, coinsGained = 0, diamondsGained = 0 } = req.body;
   const updatedUser = userDb.updateStats(userId, {
@@ -177,10 +198,39 @@ app.post('/api/user/progress', (req, res) => {
   res.json({ success: true, user: updatedUser });
 });
 
-// 6. Voice Assistant Chat with Linkbus / DeepSeek
+app.post('/api/user/sync', (req, res) => {
+  const { userId = 'demo-user', ...data } = req.body;
+  const updated = userDb.syncUser(userId, data);
+  res.json({ success: true, user: updated });
+});
+
+// Dictionary Endpoints
+app.get('/api/user/phrases', (req, res) => {
+  const userId = req.query.userId || 'demo-user';
+  const phrases = userDb.getPhrases(userId);
+  res.json({ success: true, phrases });
+});
+
+app.post('/api/user/phrases', (req, res) => {
+  const { userId = 'demo-user', phrase } = req.body;
+  if (!phrase || !phrase.phrase) {
+    return res.status(400).json({ error: 'Phrase data is required' });
+  }
+  const id = userDb.addPhrase(userId, phrase);
+  res.json({ success: true, id });
+});
+
+// 6. Voice Assistant Chat with Linkbus / DeepSeek & Practice Scenarios
 app.post('/api/talk', async (req, res) => {
   try {
-    const { messages, language = 'ru', character, model = DEFAULT_MODEL, userId = 'demo-user' } = req.body;
+    const {
+      messages,
+      language = 'ru',
+      character,
+      model = DEFAULT_MODEL,
+      userId = 'demo-user',
+      scenario = 'free',
+    } = req.body;
 
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: 'Messages array is required' });
@@ -190,17 +240,31 @@ app.post('/api/talk', async (req, res) => {
     const charEmoji = character?.emoji || "🐹";
     const charPersonality = character?.personality?.[language] || "Дружелюбный хомячок-учитель.";
 
+    // Scenario prompt guidelines
+    const SCENARIOS_PROMPT = {
+      free: "Casual, friendly conversation about anything the user wants to talk about.",
+      cafe: "Roleplay: You are a friendly barista / waiter at a cozy cafe. Help the user order coffee, pastries, or lunch, ask about their day.",
+      airport: "Roleplay: You are a polite airport staff / customs officer guiding the user through check-in, baggage, and flights.",
+      story: "Roleplay: You are telling an engaging interactive fairytale / story with the user, pausing to ask what happens next.",
+      interview: "Roleplay: You are an interviewer for a cool dream club or creative project, asking friendly conversational questions."
+    };
+
+    const currentScenarioContext = SCENARIOS_PROMPT[scenario] || SCENARIOS_PROMPT.free;
+
     const systemPrompt = `You are ${charName} (${charEmoji}), a lovely companion in a Duolingo-style language learning app named Talkingo.
 Current study language: ${String(language).toUpperCase()} (ru = Russian, en = English, kk = Kazakh).
 Character personality: ${charPersonality}.
+Active Practice Scenario: ${currentScenarioContext}.
 
 Instructions:
 1. Reply warmly, enthusiastically, and naturally in ${language === 'ru' ? 'Russian' : language === 'kk' ? 'Kazakh' : 'English'}.
 2. Keep your response conversational and concise (1-2 sentences max), ideal for voice audio pronunciation.
-3. Naturally weave in or explain an interesting idiom / literary expression (крылатое выражение / мақал / idiom) suitable for children and learners.
-4. Respond in JSON format:
+3. Naturally weave in or explain an interesting idiom / literary expression (крылатое выражение / мақал / idiom) suitable for children and learners when fitting.
+4. If the user made a grammar or pronunciation slip, gently suggest a natural alternative in the "tip" field without sounding pedantic.
+5. Respond strictly in JSON format:
 {
   "spoken": "Your character's cheerful spoken response to the user in 1-2 sentences",
+  "tip": "Optional 1-sentence tip e.g. 💡 Можно сказать естественнее: ..., or null if no correction is needed",
   "new_phrases": [
     {
       "phrase": "The idiom or phrase introduced",
@@ -271,15 +335,33 @@ If no new idiom fits this specific turn, return "new_phrases": [].`;
       userDb.updateStats(userId, { xpDelta: 5 });
     }
 
+    // Automatically persist any learned phrases to user's dictionary in SQLite
+    if (parsed && Array.isArray(parsed.new_phrases)) {
+      for (const p of parsed.new_phrases) {
+        if (p.phrase && userId) {
+          userDb.addPhrase(userId, {
+            language: language,
+            phrase: p.phrase,
+            kidExplanation: p.meaning,
+            literalMeaning: p.literal_meaning,
+            sourceBook: p.source_book,
+            example: p.example,
+          });
+        }
+      }
+    }
+
     if (parsed && (parsed.spoken || parsed.new_phrases)) {
       return res.json({
         spoken: String(parsed.spoken || contentStr).replace(/\*+/g, '').replace(/[_`#>]/g, '').trim(),
+        tip: parsed.tip || null,
         new_phrases: Array.isArray(parsed.new_phrases) ? parsed.new_phrases : []
       });
     }
 
     res.json({
       spoken: String(contentStr).replace(/\*+/g, '').replace(/[_`#>]/g, '').trim(),
+      tip: null,
       new_phrases: []
     });
 

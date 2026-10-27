@@ -5,11 +5,11 @@ import { Trophy, ArrowUp, ArrowDown, Sparkles, Clock } from 'lucide-react';
 import { soundEffects } from '../services/voice';
 
 const LEAGUES = [
-  { id: 'bronze', label: 'Бронза', icon: '🥉', badge: 'bg-[#F9EFEB] text-[#D2674E]', border: 'border-[#F1D7CE]' },
-  { id: 'silver', label: 'Серебро', icon: '🥈', badge: 'bg-[#F6F3EC] text-[#78746D]', border: 'border-[#EAE6DE]' },
-  { id: 'gold', label: 'Золото', icon: '🥇', badge: 'bg-[#F8F3E8] text-[#C49B52]', border: 'border-[#EBE0C7]' },
-  { id: 'sapphire', label: 'Сапфир', icon: '💎', badge: 'bg-[#EBF1F5] text-[#476579]', border: 'border-[#D3E2EB]' },
-  { id: 'ruby', label: 'Рубин', icon: '👑', badge: 'bg-[#FBE8EC] text-[#C94D6A]', border: 'border-[#F5CCD6]' },
+  { id: 'bronze', label: 'Бронза', icon: '🥉', badge: 'bg-amber-600/15 border-amber-600/30 text-amber-400' },
+  { id: 'silver', label: 'Серебро', icon: '🥈', badge: 'bg-slate-400/15 border-slate-400/30 text-slate-300' },
+  { id: 'gold', label: 'Золото', icon: '🥇', badge: 'bg-yellow-500/15 border-yellow-500/30 text-yellow-300' },
+  { id: 'sapphire', label: 'Сапфир', icon: '💎', badge: 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300' },
+  { id: 'ruby', label: 'Рубин', icon: '👑', badge: 'bg-rose-500/15 border-rose-500/30 text-rose-300' },
 ];
 
 export const LeaderboardPage: React.FC = () => {
@@ -87,38 +87,42 @@ export const LeaderboardPage: React.FC = () => {
   const top3 = competitors.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] pb-24 pt-4 px-4 max-w-lg mx-auto space-y-4">
+    <div className="min-h-screen bg-black text-white pb-28 pt-4 px-4 max-w-lg mx-auto space-y-4 relative overflow-hidden">
       
-      {/* 1. Header & Season Info */}
-      <div className="open-card p-5">
+      {/* Ambient background glow */}
+      <div className="ambient-glow-orb w-[350px] h-[350px] bg-purple-600/15 top-[-40px] left-[-80px] pointer-events-none" />
+      <div className="ambient-glow-orb w-[300px] h-[300px] bg-yellow-500/10 top-[200px] right-[-60px] pointer-events-none" />
+
+      {/* 1. Header & Season Info (Liquid Glass) */}
+      <div className="liquid-glass p-5 border border-white/15 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-[#F8F3E8] flex items-center justify-center text-2xl shadow-sm">
+            <div className="w-11 h-11 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-2xl shadow-sm">
               {currentLeagueObj.icon}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-bold text-[#1C1A17]">
+                <h1 className="text-lg font-medium text-white">
                   {currentLeagueObj.label} лига
                 </h1>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${currentLeagueObj.badge}`}>
+                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${currentLeagueObj.badge}`}>
                   Турнир
                 </span>
               </div>
-              <p className="text-xs text-[#78746D] mt-0.5 flex items-center gap-1">
+              <p className="text-xs text-neutral-400 mt-0.5 flex items-center gap-1 font-light">
                 <Clock className="w-3.5 h-3.5" />
                 <span>Итоги недели через 3 дня</span>
               </p>
             </div>
           </div>
           <div className="text-right">
-            <span className="text-xs text-[#78746D] block">Твой опыт</span>
-            <span className="text-base font-extrabold text-[#1C1A17]">{resources.xp} XP</span>
+            <span className="text-xs text-neutral-400 block font-light">Твой опыт</span>
+            <span className="text-base font-semibold text-white font-mono">{resources.xp} XP</span>
           </div>
         </div>
 
         {/* League Selector Horizontal Tabs */}
-        <div className="mt-4 pt-3 border-t border-[#F2EEE6] flex items-center justify-between gap-1">
+        <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between gap-1">
           {LEAGUES.map((league) => (
             <button
               key={league.id}
@@ -126,10 +130,10 @@ export const LeaderboardPage: React.FC = () => {
                 soundEffects.click();
                 setSelectedLeague(league.id);
               }}
-              className={`flex-1 py-1.5 px-1 rounded-full text-xs font-semibold flex items-center justify-center gap-1 transition-all ${
+              className={`flex-1 py-1.5 px-1 rounded-full text-xs font-medium flex items-center justify-center gap-1 transition-all ${
                 selectedLeague === league.id
-                  ? 'bg-[#1C1A17] text-white shadow-sm'
-                  : 'text-[#78746D] hover:bg-[#F6F3EC]'
+                  ? 'bg-white text-black font-semibold shadow-[0_0_15px_rgba(255,255,255,0.3)]'
+                  : 'text-neutral-400 hover:text-white hover:bg-white/[0.05]'
               }`}
             >
               <span>{league.icon}</span>
@@ -139,47 +143,48 @@ export const LeaderboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Podium (Top 3 in Open Style) */}
+      {/* 2. Podium (Top 3 in Liquid Glass Pedestals) */}
       {top3.length >= 3 && (
-        <div className="grid grid-cols-3 gap-2 items-end pt-2">
+        <div className="grid grid-cols-3 gap-2.5 items-end pt-2 relative z-10">
+          
           {/* 2nd Place */}
-          <div className="open-card p-3 text-center order-1 border-[#EAE6DE]">
-            <div className="text-xl mb-1">🥈</div>
-            <div className="w-10 h-10 mx-auto rounded-full bg-[#F6F3EC] flex items-center justify-center text-lg shadow-sm">
+          <div className="liquid-glass p-3 text-center order-1 border border-white/10">
+            <div className="text-lg mb-1">🥈</div>
+            <div className="w-10 h-10 mx-auto rounded-full bg-white/[0.08] border border-white/15 flex items-center justify-center text-lg shadow-sm">
               {top3[1]?.avatar}
             </div>
-            <span className="text-xs font-bold text-[#1C1A17] block truncate mt-1.5">
+            <span className="text-xs font-medium text-white block truncate mt-1.5">
               {top3[1]?.name}
             </span>
-            <span className="text-[10px] font-semibold text-[#78746D]">
+            <span className="text-[10px] text-neutral-400 font-mono">
               {top3[1]?.xp} XP
             </span>
           </div>
 
-          {/* 1st Place */}
-          <div className="open-card p-4 text-center order-2 bg-gradient-to-b from-[#FFFDF9] to-[#F8F3E8] border-[#EBE0C7] shadow-sm relative -top-2">
+          {/* 1st Place (Centerpiece with Amber Light Glow) */}
+          <div className="liquid-glass-elevated p-4 text-center order-2 border border-yellow-500/30 shadow-[0_0_30px_rgba(234,179,8,0.2)] relative -top-2">
             <div className="text-2xl mb-1">🥇</div>
-            <div className="w-12 h-12 mx-auto rounded-full bg-white border border-[#EBE0C7] flex items-center justify-center text-2xl shadow-sm">
+            <div className="w-12 h-12 mx-auto rounded-full bg-yellow-500/20 border border-yellow-400/40 flex items-center justify-center text-2xl shadow-sm">
               {top3[0]?.avatar}
             </div>
-            <span className="text-xs font-extrabold text-[#1C1A17] block truncate mt-1.5">
+            <span className="text-xs font-semibold text-white block truncate mt-1.5">
               {top3[0]?.name}
             </span>
-            <span className="text-[11px] font-bold text-[#C49B52]">
+            <span className="text-[11px] font-bold text-yellow-300 font-mono">
               {top3[0]?.xp} XP
             </span>
           </div>
 
           {/* 3rd Place */}
-          <div className="open-card p-3 text-center order-3 border-[#EAE6DE]">
-            <div className="text-xl mb-1">🥉</div>
-            <div className="w-10 h-10 mx-auto rounded-full bg-[#F6F3EC] flex items-center justify-center text-lg shadow-sm">
+          <div className="liquid-glass p-3 text-center order-3 border border-white/10">
+            <div className="text-lg mb-1">🥉</div>
+            <div className="w-10 h-10 mx-auto rounded-full bg-white/[0.08] border border-white/15 flex items-center justify-center text-lg shadow-sm">
               {top3[2]?.avatar}
             </div>
-            <span className="text-xs font-bold text-[#1C1A17] block truncate mt-1.5">
+            <span className="text-xs font-medium text-white block truncate mt-1.5">
               {top3[2]?.name}
             </span>
-            <span className="text-[10px] font-semibold text-[#78746D]">
+            <span className="text-[10px] text-neutral-400 font-mono">
               {top3[2]?.xp} XP
             </span>
           </div>
@@ -187,13 +192,13 @@ export const LeaderboardPage: React.FC = () => {
       )}
 
       {/* 3. Leaderboard List with Promotion & Demotion Indicators */}
-      <div className="open-card overflow-hidden">
-        <div className="p-3.5 border-b border-[#F2EEE6] flex items-center justify-between text-[11px] text-[#78746D] font-semibold">
+      <div className="liquid-glass overflow-hidden border border-white/15 relative z-10">
+        <div className="p-3.5 border-b border-white/10 flex items-center justify-between text-[11px] text-neutral-400 font-medium">
           <span>Участник</span>
           <span>Опыт (XP)</span>
         </div>
 
-        <div className="divide-y divide-[#F6F3EC]">
+        <div className="divide-y divide-white/5">
           {competitors.map((item, index) => {
             const isTop3 = index < 3;
             const isBottom3 = index >= competitors.length - 2;
@@ -203,47 +208,47 @@ export const LeaderboardPage: React.FC = () => {
                 key={item.id}
                 className={`p-3.5 flex items-center justify-between transition-colors ${
                   item.isCurrentUser
-                    ? 'bg-[#E8EFEA]/60 font-bold'
-                    : 'hover:bg-[#FAF8F5]'
+                    ? 'bg-emerald-500/15 border-l-2 border-emerald-400'
+                    : 'hover:bg-white/[0.04]'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <span
-                    className={`w-5 text-center text-xs font-bold ${
+                    className={`w-5 text-center text-xs font-mono font-bold ${
                       index === 0
-                        ? 'text-[#C49B52]'
+                        ? 'text-yellow-400'
                         : index === 1
-                        ? 'text-[#78746D]'
+                        ? 'text-neutral-300'
                         : index === 2
-                        ? 'text-[#D2674E]'
-                        : 'text-[#A8A399]'
+                        ? 'text-amber-500'
+                        : 'text-neutral-500'
                     }`}
                   >
                     {item.rank}
                   </span>
 
-                  <div className="w-9 h-9 rounded-full bg-[#F6F3EC] flex items-center justify-center text-base shrink-0 shadow-sm border border-[#EAE6DE]">
+                  <div className="w-9 h-9 rounded-full bg-white/[0.08] border border-white/15 flex items-center justify-center text-base shrink-0 shadow-sm">
                     {item.avatar}
                   </div>
 
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold text-[#1C1A17]">
+                      <span className="text-xs font-medium text-white">
                         {item.name}
                       </span>
                       {item.isCurrentUser && (
-                        <span className="text-[9px] bg-[#3F634D] text-white font-bold px-1.5 py-0.2 rounded-full">
+                        <span className="text-[9px] bg-emerald-500 text-white font-semibold px-1.5 py-0.2 rounded-full">
                           Ты
                         </span>
                       )}
                     </div>
-                    <span className="text-[10px] text-[#78746D] block">
+                    <span className="text-[10px] text-neutral-400 block font-light">
                       {isTop3 ? (
-                        <span className="text-[#3F634D] font-medium flex items-center gap-0.5">
+                        <span className="text-emerald-400 font-normal flex items-center gap-0.5">
                           <ArrowUp className="w-3 h-3" /> Переход наверх
                         </span>
                       ) : isBottom3 ? (
-                        <span className="text-[#D2674E] font-medium flex items-center gap-0.5">
+                        <span className="text-rose-400 font-normal flex items-center gap-0.5">
                           <ArrowDown className="w-3 h-3" /> Зона вылета
                         </span>
                       ) : (
@@ -253,8 +258,8 @@ export const LeaderboardPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 text-xs font-bold text-[#1C1A17]">
-                  <Sparkles className="w-3 h-3 text-[#C49B52]" />
+                <div className="flex items-center gap-1 text-xs font-semibold text-white font-mono">
+                  <Sparkles className="w-3 h-3 text-amber-400" />
                   <span>{item.xp} XP</span>
                 </div>
               </div>

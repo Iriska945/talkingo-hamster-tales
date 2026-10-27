@@ -26,6 +26,9 @@ function getAudioContext(): AudioContext | null {
 export const soundEffects = {
   click: () => {
     try {
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate(10);
+      }
       const ctx = getAudioContext();
       if (!ctx) return;
       const osc = ctx.createOscillator();
@@ -33,7 +36,7 @@ export const soundEffects = {
       osc.type = 'sine';
       osc.frequency.setValueAtTime(440, ctx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.05);
-      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -46,14 +49,17 @@ export const soundEffects = {
 
   listenStart: () => {
     try {
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate([15, 30, 15]);
+      }
       const ctx = getAudioContext();
       if (!ctx) return;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = 'triangle';
+      osc.type = 'sine';
       osc.frequency.setValueAtTime(520, ctx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(780, ctx.currentTime + 0.12);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.setValueAtTime(0.18, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -64,8 +70,34 @@ export const soundEffects = {
     }
   },
 
+  chime: () => {
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      // Soft peaceful mindfulness gong chord (F4, A4, C5)
+      const freqs = [349.23, 440.00, 523.25];
+      freqs.forEach((f) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, ctx.currentTime);
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 1.2);
+      });
+    } catch (e) {
+      console.warn(e);
+    }
+  },
+
   success: () => {
     try {
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate([20, 40, 30]);
+      }
       const ctx = getAudioContext();
       if (!ctx) return;
       // Duolingo chime chords
@@ -89,6 +121,9 @@ export const soundEffects = {
 
   fanfare: () => {
     try {
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate([30, 50, 40, 50, 50]);
+      }
       const ctx = getAudioContext();
       if (!ctx) return;
       const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51];
@@ -113,7 +148,8 @@ export const soundEffects = {
 // Speak with high-quality free Microsoft Edge Neural TTS via backend
 export async function speakWithEdgeNeural(
   text: string,
-  lang: Language
+  lang: Language,
+  options?: { rate?: number; pitch?: number; voiceName?: string }
 ): Promise<void> {
   stopSpeaking();
   const cleanText = text
@@ -131,7 +167,10 @@ export async function speakWithEdgeNeural(
       },
       body: JSON.stringify({
         text: cleanText,
-        language: lang
+        language: lang,
+        rate: options?.rate ?? 1.0,
+        pitch: options?.pitch ?? 0,
+        voiceName: options?.voiceName
       })
     });
 

@@ -287,14 +287,76 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
-  // Save changes to localStorage
+  // Save changes to localStorage & sync to SQLite database
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.LANG, lang);
   }, [lang]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.RESOURCES, JSON.stringify(resources));
+    // Background sync to server SQLite DB
+    fetch('/api/user/progress', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: 'demo-user',
+        xpGained: 0,
+        coinsGained: 0,
+        diamondsGained: 0
+      })
+    }).catch(() => {});
   }, [resources]);
+
+  // Initial load from SQLite database to hydrate real progress
+  useEffect(() => {
+    fetch('/api/user/state?userId=demo-user')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data?.user) {
+          setResources(prev => ({
+            ...prev,
+            xp: Math.max(prev.xp, data.user.xp || 0),
+            coins: Math.max(prev.coins, data.user.coins || 0),
+            diamonds: Math.max(prev.diamonds, data.user.diamonds || 0),
+          }));
+          if (data.user.current_streak) {
+            setProfile(prev => ({
+              ...prev,
+              currentStreak: Math.max(prev.currentStreak, data.user.current_streak)
+            }));
+          }
+          if (Array.isArray(data.user.unlockedCharacters) && data.user.unlockedCharacters.length > 0) {
+            setOwnedCharacterIds(prev => Array.from(new Set([...prev, ...data.user.unlockedCharacters])));
+          }
+        }
+      })
+      .catch(() => {});
+
+    // Also hydrate dictionary phrases from SQLite
+    fetch('/api/user/phrases?userId=demo-user')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data?.phrases && Array.isArray(data.phrases) && data.phrases.length > 0) {
+          setPhrases(prev => {
+            const existingIds = new Set(prev.map(p => p.id));
+            const newOnes = data.phrases
+              .filter((p: any) => !existingIds.has(p.id))
+              .map((p: any) => ({
+                id: p.id,
+                language: p.language || 'ru',
+                phrase: p.phrase,
+                kidExplanation: p.kid_explanation || '',
+                literalMeaning: p.literal_meaning || '',
+                sourceBook: p.source_book || '',
+                example: p.example || '',
+                dateAdded: p.created_at || new Date().toISOString(),
+              }));
+            return [...newOnes, ...prev];
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(profile));
@@ -421,6 +483,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       totalLessonsCompleted: prev.totalLessonsCompleted + 1
     }));
     soundEffects.fanfare();
+
+    // Persist completed lesson to SQLite
+    fetch('/api/user/progress', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: 'demo-user',
+        xpGained: 25,
+        coinsGained: rewardCoins,
+        diamondsGained: rewardDiamonds
+      })
+    }).catch(() => {});
   };
 
   const claimQuest = (questId: string) => {
@@ -439,15 +513,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const addDictionaryPhrase = (phrase: Omit<DictionaryPhrase, 'id' | 'dateAdded'>) => {
     const today = new Date().toISOString().slice(0, 10);
+    const newId = 'phrase-' + Date.now();
     setPhrases(prev => [
       {
         ...phrase,
-        id: 'phrase-' + Date.now(),
+        id: newId,
         dateAdded: today
       },
       ...prev
     ]);
     soundEffects.success();
+
+    // Persist to SQLite
+    fetch('/api/user/phrases', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: 'demo-user',
+        phrase: {
+          id: newId,
+          language: phrase.language || lang,
+          phrase: phrase.phrase,
+          kidExplanation: phrase.kidExplanation,
+          literalMeaning: phrase.literalMeaning,
+          sourceBook: phrase.sourceBook,
+          example: phrase.example
+        }
+      })
+    }).catch(() => {});
   };
 
   const updateVoiceSettings = (newSettings: Partial<VoiceSettings>) => {

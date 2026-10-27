@@ -17,7 +17,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isTalkPage = location.pathname === '/talk';
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF8F5] text-[#1C1A17]">
+    <div className="min-h-screen flex flex-col bg-black text-white selection:bg-white/20 selection:text-white">
       {!isTalkPage && <Navbar />}
       <main className="flex-1 pb-20">
         {children}

@@ -2,6 +2,7 @@ import { Character, ChatMessage, Language, VoiceSettings } from '../types';
 
 export interface TalkResponse {
   spoken: string;
+  tip?: string | null;
   new_phrases: Array<{
     phrase: string;
     meaning: string;
@@ -88,8 +89,9 @@ export async function generateTalkResponse(params: {
   language: Language;
   character: Character;
   voiceSettings: VoiceSettings;
+  scenario?: string;
 }): Promise<TalkResponse> {
-  const { messages, language, character, voiceSettings } = params;
+  const { messages, language, character, voiceSettings, scenario = 'free' } = params;
   const lastUserMessage = [...messages].reverse().find(m => m.role === 'user')?.content || "Привет!";
 
   // 1. Try our own secure backend server endpoint /api/talk
@@ -103,6 +105,7 @@ export async function generateTalkResponse(params: {
         messages: messages.slice(-6).map(m => ({ role: m.role, content: m.content })),
         language,
         character,
+        scenario,
         model: voiceSettings.deepseekModel || "deepseek-v4-flash"
       })
     });
@@ -112,6 +115,7 @@ export async function generateTalkResponse(params: {
       if (data && (data.spoken || data.new_phrases)) {
         return {
           spoken: cleanSpokenText(data.spoken),
+          tip: data.tip || null,
           new_phrases: Array.isArray(data.new_phrases) ? data.new_phrases : []
         };
       }
