@@ -4,83 +4,150 @@
 
 @layer base {
   body {
-    font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #FAF8F5;
+    color: #1C1A17;
   }
 }
 
-/* Custom Duolingo 3D button effects */
+/* Open Aesthetic Utility Classes */
+.open-card {
+  background-color: #FFFFFF;
+  border-radius: 26px;
+  border: 1px solid rgba(234, 230, 222, 0.9);
+  box-shadow: 0 4px 20px -2px rgba(28, 26, 23, 0.03);
+}
+
+.open-card-soft {
+  background-color: #F6F3EC;
+  border-radius: 26px;
+  border: 1px solid rgba(234, 230, 222, 0.7);
+}
+
+.open-pill {
+  border-radius: 9999px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Refined Tactile Button System */
+.btn-open-primary {
+  background-color: #1C1A17;
+  color: #FAF8F5;
+  border-radius: 9999px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.btn-open-primary:hover {
+  background-color: #000000;
+  transform: translateY(-1px);
+}
+.btn-open-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-open-sage {
+  background-color: #3F634D;
+  color: #FFFFFF;
+  border-radius: 9999px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.btn-open-sage:hover {
+  background-color: #33523F;
+}
+.btn-open-sage:active {
+  transform: scale(0.98);
+}
+
+.btn-open-outline {
+  background-color: #FFFFFF;
+  color: #1C1A17;
+  border: 1px solid #EAE6DE;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.btn-open-outline:hover {
+  background-color: #F8F6F2;
+  border-color: #D6D1C6;
+}
+.btn-open-outline:active {
+  transform: scale(0.98);
+}
+
+/* Modern clean replacement for old Duo 3D buttons */
 .btn-duo-green {
-  background-color: #58cc02;
-  border-bottom: 4px solid #46a302;
+  background-color: #3F634D;
   color: white;
+  border-radius: 9999px;
+  transition: all 0.15s ease;
 }
 .btn-duo-green:hover {
-  background-color: #61e002;
+  background-color: #34523F;
 }
 .btn-duo-green:active {
-  border-bottom-width: 0px;
-  transform: translateY(4px);
+  transform: scale(0.97);
 }
 
 .btn-duo-blue {
-  background-color: #1cb0f6;
-  border-bottom: 4px solid #1899d6;
+  background-color: #476579;
   color: white;
+  border-radius: 9999px;
+  transition: all 0.15s ease;
 }
 .btn-duo-blue:hover {
-  background-color: #2bd0ff;
+  background-color: #375061;
 }
 .btn-duo-blue:active {
-  border-bottom-width: 0px;
-  transform: translateY(4px);
+  transform: scale(0.97);
 }
 
 .btn-duo-yellow {
-  background-color: #ffc800;
-  border-bottom: 4px solid #e5a500;
-  color: #4b4b4b;
+  background-color: #C49B52;
+  color: white;
+  border-radius: 9999px;
+  transition: all 0.15s ease;
 }
 .btn-duo-yellow:active {
-  border-bottom-width: 0px;
-  transform: translateY(4px);
+  transform: scale(0.97);
 }
 
 .btn-duo-red {
-  background-color: #ff4b4b;
-  border-bottom: 4px solid #ea2b2b;
+  background-color: #D2674E;
   color: white;
+  border-radius: 9999px;
+  transition: all 0.15s ease;
 }
 .btn-duo-red:active {
-  border-bottom-width: 0px;
-  transform: translateY(4px);
+  transform: scale(0.97);
 }
 
 .btn-duo-white {
   background-color: #ffffff;
-  border: 2px solid #e5e5e5;
-  border-bottom: 4px solid #d4d4d4;
-  color: #4b4b4b;
+  border: 1px solid #EAE6DE;
+  color: #1C1A17;
+  border-radius: 9999px;
+  transition: all 0.15s ease;
 }
 .btn-duo-white:hover {
-  background-color: #f7f7f7;
+  background-color: #FAF8F5;
 }
 .btn-duo-white:active {
-  border-bottom-width: 2px;
-  transform: translateY(2px);
+  transform: scale(0.97);
 }
 
-/* Custom scrollbars */
+/* Minimalist Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #EAE6DE;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #D8D3C8;
 }

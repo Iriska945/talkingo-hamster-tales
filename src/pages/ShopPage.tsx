@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Character } from '../types';
 import { speakWithBrowser, soundEffects } from '../services/voice';
-import { ShoppingBag, Coins, Gem, Sparkles, Check, Volume2, Star } from 'lucide-react';
+import { ShoppingBag, Coins, Gem, Check, Volume2 } from 'lucide-react';
 
 export const ShopPage: React.FC = () => {
   const {
@@ -31,136 +31,124 @@ export const ShopPage: React.FC = () => {
     switch (rarity) {
       case 'legendary':
         return {
-          label: t('legendary'),
-          bg: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white',
-          border: 'border-purple-300',
+          label: 'Легендарный',
+          badge: 'bg-[#F9EFEB] text-[#D2674E] border border-[#F1D7CE]',
         };
       case 'rare':
         return {
-          label: t('rare'),
-          bg: 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white',
-          border: 'border-blue-300',
+          label: 'Редкий',
+          badge: 'bg-[#EBF1F5] text-[#476579] border border-[#D3E2EB]',
         };
       default:
         return {
-          label: t('common'),
-          bg: 'bg-slate-200 text-slate-700',
-          border: 'border-slate-300',
+          label: 'Обычный',
+          badge: 'bg-[#F6F3EC] text-[#78746D] border border-[#EAE6DE]',
         };
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f7f7] pb-28 pt-4 px-4 max-w-lg mx-auto space-y-4">
+    <div className="min-h-screen bg-[#FAF8F5] pb-24 pt-4 px-4 max-w-lg mx-auto space-y-4">
       
-      {/* Shop Header */}
-      <div className="bg-white rounded-3xl p-5 border-2 border-slate-200 shadow-sm flex items-center justify-between">
-        <div>
-          <span className="text-[11px] font-black uppercase text-duo-blue flex items-center gap-1">
-            <ShoppingBag className="w-4 h-4" />
-            {t('shopTitle')}
-          </span>
-          <h1 className="text-xl font-black text-slate-800 leading-tight mt-0.5">
-            Собери всю коллекцию!
-          </h1>
-          <p className="text-xs font-bold text-slate-400 mt-0.5">
-            {t('shopSub')}
-          </p>
-        </div>
-
-        {/* User Balance Chips */}
-        <div className="flex flex-col gap-1.5 shrink-0">
-          <div className="flex items-center gap-1 px-3 py-1 rounded-xl bg-amber-50 border border-amber-200 text-xs font-black text-amber-700">
-            <Coins className="w-4 h-4 fill-amber-400 text-amber-500" />
-            <span>{resources.coins}</span>
+      {/* 1. Header & Balance Card */}
+      <div className="open-card p-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-[#F6F3EC] flex items-center justify-center text-[#1C1A17]">
+              <ShoppingBag className="w-5 h-5" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-[#1C1A17] leading-tight">
+                Магазин компаньонов
+              </h1>
+              <span className="text-xs text-[#78746D]">
+                Открывай персонажей за успехи в речи
+              </span>
+            </div>
           </div>
-          <div className="flex items-center gap-1 px-3 py-1 rounded-xl bg-cyan-50 border border-cyan-200 text-xs font-black text-cyan-700">
-            <Gem className="w-4 h-4 fill-cyan-400 text-cyan-500" />
-            <span>{resources.diamonds}</span>
+
+          {/* Balance Pills */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#F8F3E8] border border-[#EBE0C7] text-xs font-bold text-[#C49B52]">
+              <Coins className="w-3.5 h-3.5" />
+              <span>{resources.coins}</span>
+            </div>
+            <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#EBF1F5] border border-[#D3E2EB] text-xs font-bold text-[#476579]">
+              <Gem className="w-3.5 h-3.5" />
+              <span>{resources.diamonds}</span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Characters Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+      {/* 2. Character Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {characters.map((char) => {
           const isOwned = ownedCharacterIds.includes(char.id);
           const isActive = activeCharacter.id === char.id;
-          const badge = getRarityBadge(char.rarity);
+          const rarity = getRarityBadge(char.rarity);
           const canAfford =
-            resources.coins >= char.price_coins &&
-            resources.diamonds >= char.price_diamonds;
+            resources.coins >= char.price_coins && resources.diamonds >= char.price_diamonds;
 
           return (
             <div
               key={char.id}
-              className={`relative bg-white rounded-3xl p-4 border-2 transition-all shadow-sm flex flex-col justify-between ${
-                isActive
-                  ? 'border-duo-green ring-4 ring-duo-green/20'
-                  : 'border-slate-200 hover:border-slate-300'
+              className={`open-card p-4 flex flex-col justify-between transition-all relative ${
+                isActive ? 'ring-2 ring-[#3F634D] ring-offset-2' : 'hover:border-[#D8D3C8]'
               }`}
             >
-              {/* Top Header: Rarity & Stars */}
-              <div className="flex items-center justify-between mb-2">
-                <span
-                  className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${badge.bg}`}
-                >
-                  {badge.label}
+              {/* Top row: Rarity & Active Tag */}
+              <div className="flex items-center justify-between mb-3">
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${rarity.badge}`}>
+                  {rarity.label}
                 </span>
 
-                <div className="flex items-center gap-0.5 text-amber-400">
-                  {Array.from({ length: char.stars }).map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
-                  ))}
-                </div>
+                {isActive && (
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#E8EFEA] text-[#3F634D] flex items-center gap-0.5">
+                    <Check className="w-3 h-3" />
+                    Выбран
+                  </span>
+                )}
               </div>
 
-              {/* Character Avatar Box */}
-              <div className="relative my-2 text-center">
-                <div
-                  className={`w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr ${char.gradient} p-2 flex items-center justify-center text-5xl shadow-md border-2 border-white transition-transform hover:scale-105`}
-                >
-                  {char.emoji}
+              {/* Character Avatar */}
+              <div className="flex flex-col items-center text-center my-2">
+                <div className="w-20 h-20 rounded-full bg-[#F8F6F1] border border-[#EAE6DE] flex items-center justify-center text-4xl shadow-sm mb-2 group">
+                  <span className="hover:scale-110 transition-transform">
+                    {char.emoji}
+                  </span>
                 </div>
 
-                {/* Voice Preview button */}
-                <button
-                  onClick={() => handlePreviewVoice(char)}
-                  className={`absolute bottom-0 right-1/2 translate-x-8 translate-y-1 p-1.5 rounded-full bg-white text-slate-700 shadow-md border border-slate-200 active:scale-90 transition-transform ${
-                    previewingId === char.id ? 'ring-2 ring-duo-blue animate-pulse' : ''
-                  }`}
-                  title="Послушать приветствие"
-                >
-                  <Volume2 className="w-3.5 h-3.5 text-duo-blue" />
-                </button>
-              </div>
-
-              {/* Info */}
-              <div className="text-center mt-1 mb-3">
-                <h3 className="text-base font-black text-slate-800 leading-tight">
-                  {char.name}
-                </h3>
-                <p className="text-[11px] font-bold text-slate-500 mt-1 min-h-[32px] line-clamp-2">
-                  {char.ability}
+                <h3 className="text-sm font-bold text-[#1C1A17]">{char.name}</h3>
+                <p className="text-[11px] text-[#78746D] line-clamp-2 mt-0.5 px-1">
+                  {char.personality[lang] || char.personality.ru}
                 </p>
               </div>
 
-              {/* Action Button */}
-              <div>
-                {isActive ? (
-                  <button
-                    disabled
-                    className="w-full py-2.5 rounded-2xl bg-duo-green/15 text-duo-green-dark font-black text-xs flex items-center justify-center gap-1.5"
-                  >
-                    <Check className="w-4 h-4" />
-                    <span>{t('active')}</span>
-                  </button>
-                ) : isOwned ? (
+              {/* Bottom Actions */}
+              <div className="mt-4 pt-3 border-t border-[#F2EEE6] flex items-center gap-2">
+                {/* Voice Preview Button */}
+                <button
+                  onClick={() => handlePreviewVoice(char)}
+                  disabled={previewingId === char.id}
+                  className="w-9 h-9 rounded-full bg-[#F6F3EC] hover:bg-[#EAE6DE] flex items-center justify-center text-[#78746D] transition-colors shrink-0"
+                  title="Прослушать голос"
+                >
+                  <Volume2 className={`w-4 h-4 ${previewingId === char.id ? 'animate-pulse text-[#3F634D]' : ''}`} />
+                </button>
+
+                {/* Primary Button: Select or Buy */}
+                {isOwned ? (
                   <button
                     onClick={() => selectCharacter(char.id)}
-                    className="w-full py-2.5 rounded-2xl btn-duo-blue font-black text-xs shadow-md active:scale-95 transition-transform"
+                    disabled={isActive}
+                    className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition-all ${
+                      isActive
+                        ? 'bg-[#E8EFEA] text-[#3F634D] cursor-default'
+                        : 'btn-open-outline'
+                    }`}
                   >
-                    {t('select')}
+                    {isActive ? 'Активен' : 'Выбрать'}
                   </button>
                 ) : (
                   <button
@@ -169,25 +157,25 @@ export const ShopPage: React.FC = () => {
                         buyCharacter(char);
                       } else {
                         soundEffects.click();
-                        alert('Недостаточно монет или алмазов! Тренируйся в речевом тренажёре, чтобы заработать.');
+                        alert('Недостаточно монет или алмазов! Практикуйся в речевом тренажёре.');
                       }
                     }}
-                    className={`w-full py-2.5 rounded-2xl font-black text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition-transform ${
+                    className={`flex-1 py-2 px-3 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
                       canAfford
-                        ? 'btn-duo-green'
-                        : 'bg-slate-200 text-slate-400 border-b-2 border-slate-300'
+                        ? 'btn-open-primary'
+                        : 'bg-[#F2EEE6] text-[#A8A399] cursor-not-allowed'
                     }`}
                   >
-                    <span>{t('buy')}</span>
+                    <span>Купить</span>
                     {char.price_coins > 0 && (
-                      <span className="flex items-center gap-0.5 ml-1">
-                        <Coins className="w-3.5 h-3.5 fill-amber-300" />
+                      <span className="flex items-center gap-0.5 text-[#F8BA44]">
+                        <Coins className="w-3 h-3" />
                         {char.price_coins}
                       </span>
                     )}
                     {char.price_diamonds > 0 && (
-                      <span className="flex items-center gap-0.5 ml-1">
-                        <Gem className="w-3.5 h-3.5 fill-cyan-300" />
+                      <span className="flex items-center gap-0.5 text-[#5B8296]">
+                        <Gem className="w-3 h-3" />
                         {char.price_diamonds}
                       </span>
                     )}

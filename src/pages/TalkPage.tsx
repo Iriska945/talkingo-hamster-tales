@@ -6,8 +6,7 @@ import {
   isSpeechRecognitionSupported,
   soundEffects,
   speakWithBrowser,
-  speakWithElevenLabs,
-  speakWithOpenAI,
+  speakWithEdgeNeural,
   stopSpeaking,
 } from '../services/voice';
 import { generateTalkResponse } from '../services/deepseek';
@@ -19,10 +18,8 @@ import {
   MicOff,
   X,
   Volume2,
-  VolumeX,
   Sparkles,
   Send,
-  BookOpen,
   Keyboard,
   RotateCcw,
 } from 'lucide-react';
@@ -58,50 +55,43 @@ export const TalkPage: React.FC = () => {
 
   // Initialize character greeting on page mount
   useEffect(() => {
-    const greetingText = activeCharacter.greeting[lang] || activeCharacter.greeting.ru;
+    const greeting = activeCharacter.greeting[lang] || activeCharacter.greeting.ru;
     const initialMsg: ChatMessage = {
-      id: 'greeting-' + Date.now(),
+      id: 'greeting',
       role: 'assistant',
-      content: greetingText,
+      content: greeting,
       timestamp: Date.now(),
     };
     setMessages([initialMsg]);
 
-    // Say greeting aloud
-    speakAssistant(greetingText);
+    const timer = setTimeout(() => {
+      speakAssistant(greeting);
+    }, 400);
 
     return () => {
+      clearTimeout(timer);
       stopSpeaking();
       if (recognitionRef.current) {
-        try {
-          recognitionRef.current.abort();
-        } catch (e) {
-          console.warn(e);
-        }
+        recognitionRef.current.abort();
       }
     };
-  }, [activeCharacter.id, lang]);
+  }, [lang, activeCharacter]);
 
-  // Voice output dispatcher based on settings
+  // Voice synthesis with Edge Neural
   const speakAssistant = async (text: string) => {
     setVoiceState('speaking');
     try {
-      if (voiceSettings.ttsEngine === 'openai' && voiceSettings.openaiApiKey) {
-        await speakWithOpenAI(text, voiceSettings.openaiApiKey);
-      } else if (voiceSettings.ttsEngine === 'elevenlabs' && voiceSettings.elevenlabsApiKey) {
-        await speakWithElevenLabs(text, voiceSettings.elevenlabsApiKey, voiceSettings.elevenlabsVoiceId);
-      } else if (voiceSettings.ttsEngine === 'webspeech') {
+      if (voiceSettings.ttsEngine === 'webspeech') {
         await speakWithBrowser(text, lang, {
           rate: voiceSettings.voiceRate,
           pitch: voiceSettings.voicePitch,
           voiceName: voiceSettings.voiceName,
         });
       } else {
-        // High quality Microsoft Edge Neural TTS by default!
         await speakWithEdgeNeural(text, lang);
       }
     } catch (e) {
-      console.warn("TTS failed, falling back to browser speech:", e);
+      console.warn('Edge TTS failed, fallback to browser speech:', e);
       await speakWithBrowser(text, lang);
     } finally {
       setVoiceState('idle');
@@ -127,24 +117,25 @@ export const TalkPage: React.FC = () => {
     if (voiceState !== 'idle') return;
 
     if (!isSpeechRecognitionSupported()) {
-      alert(t('notSupported'));
+      alert('Распознавание речи не поддерживается в этом браузере. Используйте клавиатуру.');
+      setShowKeyboard(true);
       return;
     }
 
     const recognition = createSpeechRecognizer(lang);
     if (!recognition) {
-      alert(t('notSupported'));
+      setShowKeyboard(true);
       return;
     }
 
     recognitionRef.current = recognition;
-    setInterimTranscript('');
     setVoiceState('listening');
     soundEffects.listenStart();
 
     recognition.onresult = (event: any) => {
-      let finalStr = '';
       let interimStr = '';
+      let finalStr = '';
+
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         if (event.results[i].isFinal) {
           finalStr += event.results[i][0].transcript;
@@ -193,7 +184,6 @@ export const TalkPage: React.FC = () => {
     setMessages(updatedMessages);
 
     try {
-      // Call DeepSeek / AI Service
       const response = await generateTalkResponse({
         messages: updatedMessages,
         language: lang,
@@ -210,8 +200,6 @@ export const TalkPage: React.FC = () => {
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
-
-      // Record speech turn & update daily quests
       recordSpeechTurn(response.new_phrases || []);
 
       if (response.new_phrases && response.new_phrases.length > 0) {
@@ -224,14 +212,11 @@ export const TalkPage: React.FC = () => {
         soundEffects.success();
       }
 
-      // Check lesson progress
       const nextTurns = turnsCount + 1;
       setTurnsCount(nextTurns);
 
-      // Speak AI reply aloud
       await speakAssistant(response.spoken);
 
-      // Reward after turnsGoal completed
       if (nextTurns >= turnsGoal) {
         completeLesson(30, 1);
         setShowRewardModal(true);
@@ -254,110 +239,125 @@ export const TalkPage: React.FC = () => {
   const lastAssistantMessage = [...messages].reverse().find((m) => m.role === 'assistant');
 
   return (
-    <div
-      className={`min-h-screen flex flex-col justify-between bg-gradient-to-br ${activeCharacter.gradient} text-white transition-all duration-300 relative overflow-hidden select-none`}
-    >
-      {/* Background radial glow */}
-      <div className="absolute inset-0 bg-black/15 pointer-events-none" />
-
-      {/* 1. Header Bar */}
-      <div className="relative z-10 flex items-center justify-between p-4 max-w-lg mx-auto w-full">
+    <div className="min-h-screen flex flex-col justify-between bg-[#FAF8F5] text-[#1C1A17] transition-all relative overflow-hidden select-none">
+      
+      {/* 1. Header Bar (Open Style Minimalist Pill Dock) */}
+      <div className="relative z-20 flex items-center justify-between p-4 max-w-md mx-auto w-full">
         <button
           onClick={() => {
             stopSpeaking();
             navigate('/learn');
           }}
-          className="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center font-black text-xl hover:bg-white/30 active:scale-95 transition-all shadow-md border border-white/20"
+          className="w-10 h-10 rounded-full bg-white border border-[#EAE6DE] shadow-sm flex items-center justify-center hover:bg-[#F6F3EC] active:scale-95 transition-all"
+          title="Завершить сессию"
         >
-          <X className="w-6 h-6 text-white" />
+          <X className="w-5 h-5 text-[#1C1A17]" />
         </button>
 
-        {/* Turns Progress Pill */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 shadow-md">
-          <span className="text-xs font-black">
-            🎯 {turnsCount} / {turnsGoal} {t('fiveTurnLesson')}
-          </span>
+        {/* Turns Progress Indicator */}
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#EAE6DE] shadow-sm text-xs font-semibold text-[#1C1A17]">
+          <span className="w-2 h-2 rounded-full bg-[#3F634D]" />
+          <span>{turnsCount} / {turnsGoal} реплик</span>
         </div>
 
         {/* Active Character Badge */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 font-black text-xs shadow-md">
+        <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-white border border-[#EAE6DE] shadow-sm text-xs font-bold text-[#1C1A17]">
           <span>{activeCharacter.emoji}</span>
-          <span>{activeCharacter.name.split(' ')[0]}</span>
+          <span className="text-[11px] font-semibold text-[#78746D]">{activeCharacter.name.split(' ')[0]}</span>
         </div>
       </div>
 
-      {/* 2. Character Center Stage */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 max-w-lg mx-auto w-full text-center">
+      {/* 2. Center Stage: Mindful Concentric Breathing Rings */}
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 max-w-md mx-auto w-full text-center">
         
-        {/* Animated Mascot Emoji */}
-        <div className="relative my-2 sm:my-4">
+        {/* Concentric Breathing Circle Visualization */}
+        <div className="relative my-6 flex items-center justify-center">
           
-          {/* Pulsing ring effects around character when active */}
-          {voiceState === 'listening' && (
-            <div className="absolute inset-0 rounded-full bg-red-400/40 animate-ping -z-10 scale-125" />
-          )}
-          {voiceState === 'speaking' && (
-            <div className="absolute inset-0 rounded-full bg-green-300/40 animate-pulse -z-10 scale-125" />
-          )}
-          {voiceState === 'thinking' && (
-            <div className="absolute inset-0 rounded-full bg-purple-400/40 animate-pulse -z-10 scale-110" />
-          )}
-
+          {/* Outermost Ring */}
           <div
-            className={`text-[120px] sm:text-[150px] drop-shadow-2xl transition-all duration-300 ${
+            className={`absolute rounded-full transition-all duration-700 pointer-events-none ${
+              voiceState === 'listening'
+                ? 'w-64 h-64 bg-[#E8EFEA] border-2 border-[#3F634D]/30 animate-ping opacity-40'
+                : voiceState === 'speaking'
+                ? 'w-64 h-64 bg-[#F8F3E8] border-2 border-[#C49B52]/40 animate-pulse'
+                : voiceState === 'thinking'
+                ? 'w-60 h-60 bg-[#F9EFEB] border border-[#D2674E]/30 animate-pulse'
+                : 'w-56 h-56 bg-[#F6F3EC] border border-[#EAE6DE] opacity-60'
+            }`}
+          />
+
+          {/* Middle Ring */}
+          <div
+            className={`absolute rounded-full transition-all duration-500 pointer-events-none ${
+              voiceState === 'listening'
+                ? 'w-48 h-48 bg-[#E8EFEA] opacity-80'
+                : voiceState === 'speaking'
+                ? 'w-48 h-48 bg-[#F8F3E8] opacity-80'
+                : 'w-44 h-44 bg-[#F2EEE6] opacity-70'
+            }`}
+          />
+
+          {/* Core Mascot Bubble */}
+          <div
+            className={`relative z-10 w-32 h-32 rounded-full bg-white border border-[#EAE6DE] shadow-[0_8px_24px_rgba(28,26,23,0.06)] flex items-center justify-center text-6xl transition-all duration-300 ${
               voiceState === 'speaking'
-                ? 'scale-110 animate-bounce'
+                ? 'scale-105'
                 : voiceState === 'listening'
                 ? 'scale-95'
-                : voiceState === 'thinking'
-                ? 'animate-pulse'
-                : 'animate-bounce-slow'
+                : 'hover:scale-102'
             }`}
           >
-            {activeCharacter.emoji}
+            <span className={voiceState === 'speaking' ? 'animate-bounce' : 'animate-float-gentle'}>
+              {activeCharacter.emoji}
+            </span>
           </div>
         </div>
 
-        {/* State Badge */}
-        <div className="mb-2">
+        {/* State Label Tag */}
+        <div className="mb-4">
           <span
-            className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black shadow-md transition-all ${
+            className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold tracking-wide transition-all ${
               voiceState === 'listening'
-                ? 'bg-rose-500 text-white animate-pulse'
+                ? 'bg-[#E8EFEA] text-[#3F634D] border border-[#3F634D]/30 animate-pulse'
                 : voiceState === 'thinking'
-                ? 'bg-purple-600 text-white animate-pulse'
+                ? 'bg-[#F9EFEB] text-[#D2674E] border border-[#D2674E]/30 animate-pulse'
                 : voiceState === 'speaking'
-                ? 'bg-emerald-500 text-white'
-                : 'bg-white/20 text-white/90 backdrop-blur'
+                ? 'bg-[#F8F3E8] text-[#C49B52] border border-[#C49B52]/40'
+                : 'bg-white text-[#78746D] border border-[#EAE6DE]'
             }`}
           >
-            {voiceState === 'listening' && <Mic className="w-3.5 h-3.5" />}
-            {voiceState === 'speaking' && <Volume2 className="w-3.5 h-3.5" />}
-            <span>{t(voiceState)}</span>
+            {voiceState === 'listening' && <Mic className="w-3 h-3 text-[#3F634D]" />}
+            {voiceState === 'speaking' && <Volume2 className="w-3 h-3 text-[#C49B52]" />}
+            <span>
+              {voiceState === 'listening'
+                ? 'Слушаю твою речь...'
+                : voiceState === 'thinking'
+                ? 'Обдумываю ответ...'
+                : voiceState === 'speaking'
+                ? 'Хомячок говорит...'
+                : 'Нажми микрофон для ответа'}
+            </span>
           </span>
         </div>
 
-        {/* Audio Wave Visualizer */}
-        <AudioWave active={voiceState === 'speaking' || voiceState === 'listening'} />
-
-        {/* Assistant Speech Bubble */}
-        <div className="mt-2 w-full max-w-sm bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 text-slate-800 shadow-2xl border-4 border-white/80 transition-all">
-          <p className="text-sm sm:text-base font-extrabold leading-snug">
-            "{lastAssistantMessage?.content || activeCharacter.greeting[lang]}"
+        {/* Assistant Speech Bubble Card */}
+        <div className="w-full max-w-sm open-card p-5 text-left transition-all">
+          <p className="text-sm font-semibold text-[#1C1A17] leading-relaxed">
+            «{lastAssistantMessage?.content || activeCharacter.greeting[lang]}»
           </p>
 
           {/* New Idiom Notification Banner */}
           {latestDiscoveredPhrase && (
-            <div className="mt-3 p-2.5 rounded-2xl bg-amber-100 border border-amber-300 text-amber-900 text-left animate-in slide-in-from-top-2 duration-200">
-              <div className="flex items-center gap-1 text-xs font-black text-amber-800 mb-0.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                <span>Новое крылатое выражение в словаре!</span>
+            <div className="mt-3 p-3 rounded-2xl bg-[#F8F3E8] border border-[#EBE0C7] text-left animate-in slide-in-from-top-2 duration-200">
+              <div className="flex items-center gap-1 text-[11px] font-bold text-[#C49B52] mb-0.5">
+                <Sparkles className="w-3 h-3 text-[#C49B52]" />
+                <span>Новое крылатое выражение в словаре</span>
               </div>
-              <p className="text-xs font-black text-amber-950">
+              <p className="text-xs font-bold text-[#1C1A17]">
                 «{latestDiscoveredPhrase.phrase}» — {latestDiscoveredPhrase.meaning}
               </p>
               {latestDiscoveredPhrase.source && (
-                <p className="text-[10px] font-bold text-amber-700 italic mt-0.5">
+                <p className="text-[10px] text-[#78746D] italic mt-0.5">
                   📖 {latestDiscoveredPhrase.source}
                 </p>
               )}
@@ -366,97 +366,87 @@ export const TalkPage: React.FC = () => {
 
           {/* User Interim Transcript while speaking */}
           {interimTranscript && (
-            <div className="mt-2 pt-2 border-t border-slate-200 text-xs font-bold text-slate-500 italic">
+            <div className="mt-2.5 pt-2 border-t border-[#F2EEE6] text-xs font-medium text-[#78746D] italic">
               Ты говоришь: "{interimTranscript}..."
             </div>
           )}
         </div>
 
+        {/* Sound waves indicator */}
+        <div className="mt-3">
+          <AudioWave active={voiceState === 'speaking' || voiceState === 'listening'} color="bg-[#3F634D]" />
+        </div>
+
       </div>
 
-      {/* 3. Bottom Controls */}
-      <div className="relative z-10 p-6 pb-10 max-w-lg mx-auto w-full flex flex-col items-center">
+      {/* 3. Bottom Control Dock (Clean Open Buttons) */}
+      <div className="relative z-20 pb-8 pt-2 px-4 max-w-md mx-auto w-full flex flex-col items-center">
         
-        {/* Toggle Keyboard / Text Input */}
+        {/* Optional text input field */}
         {showKeyboard ? (
-          <form
-            onSubmit={handleTextSubmit}
-            className="w-full flex items-center gap-2 mb-4 animate-in fade-in duration-150"
-          >
+          <form onSubmit={handleTextSubmit} className="w-full flex items-center gap-2 mb-3">
             <input
               type="text"
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
-              placeholder="Напиши фразу здесь..."
-              className="flex-1 py-3 px-4 rounded-2xl bg-white text-slate-800 font-bold text-sm shadow-xl focus:outline-none focus:ring-4 focus:ring-white/50"
+              placeholder="Напиши сообщение хомячку..."
+              autoFocus
+              className="flex-1 px-4 py-3 rounded-full bg-white border border-[#EAE6DE] text-sm text-[#1C1A17] focus:outline-none focus:border-[#3F634D] shadow-sm"
             />
             <button
               type="submit"
               disabled={!textInput.trim() || voiceState === 'thinking'}
-              className="p-3 rounded-2xl bg-duo-green text-white font-black shadow-xl active:scale-90 transition-transform disabled:opacity-50"
+              className="w-11 h-11 rounded-full btn-open-primary flex items-center justify-center shrink-0 disabled:opacity-40"
             >
-              <Send className="w-5 h-5" />
+              <Send className="w-4 h-4" />
             </button>
             <button
               type="button"
               onClick={() => setShowKeyboard(false)}
-              className="p-3 rounded-2xl bg-white/20 text-white font-black shadow-xl active:scale-90 transition-transform"
+              className="p-2 text-xs text-[#78746D] hover:text-[#1C1A17]"
             >
-              <Mic className="w-5 h-5" />
+              Отмена
             </button>
           </form>
         ) : (
-          <div className="w-full flex items-center justify-center gap-6 mb-2">
+          <div className="flex items-center justify-center gap-5 w-full">
             
-            {/* Keyboard mode button */}
+            {/* Keyboard toggle */}
             <button
               onClick={() => setShowKeyboard(true)}
-              className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-lg active:scale-90 transition-all border border-white/20"
-              title="Написать текстом"
+              className="w-11 h-11 rounded-full bg-white border border-[#EAE6DE] shadow-sm flex items-center justify-center text-[#78746D] hover:text-[#1C1A17] active:scale-95 transition-all"
+              title="Печатать текстом"
             >
-              <Keyboard className="w-5 h-5" />
+              <Keyboard className="w-4 h-4" />
             </button>
 
-            {/* Giant Central 🎤 Microphone Button */}
-            <div className="relative">
-              {/* Outer pulsing animated ripple */}
-              <div
-                className={`absolute -inset-3 rounded-full transition-all duration-300 -z-10 ${
-                  voiceState === 'listening'
-                    ? 'bg-rose-400/50 animate-ping'
-                    : voiceState === 'speaking'
-                    ? 'bg-emerald-400/40 animate-pulse'
-                    : 'bg-white/20 animate-pulse-glow'
-                }`}
-              />
-
-              <button
-                onClick={handleMicClick}
-                disabled={voiceState === 'thinking'}
-                className={`w-28 h-28 sm:w-32 sm:h-32 rounded-full flex flex-col items-center justify-center shadow-2xl transition-all border-4 border-white ${
-                  voiceState === 'listening'
-                    ? 'bg-rose-500 text-white scale-105 ring-8 ring-rose-300'
-                    : voiceState === 'speaking'
-                    ? 'bg-emerald-500 text-white ring-8 ring-emerald-300'
-                    : 'bg-white text-slate-800 hover:scale-105 active:scale-95 ring-8 ring-white/40'
-                } disabled:opacity-60`}
-              >
-                {voiceState === 'listening' ? (
-                  <MicOff className="w-12 h-12 animate-pulse" />
-                ) : voiceState === 'speaking' ? (
-                  <Volume2 className="w-12 h-12 animate-pulse" />
-                ) : (
-                  <Mic className="w-12 h-12 text-duo-green" />
-                )}
-                <span className="text-[11px] font-black uppercase mt-1 tracking-tight">
-                  {voiceState === 'speaking'
-                    ? 'Остановить'
-                    : voiceState === 'listening'
-                    ? 'Слушаю'
-                    : 'Нажми'}
-                </span>
-              </button>
-            </div>
+            {/* Central Large Mindful Mic Button */}
+            <button
+              onClick={handleMicClick}
+              disabled={voiceState === 'thinking'}
+              className={`w-20 h-20 rounded-full flex flex-col items-center justify-center shadow-lg transition-all active:scale-95 ${
+                voiceState === 'listening'
+                  ? 'bg-[#3F634D] text-white ring-4 ring-[#E8EFEA]'
+                  : voiceState === 'speaking'
+                  ? 'bg-[#1C1A17] text-white ring-4 ring-[#F8F3E8]'
+                  : 'bg-[#1C1A17] text-white hover:bg-black'
+              }`}
+            >
+              {voiceState === 'listening' ? (
+                <MicOff className="w-8 h-8 animate-pulse text-[#FAF8F5]" />
+              ) : voiceState === 'speaking' ? (
+                <Volume2 className="w-8 h-8 animate-pulse text-[#F8BA44]" />
+              ) : (
+                <Mic className="w-8 h-8 text-[#FAF8F5]" />
+              )}
+              <span className="text-[10px] font-bold mt-1 tracking-tight">
+                {voiceState === 'speaking'
+                  ? 'Стоп'
+                  : voiceState === 'listening'
+                  ? 'Слушаю'
+                  : 'Говорить'}
+              </span>
+            </button>
 
             {/* Repeat Audio button */}
             <button
@@ -465,16 +455,16 @@ export const TalkPage: React.FC = () => {
                   speakAssistant(lastAssistantMessage.content);
                 }
               }}
-              className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-lg active:scale-90 transition-all border border-white/20"
+              className="w-11 h-11 rounded-full bg-white border border-[#EAE6DE] shadow-sm flex items-center justify-center text-[#78746D] hover:text-[#1C1A17] active:scale-95 transition-all"
               title="Повторить фразу"
             >
-              <RotateCcw className="w-5 h-5" />
+              <RotateCcw className="w-4 h-4" />
             </button>
           </div>
         )}
 
-        <p className="text-xs font-black text-white/90 drop-shadow mt-2">
-          {t('tapToTalk')}
+        <p className="text-[11px] text-[#A8A399] mt-3">
+          Нажми микрофон и отвечай хомячку своими словами
         </p>
 
       </div>

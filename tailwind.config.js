@@ -7,47 +7,79 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Open Inspired Mindful Palette
+        open: {
+          bg: "#FAF8F5",
+          sand: "#F4F0E8",
+          card: "#FFFFFF",
+          border: "#EAE6DE",
+          text: "#1C1A17",
+          muted: "#78746D",
+          subtle: "#A8A399",
+          sage: "#3F634D",
+          "sage-light": "#E8EFEA",
+          terracotta: "#D2674E",
+          "terracotta-light": "#F9EFEB",
+          ochre: "#C49B52",
+          "ochre-light": "#F8F3E8",
+          slate: "#476579",
+          "slate-light": "#EBF1F5",
+          ink: "#141312",
+        },
+        // Legacy Duo mapping with refined modern tones
         duo: {
-          green: "#58cc02",
-          "green-dark": "#46a302",
-          blue: "#1cb0f6",
-          "blue-dark": "#1899d6",
-          yellow: "#ffc800",
-          "yellow-dark": "#e5a500",
-          red: "#ff4b4b",
-          "red-dark": "#ea2b2b",
-          purple: "#ce82ff",
-          "purple-dark": "#a559d9",
-          orange: "#ff9600",
-          "orange-dark": "#e08300",
-          pink: "#ff86d0",
-          "pink-dark": "#e66cb5",
-          gray: "#e5e5e5",
-          "gray-dark": "#afafaf",
-          card: "#ffffff",
+          green: "#3F634D",
+          "green-dark": "#2E4A39",
+          blue: "#476579",
+          "blue-dark": "#344B5A",
+          yellow: "#C49B52",
+          "yellow-dark": "#A37E3B",
+          red: "#D2674E",
+          "red-dark": "#B24F38",
+          purple: "#7E6B8F",
+          "purple-dark": "#635272",
+          orange: "#D87948",
+          "orange-dark": "#B85F31",
+          pink: "#C96D85",
+          "pink-dark": "#A8536A",
+          gray: "#EAE6DE",
+          "gray-dark": "#A8A399",
+          card: "#FFFFFF",
         }
       },
       fontFamily: {
-        bubble: ['"Nunito"', '"Fredoka"', 'system-ui', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', '"Inter"', 'system-ui', 'sans-serif'],
+        open: ['"Plus Jakarta Sans"', '"Inter"', 'system-ui', 'sans-serif'],
+        bubble: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+      },
+      borderRadius: {
+        '2xl': '18px',
+        '3xl': '26px',
+        '4xl': '34px',
       },
       keyframes: {
-        bounceSlow: {
-          '0%, 100%': { transform: 'translateY(-4%)' },
-          '50%': { transform: 'translateY(0)' },
+        breathExpand: {
+          '0%, 100%': { transform: 'scale(1)', opacity: '0.45' },
+          '50%': { transform: 'scale(1.22)', opacity: '0.85' },
         },
-        pulseGlow: {
-          '0%, 100%': { transform: 'scale(1)', opacity: '0.8' },
-          '50%': { transform: 'scale(1.15)', opacity: '0.3' },
+        breathPulse: {
+          '0%, 100%': { transform: 'scale(1)', opacity: '0.3' },
+          '50%': { transform: 'scale(1.45)', opacity: '0.1' },
         },
-        wiggle: {
-          '0%, 100%': { transform: 'rotate(-3deg)' },
-          '50%': { transform: 'rotate(3deg)' },
+        wavePulse: {
+          '0%, 100%': { transform: 'scaleY(0.4)', opacity: '0.5' },
+          '50%': { transform: 'scaleY(1)', opacity: '1' },
+        },
+        floatGentle: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-6px)' },
         }
       },
       animation: {
-        'bounce-slow': 'bounceSlow 2s ease-in-out infinite',
-        'pulse-glow': 'pulseGlow 1.8s ease-in-out infinite',
-        'wiggle': 'wiggle 0.4s ease-in-out infinite',
+        'breath-expand': 'breathExpand 4s ease-in-out infinite',
+        'breath-pulse': 'breathPulse 4s ease-in-out infinite',
+        'wave-pulse': 'wavePulse 1.2s ease-in-out infinite',
+        'float-gentle': 'floatGentle 3s ease-in-out infinite',
       }
     },
   },
