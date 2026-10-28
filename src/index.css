@@ -278,6 +278,27 @@ html.light {
   }
 }
 
+@keyframes wavePulse {
+  0%, 100% {
+    transform: scaleY(0.4);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleY(1.3);
+    opacity: 1;
+  }
+}
+
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.motion-error-shake {
+  animation: errorShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
 .motion-page-enter {
   animation: pageEnter 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
