@@ -224,8 +224,8 @@ export const DictionaryPage: React.FC = () => {
               }}
               className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 transition-all ${
                 viewMode === 'quiz'
-                  ? 'bg-white text-black font-semibold shadow-sm'
-                  : 'text-neutral-400 hover:text-white'
+                  ? 'bg-[var(--app-cta-bg)] text-[var(--app-cta-text)] font-semibold shadow-sm'
+                  : 'text-[var(--app-text)] opacity-60 hover:opacity-100'
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
@@ -238,13 +238,13 @@ export const DictionaryPage: React.FC = () => {
         {viewMode === 'list' && (
           <>
             <div className="relative mb-3">
-              <Search className="w-4 h-4 text-neutral-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-[var(--app-text)] opacity-40 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Поиск по фразе или автору..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-full bg-white/[0.06] border border-white/15 text-xs text-white placeholder:text-neutral-500 focus:outline-none focus:border-white transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] text-xs text-[var(--app-text)] placeholder:opacity-40 focus:outline-none focus:border-[var(--app-glass-border-hover)] transition-colors"
               />
             </div>
 
@@ -260,8 +260,8 @@ export const DictionaryPage: React.FC = () => {
                   onClick={() => setSelectedLang(tab.id as any)}
                   className={`py-1 px-3 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
                     selectedLang === tab.id
-                      ? 'bg-white text-black font-semibold shadow-sm'
-                      : 'bg-white/[0.05] border border-white/10 text-neutral-400 hover:text-white'
+                      ? 'bg-[var(--app-cta-bg)] text-[var(--app-cta-text)] font-semibold shadow-sm'
+                      : 'bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] text-[var(--app-text)] opacity-70 hover:opacity-100'
                   }`}
                 >
                   {tab.label}
@@ -276,14 +276,14 @@ export const DictionaryPage: React.FC = () => {
       {viewMode === 'quiz' && (
         <div className="space-y-4 relative z-10">
           {quizFinished ? (
-            <div className="liquid-glass p-8 text-center space-y-4 border border-white/15">
+            <div className="liquid-glass p-8 text-center space-y-4 border border-[var(--app-glass-border)]">
               <div className="w-16 h-16 mx-auto rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(16,185,129,0.3)]">
                 🎉
               </div>
-              <h2 className="text-xl font-medium text-white">
+              <h2 className="text-xl font-medium text-[var(--app-text)]">
                 Тренировка завершена!
               </h2>
-              <p className="text-xs text-neutral-400 max-w-xs mx-auto leading-relaxed font-light">
+              <p className="text-xs text-[var(--app-text)] opacity-70 max-w-xs mx-auto leading-relaxed font-light">
                 Отличная работа! Ты повторил все {allPhrases.length} выражений и закрепил их значение.
               </p>
               <button
@@ -299,25 +299,25 @@ export const DictionaryPage: React.FC = () => {
               </button>
             </div>
           ) : currentQuizCard ? (
-            <div className="liquid-glass p-6 min-h-[300px] flex flex-col justify-between transition-all relative border border-white/20">
+            <div className="liquid-glass p-6 min-h-[300px] flex flex-col justify-between transition-all relative border border-[var(--app-glass-border)] shadow-xl">
               
               {/* Progress counter */}
-              <div className="flex items-center justify-between text-xs text-neutral-400">
+              <div className="flex items-center justify-between text-xs text-[var(--app-text)] opacity-70">
                 <span>Карточка {quizIndex + 1} из {allPhrases.length}</span>
-                <span className="text-[10px] uppercase font-semibold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] uppercase font-semibold text-emerald-500 dark:text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full">
                   {currentQuizCard.language === 'ru' ? 'Русский' : currentQuizCard.language === 'en' ? 'English' : 'Қазақша'}
                 </span>
               </div>
 
               {/* Card Face */}
               <div className="my-8 text-center">
-                <h3 className="text-2xl font-medium text-white tracking-tight leading-snug">
+                <h3 className="text-2xl font-medium text-[var(--app-text)] tracking-tight leading-snug">
                   «{currentQuizCard.phrase}»
                 </h3>
 
                 <button
                   onClick={() => handleSpeakPhrase('quiz-' + quizIndex, currentQuizCard.phrase, currentQuizCard.language)}
-                  className="mt-3.5 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/[0.08] border border-white/15 text-xs font-medium text-white hover:bg-white/15 transition-colors"
+                  className="mt-3.5 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] text-xs font-medium text-[var(--app-text)] hover:opacity-100 opacity-90 transition-colors"
                 >
                   <Volume2 className={`w-3.5 h-3.5 ${speakingId ? 'animate-pulse text-emerald-400' : ''}`} />
                   <span>Прослушать</span>
@@ -325,25 +325,25 @@ export const DictionaryPage: React.FC = () => {
 
                 {/* Flipped details */}
                 {isFlipped ? (
-                  <div className="mt-6 p-4 rounded-2xl bg-white/[0.04] border border-white/10 text-left space-y-2 animate-in fade-in zoom-in-95">
+                  <div className="mt-6 p-4 rounded-2xl bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] text-left space-y-2 animate-in fade-in zoom-in-95">
                     <div>
-                      <span className="text-[10px] font-semibold uppercase text-emerald-400 block tracking-wider">
+                      <span className="text-[10px] font-semibold uppercase text-emerald-500 dark:text-emerald-400 block tracking-wider">
                         Значение
                       </span>
-                      <p className="text-xs text-white font-light leading-relaxed">
+                      <p className="text-xs text-[var(--app-text)] font-light leading-relaxed">
                         {currentQuizCard.kidExplanation}
                       </p>
                     </div>
 
                     {currentQuizCard.literalMeaning && (
-                      <div className="text-xs text-neutral-400 font-light">
-                        <span className="text-white font-normal">Буквально: </span>
+                      <div className="text-xs text-[var(--app-text)] opacity-70 font-light">
+                        <span className="text-[var(--app-text)] font-normal">Буквально: </span>
                         <span>{currentQuizCard.literalMeaning}</span>
                       </div>
                     )}
 
                     {currentQuizCard.sourceBook && (
-                      <div className="text-[11px] text-amber-400 font-medium flex items-center gap-1 pt-1">
+                      <div className="text-[11px] text-amber-500 dark:text-amber-400 font-medium flex items-center gap-1 pt-1">
                         <BookOpen className="w-3.5 h-3.5" />
                         <span>{currentQuizCard.sourceBook}</span>
                       </div>
@@ -356,7 +356,7 @@ export const DictionaryPage: React.FC = () => {
                         soundEffects.click();
                         setIsFlipped(true);
                       }}
-                      className="px-4 py-2 rounded-full border border-white/20 bg-white/[0.04] text-xs font-medium text-neutral-300 hover:bg-white/10 transition-all"
+                      className="px-4 py-2 rounded-full border border-[var(--app-glass-border)] bg-[var(--app-pill-glass-bg)] text-xs font-medium text-[var(--app-text)] opacity-80 hover:opacity-100 transition-all"
                     >
                       Показать значение
                     </button>
@@ -365,10 +365,10 @@ export const DictionaryPage: React.FC = () => {
               </div>
 
               {/* Bottom Actions */}
-              <div className="flex items-center gap-2 pt-4 border-t border-white/10">
+              <div className="flex items-center gap-2 pt-4 border-t border-[var(--app-glass-border)]">
                 <button
                   onClick={() => handleNextCard(false)}
-                  className="flex-1 py-2.5 rounded-full bg-white/[0.06] border border-white/15 hover:bg-white/10 text-xs font-medium text-neutral-300 transition-colors"
+                  className="flex-1 py-2.5 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] hover:opacity-100 opacity-80 text-xs font-medium text-[var(--app-text)] transition-colors"
                 >
                   Повторить позже
                 </button>
@@ -377,7 +377,7 @@ export const DictionaryPage: React.FC = () => {
                   onClick={() => handleNextCard(true)}
                   className="flex-1 py-2.5 rounded-full liquid-pill-white text-xs font-semibold flex items-center justify-center gap-1 shadow-sm"
                 >
-                  <Check className="w-3.5 h-3.5 text-black" />
+                  <Check className="w-3.5 h-3.5 text-[var(--app-cta-text)]" />
                   <span>Помню (+5 XP)</span>
                 </button>
               </div>
@@ -391,12 +391,12 @@ export const DictionaryPage: React.FC = () => {
       {viewMode === 'list' && (
         <div className="space-y-3 relative z-10">
           {filteredPhrases.length === 0 ? (
-            <div className="liquid-glass p-8 text-center border border-white/15">
-              <div className="w-12 h-12 mx-auto rounded-full bg-white/[0.08] flex items-center justify-center text-2xl mb-2">
+            <div className="liquid-glass p-8 text-center border border-[var(--app-glass-border)]">
+              <div className="w-12 h-12 mx-auto rounded-full bg-[var(--app-pill-glass-bg)] flex items-center justify-center text-2xl mb-2">
                 ✨
               </div>
-              <h3 className="text-sm font-medium text-white">Фразы не найдены</h3>
-              <p className="text-xs text-neutral-400 mt-1 max-w-xs mx-auto font-light">
+              <h3 className="text-sm font-medium text-[var(--app-text)]">Фразы не найдены</h3>
+              <p className="text-xs text-[var(--app-text)] opacity-70 mt-1 max-w-xs mx-auto font-light">
                 Попробуй изменить поисковый запрос или фильтр языка.
               </p>
             </div>
@@ -404,22 +404,22 @@ export const DictionaryPage: React.FC = () => {
             filteredPhrases.map((item) => (
               <div
                 key={item.id}
-                className="liquid-glass p-4.5 transition-all hover:border-white/25 space-y-2.5 border border-white/15"
+                className="liquid-glass p-4.5 transition-all hover:border-[var(--app-glass-border-hover)] space-y-2.5 border border-[var(--app-glass-border)]"
               >
                 {/* Header row: Phrase & Audio Button */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
-                    <span className="text-sm font-medium text-white block leading-snug">
+                    <span className="text-sm font-medium text-[var(--app-text)] block leading-snug">
                       «{item.phrase}»
                     </span>
-                    <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">
+                    <span className="text-[10px] font-mono text-[var(--app-text)] opacity-50 uppercase tracking-wider">
                       {item.language === 'ru' ? 'Русский' : item.language === 'en' ? 'English' : 'Қазақша'}
                     </span>
                   </div>
 
                   <button
                     onClick={() => handleSpeakPhrase(item.id, item.phrase, item.language)}
-                    className="w-8 h-8 rounded-full bg-white/[0.08] border border-white/15 hover:bg-white/15 flex items-center justify-center text-neutral-300 shrink-0 transition-colors"
+                    className="w-8 h-8 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] flex items-center justify-center text-[var(--app-text)] shrink-0 transition-colors"
                     title="Озвучить"
                   >
                     <Volume2 className={`w-3.5 h-3.5 ${speakingId === item.id ? 'animate-pulse text-emerald-400' : ''}`} />
@@ -428,27 +428,27 @@ export const DictionaryPage: React.FC = () => {
 
                 {/* Kid-friendly meaning */}
                 <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/25">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-400 block mb-0.5">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-500 dark:text-emerald-400 block mb-0.5">
                     ✨ Простое объяснение
                   </span>
-                  <p className="text-xs text-white font-light leading-relaxed">
+                  <p className="text-xs text-[var(--app-text)] font-light leading-relaxed">
                     {item.kidExplanation}
                   </p>
                 </div>
 
                 {/* Literal meaning */}
                 {item.literalMeaning && (
-                  <div className="text-xs text-neutral-400 font-light">
-                    <span className="text-neutral-200 font-normal">Буквально: </span>
+                  <div className="text-xs text-[var(--app-text)] opacity-70 font-light">
+                    <span className="text-[var(--app-text)] font-normal">Буквально: </span>
                     <span>{item.literalMeaning}</span>
                   </div>
                 )}
 
                 {/* Example */}
                 {item.example && (
-                  <div className="text-xs text-neutral-300 bg-white/[0.03] p-2.5 rounded-2xl border border-white/10 font-light">
-                    <span className="text-neutral-400 font-normal">Пример: </span>
-                    <span className="italic text-white">«{item.example}»</span>
+                  <div className="text-xs text-[var(--app-text)] bg-[var(--app-pill-glass-bg)] p-2.5 rounded-2xl border border-[var(--app-glass-border)] font-light">
+                    <span className="text-[var(--app-text)] opacity-60 font-normal">Пример: </span>
+                    <span className="italic text-[var(--app-text)] font-normal">«{item.example}»</span>
                   </div>
                 )}
 

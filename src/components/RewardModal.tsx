@@ -52,10 +52,10 @@ export const RewardModal: React.FC<RewardModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-in fade-in duration-200">
-      <div className="relative w-full max-w-sm liquid-glass-elevated p-6 text-center animate-in zoom-in-95 duration-200 border border-white/20">
+      <div className="relative w-full max-w-sm liquid-glass-elevated p-6 text-center animate-in zoom-in-95 duration-200 border border-[var(--app-glass-border)] shadow-2xl">
         
         {/* Animated Mascot Badge */}
-        <div className="relative mx-auto -mt-16 w-24 h-24 rounded-full bg-gradient-to-tr from-amber-500/20 to-yellow-400/30 border border-white/30 backdrop-blur-2xl shadow-[0_0_30px_rgba(245,158,11,0.4)] flex items-center justify-center text-5xl">
+        <div className="relative mx-auto -mt-16 w-24 h-24 rounded-full bg-gradient-to-tr from-amber-500/20 to-yellow-400/30 border border-[var(--app-glass-border)] backdrop-blur-2xl shadow-[0_0_30px_rgba(245,158,11,0.4)] flex items-center justify-center text-5xl">
           {activeCharacter.emoji}
           <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-emerald-500 border border-white flex items-center justify-center text-white text-xs shadow-md">
             <Sparkles className="w-3.5 h-3.5" />
@@ -63,10 +63,10 @@ export const RewardModal: React.FC<RewardModalProps> = ({
         </div>
 
         {/* Title */}
-        <h2 className="mt-4 text-2xl font-medium text-white tracking-tight">
+        <h2 className="mt-4 text-2xl font-medium text-[var(--app-text)] tracking-tight">
           {t('lessonComplete')} 🎉
         </h2>
-        <p className="text-xs text-neutral-400 mt-1">
+        <p className="text-xs text-[var(--app-text)] opacity-70 mt-1">
           {activeCharacter.name} гордится твоими речевыми успехами!
         </p>
 

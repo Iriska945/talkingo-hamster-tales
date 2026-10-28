@@ -13,14 +13,14 @@ export const GalleryPage: React.FC = () => {
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Назад в приложение</span>
         </Link>
-        <span className="text-xs font-medium tracking-[0.25em] uppercase text-neutral-400">
+        <span className="text-xs font-medium tracking-[0.25em] uppercase text-[var(--app-text)] opacity-70">
           Scenarios Gallery
         </span>
         <a
           href="/gallery.html"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-xs text-neutral-400 hover:text-white transition-colors"
+          className="flex items-center gap-1 text-xs text-[var(--app-text)] opacity-70 hover:opacity-100 transition-colors"
           title="Открыть в новой вкладке"
         >
           <span>В полный экран</span>

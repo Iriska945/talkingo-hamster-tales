@@ -82,19 +82,19 @@ export const HomeLanding: React.FC = () => {
         </div>
 
         {/* Editorial Spaced Subtitle */}
-        <span className="text-[11px] uppercase tracking-[0.35em] text-neutral-400 font-medium block mb-4">
+        <span className="text-[11px] uppercase tracking-[0.35em] text-[var(--app-text)] opacity-60 font-medium block mb-4">
           Mindful Speech Practice
         </span>
 
         {/* Editorial Minimalist Title */}
-        <h1 className="text-4xl sm:text-6xl font-light text-white tracking-tight max-w-xl mx-auto leading-[1.12]">
+        <h1 className="text-4xl sm:text-6xl font-light text-[var(--app-text)] tracking-tight max-w-xl mx-auto leading-[1.12]">
           Говори уверенно. <br />
-          <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-white via-neutral-200 to-neutral-400">
+          <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-300 dark:from-white dark:via-neutral-200 dark:to-neutral-400">
             Каждый день.
           </span>
         </h1>
         
-        <p className="mt-5 text-sm sm:text-base text-neutral-400 max-w-md mx-auto leading-relaxed font-light">
+        <p className="mt-5 text-sm sm:text-base text-[var(--app-text)] opacity-75 max-w-md mx-auto leading-relaxed font-light">
           Пространство живого речевого общения с умным хомячком {activeCharacter.name}. Без заучивания правил и страха ошибок.
         </p>
 
@@ -104,7 +104,7 @@ export const HomeLanding: React.FC = () => {
             to="/talk"
             className="w-full sm:w-auto px-8 py-3.5 liquid-pill-white flex items-center justify-center gap-2 text-sm"
           >
-            <Mic className="w-4 h-4 text-black" />
+            <Mic className="w-4 h-4 text-[var(--app-cta-text)]" />
             <span>Начать говорить</span>
             <ArrowRight className="w-4 h-4 ml-0.5 opacity-70" />
           </Link>
@@ -114,13 +114,13 @@ export const HomeLanding: React.FC = () => {
             disabled={isPlayingSample}
             className="w-full sm:w-auto px-6 py-3.5 liquid-pill-glass flex items-center justify-center gap-2 text-sm"
           >
-            <Volume2 className={`w-4 h-4 text-amber-400 ${isPlayingSample ? 'animate-pulse' : ''}`} />
+            <Volume2 className={`w-4 h-4 text-amber-500 dark:text-amber-400 ${isPlayingSample ? 'animate-pulse' : ''}`} />
             <span>{isPlayingSample ? 'Говорит...' : 'Голос Хэмми'}</span>
           </button>
         </div>
 
         {/* Footnote */}
-        <p className="mt-5 text-[11px] text-neutral-400 tracking-wide font-light">
+        <p className="mt-5 text-[11px] text-[var(--app-text)] opacity-60 tracking-wide font-light">
           Русский • English • Қазақша • Edge Neural HD Voice
         </p>
       </div>
@@ -145,15 +145,15 @@ export const HomeLanding: React.FC = () => {
             <Link
               key={item.id}
               to={item.link}
-              className="liquid-glass p-4 text-left transition-all hover:border-white/30 group active:scale-[0.98] border border-white/10"
+              className="liquid-glass p-4 text-left transition-all hover:border-[var(--app-glass-border-hover)] group active:scale-[0.98] border border-[var(--app-glass-border)]"
             >
-              <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-xl mb-3 group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-2xl bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-xl mb-3 group-hover:scale-105 transition-transform">
                 {item.icon}
               </div>
-              <h3 className="text-sm font-medium text-white group-hover:text-amber-300 transition-colors">
+              <h3 className="text-sm font-medium text-[var(--app-text)] group-hover:text-amber-500 dark:group-hover:text-amber-300 transition-colors">
                 {item.title}
               </h3>
-              <p className="text-[11px] text-neutral-400 mt-1 font-light leading-snug line-clamp-2">
+              <p className="text-[11px] text-[var(--app-text)] opacity-70 mt-1 font-light leading-snug line-clamp-2">
                 {item.desc}
               </p>
             </Link>
@@ -165,32 +165,32 @@ export const HomeLanding: React.FC = () => {
       <div className="relative z-10 max-w-4xl mx-auto px-6 pb-12">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           
-          <div className="liquid-glass p-6 text-left transition-all hover:border-white/25 group">
-            <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/10 text-white flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-              <Mic className="w-5 h-5 text-cyan-400" />
+          <div className="liquid-glass p-6 text-left transition-all hover:border-[var(--app-glass-border-hover)] group border border-[var(--app-glass-border)]">
+            <div className="w-10 h-10 rounded-2xl bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+              <Mic className="w-5 h-5 text-cyan-500 dark:text-cyan-400" />
             </div>
-            <h3 className="text-base font-medium text-white">Живой диалог голосом</h3>
-            <p className="text-xs text-neutral-400 mt-2 leading-relaxed font-light">
+            <h3 className="text-base font-medium text-[var(--app-text)]">Живой диалог голосом</h3>
+            <p className="text-xs text-[var(--app-text)] opacity-70 mt-2 leading-relaxed font-light">
               Общайся через микрофон в свободной беседе или по сценариям: кафе, аэропорт, сказка и интервью.
             </p>
           </div>
 
-          <div className="liquid-glass p-6 text-left transition-all hover:border-white/25 group">
-            <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/10 text-white flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-              <BookOpen className="w-5 h-5 text-amber-400" />
+          <div className="liquid-glass p-6 text-left transition-all hover:border-[var(--app-glass-border-hover)] group border border-[var(--app-glass-border)]">
+            <div className="w-10 h-10 rounded-2xl bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+              <BookOpen className="w-5 h-5 text-amber-500 dark:text-amber-400" />
             </div>
-            <h3 className="text-base font-medium text-white">Богатство речи</h3>
-            <p className="text-xs text-neutral-400 mt-2 leading-relaxed font-light">
+            <h3 className="text-base font-medium text-[var(--app-text)]">Богатство речи</h3>
+            <p className="text-xs text-[var(--app-text)] opacity-70 mt-2 leading-relaxed font-light">
               В каждом разговоре хомячок делится красивыми фразеологизмами, пословицами и цитатами с карточками для повторения.
             </p>
           </div>
 
-          <div className="liquid-glass p-6 text-left transition-all hover:border-white/25 group">
-            <div className="w-10 h-10 rounded-2xl bg-white/[0.08] border border-white/10 text-white flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-              <Trophy className="w-5 h-5 text-purple-400" />
+          <div className="liquid-glass p-6 text-left transition-all hover:border-[var(--app-glass-border-hover)] group border border-[var(--app-glass-border)]">
+            <div className="w-10 h-10 rounded-2xl bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+              <Trophy className="w-5 h-5 text-purple-500 dark:text-purple-400" />
             </div>
-            <h3 className="text-base font-medium text-white">Лиги и турниры</h3>
-            <p className="text-xs text-neutral-400 mt-2 leading-relaxed font-light">
+            <h3 className="text-base font-medium text-[var(--app-text)]">Лиги и турниры</h3>
+            <p className="text-xs text-[var(--app-text)] opacity-70 mt-2 leading-relaxed font-light">
               Поддерживай ежедневный ударный режим (Streak), поднимайся в лигах от Бронзы до Рубина и собирай алмазы.
             </p>
           </div>

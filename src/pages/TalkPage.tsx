@@ -306,22 +306,22 @@ export const TalkPage: React.FC = () => {
               stopSpeaking();
               navigate('/learn');
             }}
-            className="w-10 h-10 rounded-full bg-white/[0.06] border border-white/15 backdrop-blur-xl flex items-center justify-center hover:bg-white/10 active:scale-95 transition-all"
+            className="w-10 h-10 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] backdrop-blur-xl flex items-center justify-center text-[var(--app-text)] hover:opacity-100 active:scale-95 transition-all shadow-sm"
             title="Завершить сессию"
           >
-            <X className="w-5 h-5 text-white" />
+            <X className="w-5 h-5 text-[var(--app-text)]" />
           </button>
 
           {/* Turns Progress Indicator */}
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.06] border border-white/15 backdrop-blur-xl text-xs font-medium text-white shadow-sm">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] backdrop-blur-xl text-xs font-medium text-[var(--app-text)] shadow-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
             <span>{turnsCount} / {turnsGoal} реплик</span>
           </div>
 
           {/* Active Character Badge */}
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.06] border border-white/15 backdrop-blur-xl text-xs font-medium text-white">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] backdrop-blur-xl text-xs font-medium text-[var(--app-text)]">
             <span>{activeCharacter.emoji}</span>
-            <span className="text-[11px] text-neutral-300">{activeCharacter.name.split(' ')[0]}</span>
+            <span className="text-[11px] opacity-80">{activeCharacter.name.split(' ')[0]}</span>
           </div>
         </div>
 
@@ -336,8 +336,8 @@ export const TalkPage: React.FC = () => {
               }}
               className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap flex items-center gap-1.5 transition-all ${
                 scenario === s.id
-                  ? 'bg-white text-black font-semibold shadow-[0_0_15px_rgba(255,255,255,0.25)]'
-                  : 'bg-white/[0.05] border border-white/15 text-neutral-300 hover:bg-white/10 backdrop-blur-md'
+                  ? 'bg-[var(--app-cta-bg)] text-[var(--app-cta-text)] font-semibold shadow-md'
+                  : 'bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] text-[var(--app-text)] opacity-75 hover:opacity-100 hover:border-[var(--app-glass-border-hover)] backdrop-blur-md'
               }`}
             >
               <span>{s.icon}</span>
@@ -362,7 +362,7 @@ export const TalkPage: React.FC = () => {
                 ? 'w-64 h-64 border border-amber-400/40 bg-amber-500/10 animate-pulse opacity-60 shadow-[0_0_40px_rgba(245,158,11,0.3)]'
                 : voiceState === 'thinking'
                 ? 'w-60 h-60 border border-purple-400/40 bg-purple-500/10 animate-pulse opacity-50'
-                : 'w-56 h-56 border border-white/10 bg-white/[0.02] opacity-50'
+                : 'w-56 h-56 border border-[var(--app-glass-border)] bg-[var(--app-glass-subtle)] opacity-40'
             }`}
           />
 
@@ -373,17 +373,17 @@ export const TalkPage: React.FC = () => {
                 ? 'w-48 h-48 border border-emerald-400/30 bg-emerald-500/15'
                 : voiceState === 'speaking'
                 ? 'w-48 h-48 border border-amber-400/30 bg-amber-500/15'
-                : 'w-44 h-44 border border-white/10 bg-white/[0.03]'
+                : 'w-44 h-44 border border-[var(--app-glass-border)] bg-[var(--app-glass-subtle)]'
             }`}
           />
 
           {/* Core Mascot Liquid Glass Lens */}
           <div
-            className={`relative z-10 w-28 h-28 rounded-full liquid-glass-elevated border border-white/25 flex items-center justify-center text-5xl transition-all duration-300 shadow-[0_0_35px_rgba(255,255,255,0.15)] ${
+            className={`relative z-10 w-28 h-28 rounded-full liquid-glass-elevated border border-[var(--app-glass-border)] flex items-center justify-center text-5xl transition-all duration-300 shadow-[0_0_35px_rgba(255,255,255,0.12)] ${
               voiceState === 'speaking'
-                ? 'scale-105 border-amber-400/50'
+                ? 'scale-105 border-amber-400/60 shadow-[0_0_35px_rgba(245,158,11,0.3)]'
                 : voiceState === 'listening'
-                ? 'scale-95 border-emerald-400/50'
+                ? 'scale-95 border-emerald-400/60 shadow-[0_0_35px_rgba(16,185,129,0.3)]'
                 : 'hover:scale-102'
             }`}
           >
@@ -398,16 +398,16 @@ export const TalkPage: React.FC = () => {
           <span
             className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium tracking-wide transition-all backdrop-blur-xl ${
               voiceState === 'listening'
-                ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.2)]'
+                ? 'bg-emerald-500/15 text-emerald-500 dark:text-emerald-300 border border-emerald-500/30 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.2)]'
                 : voiceState === 'thinking'
-                ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30 animate-pulse'
+                ? 'bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-500/30 animate-pulse'
                 : voiceState === 'speaking'
-                ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
-                : 'bg-white/[0.06] text-neutral-300 border border-white/15'
+                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30'
+                : 'bg-[var(--app-pill-glass-bg)] text-[var(--app-text)] border border-[var(--app-glass-border)] opacity-90'
             }`}
           >
-            {voiceState === 'listening' && <Mic className="w-3.5 h-3.5 text-emerald-400" />}
-            {voiceState === 'speaking' && <Volume2 className="w-3.5 h-3.5 text-amber-400" />}
+            {voiceState === 'listening' && <Mic className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />}
+            {voiceState === 'speaking' && <Volume2 className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />}
             <span>
               {voiceState === 'listening'
                 ? 'Слушаю твою речь...'
@@ -420,20 +420,20 @@ export const TalkPage: React.FC = () => {
           </span>
         </div>
 
-        {/* Assistant Speech Bubble Card (Liquid Glass) */}
-        <div className="w-full max-w-sm liquid-glass p-5 text-left transition-all border border-white/15">
-          <p className="text-sm font-light text-white leading-relaxed">
+        {/* Assistant Speech Bubble Card (Liquid Glass with Crystal Contrast) */}
+        <div className="w-full max-w-sm liquid-glass p-5 text-left transition-all border border-[var(--app-glass-border)] shadow-xl">
+          <p className="text-sm sm:text-base font-normal text-[var(--app-text)] leading-relaxed">
             «{lastAssistantMessage?.content || activeCharacter.greeting[lang]}»
           </p>
 
           {/* Grammar & Pronunciation Coach Tip */}
           {coachTip && (
-            <div className="mt-3 p-3 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 text-left animate-in slide-in-from-top-1">
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-cyan-400 mb-0.5">
-                <Lightbulb className="w-3.5 h-3.5 text-cyan-400" />
+            <div className="mt-3 p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/25 text-left animate-in slide-in-from-top-1">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-cyan-600 dark:text-cyan-400 mb-0.5">
+                <Lightbulb className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
                 <span>Совет репетитора</span>
               </div>
-              <p className="text-xs text-neutral-200 leading-tight font-light">
+              <p className="text-xs text-[var(--app-text)] opacity-90 leading-tight font-light">
                 {coachTip}
               </p>
             </div>
@@ -441,16 +441,16 @@ export const TalkPage: React.FC = () => {
 
           {/* New Idiom Notification Banner */}
           {latestDiscoveredPhrase && (
-            <div className="mt-3 p-3 rounded-2xl bg-amber-950/30 border border-amber-500/30 text-left animate-in slide-in-from-top-2 duration-200">
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-amber-400 mb-0.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <div className="mt-3 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-left animate-in slide-in-from-top-2 duration-200">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-amber-600 dark:text-amber-400 mb-0.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                 <span>Новое крылатое выражение</span>
               </div>
-              <p className="text-xs font-medium text-amber-100">
+              <p className="text-xs font-medium text-[var(--app-text)]">
                 «{latestDiscoveredPhrase.phrase}» — {latestDiscoveredPhrase.meaning}
               </p>
               {latestDiscoveredPhrase.source && (
-                <p className="text-[10px] text-neutral-400 italic mt-0.5 font-light">
+                <p className="text-[10px] text-[var(--app-text)] opacity-60 italic mt-0.5 font-light">
                   📖 {latestDiscoveredPhrase.source}
                 </p>
               )}
@@ -459,7 +459,7 @@ export const TalkPage: React.FC = () => {
 
           {/* User Interim Transcript while speaking */}
           {interimTranscript && (
-            <div className="mt-2.5 pt-2 border-t border-white/10 text-xs font-light text-neutral-300 italic">
+            <div className="mt-2.5 pt-2 border-t border-[var(--app-glass-border)] text-xs font-light text-[var(--app-text)] opacity-75 italic">
               Ты говоришь: "{interimTranscript}..."
             </div>
           )}
@@ -484,19 +484,19 @@ export const TalkPage: React.FC = () => {
               onChange={(e) => setTextInput(e.target.value)}
               placeholder="Напиши сообщение хомячку..."
               autoFocus
-              className="flex-1 px-4 py-2.5 rounded-full bg-white/[0.08] border border-white/20 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white shadow-sm"
+              className="flex-1 px-4 py-2.5 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] text-sm text-[var(--app-text)] placeholder:opacity-50 focus:outline-none focus:border-[var(--app-glass-border-hover)] shadow-sm"
             />
             <button
               type="submit"
               disabled={!textInput.trim() || voiceState === 'thinking'}
               className="w-10 h-10 rounded-full liquid-pill-white flex items-center justify-center shrink-0 disabled:opacity-40"
             >
-              <Send className="w-4 h-4 text-black" />
+              <Send className="w-4 h-4 text-[var(--app-cta-text)]" />
             </button>
             <button
               type="button"
               onClick={() => setShowKeyboard(false)}
-              className="p-2 text-xs text-neutral-400 hover:text-white"
+              className="p-2 text-xs text-[var(--app-text)] opacity-60 hover:opacity-100"
             >
               Отмена
             </button>
@@ -510,36 +510,46 @@ export const TalkPage: React.FC = () => {
                 soundEffects.click();
                 setShowKeyboard(true);
               }}
-              className="w-11 h-11 rounded-full bg-white/[0.06] border border-white/15 backdrop-blur-xl flex items-center justify-center text-neutral-300 hover:text-white active:scale-95 transition-all"
+              className="w-11 h-11 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] backdrop-blur-xl flex items-center justify-center text-[var(--app-text)] opacity-80 hover:opacity-100 active:scale-95 transition-all shadow-sm"
               title="Печатать текстом"
             >
               <Keyboard className="w-4 h-4" />
             </button>
 
-            {/* Central Large Mindful Mic Button (Pure White Pill / Emerald Ripple) */}
+            {/* Central Large Mindful Mic Button (Liquid Glass Primary CTA) */}
             <button
               onClick={handleMicClick}
               disabled={voiceState === 'thinking'}
-              className={`w-20 h-20 rounded-full flex flex-col items-center justify-center transition-all active:scale-95 shadow-[0_0_35px_rgba(255,255,255,0.25)] ${
+              className={`w-20 h-20 rounded-full flex flex-col items-center justify-center transition-all active:scale-95 ${
                 voiceState === 'listening'
                   ? 'bg-emerald-500 text-white ring-4 ring-emerald-400/40 shadow-[0_0_35px_rgba(16,185,129,0.5)]'
                   : voiceState === 'speaking'
-                  ? 'bg-neutral-800 text-white ring-4 ring-white/20'
-                  : 'bg-white text-black hover:bg-neutral-200'
+                  ? 'bg-amber-500 text-white ring-4 ring-amber-400/40 shadow-[0_0_35px_rgba(245,158,11,0.5)]'
+                  : voiceState === 'thinking'
+                  ? 'bg-purple-600 text-white ring-4 ring-purple-400/40 animate-pulse'
+                  : 'bg-[var(--app-cta-bg)] text-[var(--app-cta-text)] hover:opacity-90 shadow-2xl'
               }`}
             >
               {voiceState === 'listening' ? (
                 <MicOff className="w-8 h-8 animate-pulse text-white" />
               ) : voiceState === 'speaking' ? (
-                <Volume2 className="w-8 h-8 animate-pulse text-amber-400" />
+                <Volume2 className="w-8 h-8 animate-pulse text-white" />
+              ) : voiceState === 'thinking' ? (
+                <Sparkles className="w-8 h-8 animate-spin text-white" />
               ) : (
-                <Mic className="w-8 h-8 text-black" />
+                <Mic className="w-8 h-8 text-[var(--app-cta-text)]" />
               )}
-              <span className={`text-[10px] font-semibold mt-1 tracking-tight ${voiceState === 'listening' || voiceState === 'speaking' ? 'text-white' : 'text-black'}`}>
+              <span className={`text-[10px] font-semibold mt-1 tracking-tight ${
+                voiceState === 'listening' || voiceState === 'speaking' || voiceState === 'thinking'
+                  ? 'text-white'
+                  : 'text-[var(--app-cta-text)]'
+              }`}>
                 {voiceState === 'speaking'
                   ? 'Стоп'
                   : voiceState === 'listening'
                   ? 'Слушаю'
+                  : voiceState === 'thinking'
+                  ? 'Думаю...'
                   : 'Говорить'}
               </span>
             </button>
@@ -552,7 +562,7 @@ export const TalkPage: React.FC = () => {
                   soundEffects.click();
                   setVoiceSpeed((prev) => (prev === 0.8 ? 1.0 : prev === 1.0 ? 1.2 : 0.8));
                 }}
-                className="px-2.5 py-1.5 rounded-full bg-white/[0.06] border border-white/15 backdrop-blur-xl text-[11px] font-semibold text-neutral-300 hover:text-white active:scale-95 transition-all"
+                className="px-2.5 py-1.5 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] backdrop-blur-xl text-[11px] font-semibold text-[var(--app-text)] opacity-80 hover:opacity-100 active:scale-95 transition-all shadow-sm"
                 title="Скорость речи (0.8x / 1.0x / 1.2x)"
               >
                 {voiceSpeed}x
@@ -566,7 +576,7 @@ export const TalkPage: React.FC = () => {
                     speakAssistant(lastAssistantMessage.content);
                   }
                 }}
-                className="w-11 h-11 rounded-full bg-white/[0.06] border border-white/15 backdrop-blur-xl flex items-center justify-center text-neutral-300 hover:text-white active:scale-95 transition-all"
+                className="w-11 h-11 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] backdrop-blur-xl flex items-center justify-center text-[var(--app-text)] opacity-80 hover:opacity-100 active:scale-95 transition-all shadow-sm"
                 title="Повторить фразу"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -575,7 +585,7 @@ export const TalkPage: React.FC = () => {
           </div>
         )}
 
-        <p className="text-[11px] text-neutral-400 mt-3 font-light">
+        <p className="text-[11px] text-[var(--app-text)] opacity-60 mt-3 font-light text-center">
           Нажми микрофон и отвечай хомячку своими словами
         </p>
 

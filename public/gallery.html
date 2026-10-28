@@ -15,11 +15,13 @@
 <title>Talkingo — Галерея сценариев</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <script>
-  /* Apply saved theme (or system preference) before first paint to avoid a flash */
+  /* Apply saved theme (defaults to dark liquid glass) before first paint */
   (function(){
-    var t = null;
-    try { t = localStorage.getItem('tg_gallery_theme'); } catch(e) {}
-    if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    var t = 'dark';
+    try {
+      var saved = localStorage.getItem('tg_gallery_theme') || localStorage.getItem('tg_theme');
+      if (saved === 'light' || saved === 'dark') t = saved;
+    } catch(e) {}
     document.documentElement.dataset.theme = t;
   })();
 </script>
