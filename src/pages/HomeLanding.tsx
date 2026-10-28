@@ -14,6 +14,7 @@ import {
   Briefcase,
   Play,
   CheckCircle2,
+  Layers,
 } from 'lucide-react';
 import { TalkingoLogo } from '../components/TalkingoLogo';
 import { speakWithEdgeNeural, speakWithBrowser, soundEffects } from '../services/voice';
@@ -49,7 +50,7 @@ export const HomeLanding: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden pb-28">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] relative overflow-hidden pb-28 transition-colors duration-300">
       
       {/* Ambient Atmospheric Light Mesh */}
       <div className="ambient-glow-orb w-[480px] h-[480px] bg-indigo-600/20 top-[-80px] left-1/2 -translate-x-1/2 pointer-events-none" />
@@ -129,12 +130,13 @@ export const HomeLanding: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-amber-400" />
-            <h2 className="text-sm font-medium text-white uppercase tracking-wider">
+            <h2 className="text-sm font-medium text-[var(--app-text)] uppercase tracking-wider">
               Выбери сценарий практики
             </h2>
           </div>
-          <Link to="/talk" className="text-xs text-neutral-400 hover:text-white flex items-center gap-1 font-light">
-            Свободная тема <ArrowRight className="w-3.5 h-3.5" />
+          <Link to="/gallery" className="text-xs text-orange-400 hover:text-orange-300 flex items-center gap-1 font-medium transition-colors">
+            <Layers className="w-3.5 h-3.5" />
+            <span>Все сценарии (scrn.gallery) →</span>
           </Link>
         </div>
 

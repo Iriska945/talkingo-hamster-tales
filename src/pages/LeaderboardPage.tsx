@@ -87,22 +87,22 @@ export const LeaderboardPage: React.FC = () => {
   const top3 = competitors.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-black text-white pb-28 pt-4 px-4 max-w-lg mx-auto space-y-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-28 pt-4 px-4 max-w-lg mx-auto space-y-4 relative overflow-hidden transition-colors duration-300">
       
       {/* Ambient background glow */}
       <div className="ambient-glow-orb w-[350px] h-[350px] bg-purple-600/15 top-[-40px] left-[-80px] pointer-events-none" />
       <div className="ambient-glow-orb w-[300px] h-[300px] bg-yellow-500/10 top-[200px] right-[-60px] pointer-events-none" />
 
       {/* 1. Header & Season Info (Liquid Glass) */}
-      <div className="liquid-glass p-5 border border-white/15 relative z-10">
+      <div className="liquid-glass p-5 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-2xl shadow-sm">
+            <div className="w-11 h-11 rounded-2xl bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-2xl shadow-sm">
               {currentLeagueObj.icon}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-medium text-white">
+                <h1 className="text-lg font-medium text-[var(--app-text)]">
                   {currentLeagueObj.label} лига
                 </h1>
                 <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${currentLeagueObj.badge}`}>

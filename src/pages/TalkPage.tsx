@@ -292,7 +292,7 @@ export const TalkPage: React.FC = () => {
   const lastAssistantMessage = [...messages].reverse().find((m) => m.role === 'assistant');
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-black text-white transition-all relative overflow-hidden select-none">
+    <div className="min-h-screen flex flex-col justify-between bg-[var(--app-bg)] text-[var(--app-text)] transition-colors duration-300 relative overflow-hidden select-none">
       
       {/* Ambient Atmospheric Glow Mesh */}
       <div className="ambient-glow-orb w-[400px] h-[400px] bg-indigo-600/20 top-[-80px] left-1/2 -translate-x-1/2 pointer-events-none" />

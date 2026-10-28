@@ -10,19 +10,20 @@ import { ShopPage } from './pages/ShopPage';
 import { DictionaryPage } from './pages/DictionaryPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { LeaderboardPage } from './pages/LeaderboardPage';
+import { GalleryPage } from './pages/GalleryPage';
 
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
-  // In the /talk voice assistant room, hide navbar and bottom dock to provide pure immersion
-  const isTalkPage = location.pathname === '/talk';
+  // In the /talk voice assistant room or /gallery, hide navbar and bottom dock to provide pure immersion
+  const isImmersive = location.pathname === '/talk' || location.pathname === '/gallery';
 
   return (
-    <div className="min-h-screen flex flex-col bg-black text-white selection:bg-white/20 selection:text-white">
-      {!isTalkPage && <Navbar />}
+    <div className="min-h-screen flex flex-col bg-[var(--app-bg)] text-[var(--app-text)] selection:bg-orange-500/20 transition-colors duration-300">
+      {!isImmersive && <Navbar />}
       <main className="flex-1 pb-20">
         {children}
       </main>
-      {!isTalkPage && <BottomNav />}
+      {!isImmersive && <BottomNav />}
     </div>
   );
 };
@@ -40,6 +41,7 @@ export const App: React.FC = () => {
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/dictionary" element={<DictionaryPage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/gallery" element={<GalleryPage />} />
             <Route path="*" element={<Navigate to="/learn" replace />} />
           </Routes>
         </AppLayout>

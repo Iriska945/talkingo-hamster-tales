@@ -20,6 +20,22 @@ const STARTER_PHRASES: Record<Language, Array<Omit<DictionaryPhrase, 'id' | 'dat
   ru: [
     {
       language: 'ru',
+      phrase: 'Бить баклуши',
+      kidExplanation: 'Бездельничать, проводить время праздно и ничего не делать.',
+      literalMeaning: 'Раскалывать поленья на заготовки (баклуши) для деревянных ложек — считалось лёгкой работой.',
+      sourceBook: 'Русский народный фольклор',
+      example: 'Хватит бить баклуши, пора за интересные уроки с Хэмми!',
+    },
+    {
+      language: 'ru',
+      phrase: 'Душа в душу',
+      kidExplanation: 'Жить очень дружно, в полном согласии, любви и взаимопонимании.',
+      literalMeaning: 'Словно две души дышат и чувствуют одинаково.',
+      sourceBook: '«Война и мир» — Л. Н. Толстой',
+      example: 'Мы с Хэмми живём душа в душу и каждый день учим новые фразы!',
+    },
+    {
+      language: 'ru',
       phrase: 'Не разлей вода',
       kidExplanation: 'Очень крепкая и верная дружба, которую ничто не может разрушить.',
       literalMeaning: 'Даже вода не может протечь между лучшими друзьями.',
@@ -46,6 +62,22 @@ const STARTER_PHRASES: Record<Language, Array<Omit<DictionaryPhrase, 'id' | 'dat
   en: [
     {
       language: 'en',
+      phrase: 'Piece of cake',
+      kidExplanation: 'Something very easy and pleasant to do.',
+      literalMeaning: 'As easy as enjoying a slice of sweet cake.',
+      sourceBook: 'Classic English Idioms',
+      example: 'Speaking English with Talkingo is a piece of cake!',
+    },
+    {
+      language: 'en',
+      phrase: 'Once in a blue moon',
+      kidExplanation: 'Something that happens very rarely.',
+      literalMeaning: 'The rare appearance of a second full moon in a single calendar month.',
+      sourceBook: 'Astronomical & Folklore Sayings',
+      example: 'I only miss a speaking practice once in a blue moon!',
+    },
+    {
+      language: 'en',
       phrase: 'Break a leg',
       kidExplanation: 'A friendly and theatrical way to wish someone great luck and success.',
       literalMeaning: 'To fracture a bone in your leg (superstition saying).',
@@ -62,6 +94,14 @@ const STARTER_PHRASES: Record<Language, Array<Omit<DictionaryPhrase, 'id' | 'dat
     },
   ],
   kk: [
+    {
+      language: 'kk',
+      phrase: 'Көзі ашық',
+      kidExplanation: 'Білімді, көкірегі ояу және парасатты адам.',
+      literalMeaning: 'Көзі ашық, дүниені көре алатын.',
+      sourceBook: 'Қазақ әдебиеті',
+      example: 'Кітап оқып, білім жинаған адамның көзі ашық болады.',
+    },
     {
       language: 'kk',
       phrase: 'Ат салысу',
@@ -136,25 +176,25 @@ export const DictionaryPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pb-28 pt-4 px-4 max-w-lg mx-auto space-y-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-28 pt-4 px-4 max-w-lg mx-auto space-y-4 relative overflow-hidden transition-colors duration-300">
       
       {/* Ambient background glow */}
       <div className="ambient-glow-orb w-[350px] h-[350px] bg-cyan-600/15 top-[-40px] left-[-80px] pointer-events-none" />
       <div className="ambient-glow-orb w-[300px] h-[300px] bg-indigo-600/10 top-[200px] right-[-60px] pointer-events-none" />
 
       {/* 1. Header with Mode Switcher (List vs Flashcards) */}
-      <div className="liquid-glass p-5 border border-white/15 relative z-10">
+      <div className="liquid-glass p-5 relative z-10">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-white">
+            <div className="w-11 h-11 rounded-2xl bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-[var(--app-text)]">
               <Bookmark className="w-5 h-5 text-cyan-400" />
             </div>
             <div>
-              <h1 className="text-lg font-medium text-white leading-tight">
+              <h1 className="text-lg font-medium text-[var(--app-text)] leading-tight">
                 Словарь выражений
               </h1>
-              <span className="text-xs text-neutral-400 font-light">
-                Выучено: <strong className="text-emerald-400 font-semibold">{allPhrases.length}</strong> фраз
+              <span className="text-xs opacity-70 font-light">
+                Выучено: <strong className="text-emerald-500 font-semibold">{allPhrases.length}</strong> фраз
               </span>
             </div>
           </div>

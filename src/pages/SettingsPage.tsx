@@ -11,7 +11,12 @@ import {
   RotateCcw,
   Check,
   User,
+  Sun,
+  Moon,
+  Layers,
+  ChevronRight,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const DAILY_GOALS = [
   { id: 5, label: '5 мин/день', desc: 'Лёгкий старт' },
@@ -20,7 +25,7 @@ const DAILY_GOALS = [
 ];
 
 export const SettingsPage: React.FC = () => {
-  const { lang, setLang, profile, voiceSettings, updateVoiceSettings, resetProgress } = useApp();
+  const { lang, setLang, theme, setTheme, profile, voiceSettings, updateVoiceSettings, resetProgress } = useApp();
   const [selectedGoal, setSelectedGoal] = useState<number>(10);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfile, setUserProfile] = useState<{ name: string; email: string; avatar: string }>({
@@ -52,24 +57,24 @@ export const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pb-28 pt-4 px-4 max-w-lg mx-auto space-y-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-28 pt-4 px-4 max-w-lg mx-auto space-y-4 relative overflow-hidden transition-colors duration-300">
       
       {/* Ambient background glow */}
       <div className="ambient-glow-orb w-[350px] h-[350px] bg-indigo-600/15 top-[-40px] left-[-80px] pointer-events-none" />
       <div className="ambient-glow-orb w-[300px] h-[300px] bg-cyan-600/10 top-[200px] right-[-60px] pointer-events-none" />
 
       {/* 1. User Profile & Google Sign-In Card (Liquid Glass) */}
-      <div className="liquid-glass p-5 border border-white/15 relative z-10">
+      <div className="liquid-glass p-5 relative z-10">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-white/[0.08] border border-white/20 flex items-center justify-center text-2xl shadow-sm">
+            <div className="w-12 h-12 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-2xl shadow-sm">
               {isLoggedIn ? userProfile.avatar : '🐹'}
             </div>
             <div>
-              <h2 className="text-base font-medium text-white leading-tight">
+              <h2 className="text-base font-medium text-[var(--app-text)] leading-tight">
                 {isLoggedIn ? userProfile.name : profile.name}
               </h2>
-              <span className="text-xs text-neutral-400 font-light">
+              <span className="text-xs opacity-70 font-light">
                 {isLoggedIn ? userProfile.email : 'Гостевой профиль (прогресс сохранён)'}
               </span>
             </div>
@@ -81,7 +86,7 @@ export const SettingsPage: React.FC = () => {
                 soundEffects.click();
                 setIsLoggedIn(false);
               }}
-              className="p-2.5 rounded-full bg-white/[0.08] text-neutral-400 hover:text-rose-400 transition-colors"
+              className="p-2.5 rounded-full bg-[var(--app-pill-glass-bg)] opacity-70 hover:opacity-100 hover:text-rose-400 transition-colors"
               title="Выйти"
             >
               <LogOut className="w-4 h-4" />
@@ -115,17 +120,85 @@ export const SettingsPage: React.FC = () => {
         </div>
 
         {/* Sync status badge */}
-        <div className="flex items-center gap-1.5 p-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-[11px] text-emerald-300 font-medium">
-          <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
+        <div className="flex items-center gap-1.5 p-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-[11px] text-emerald-400 font-medium">
+          <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-500" />
           <span>Синхронизация в базу данных SQLite активна</span>
         </div>
       </div>
 
-      {/* 2. Daily Goal Card (Liquid Glass) */}
-      <div className="liquid-glass p-5 space-y-3 border border-white/15 relative z-10">
+      {/* 2. Theme Selection Card (Light / Dark) */}
+      <div className="liquid-glass p-5 space-y-3 relative z-10">
+        <div className="flex items-center gap-2">
+          {theme === 'dark' ? <Moon className="w-4 h-4 text-amber-400" /> : <Sun className="w-4 h-4 text-orange-500" />}
+          <h3 className="text-sm font-medium text-[var(--app-text)]">
+            Тема оформления
+          </h3>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2.5">
+          <button
+            onClick={() => {
+              soundEffects.click();
+              setTheme('dark');
+            }}
+            className={`p-3 rounded-2xl border text-center transition-all flex items-center justify-center gap-2 ${
+              theme === 'dark'
+                ? 'border-orange-500 bg-black text-white font-semibold shadow-md'
+                : 'border-[var(--app-glass-border)] bg-[var(--app-pill-glass-bg)] text-[var(--app-text)] hover:opacity-90'
+            }`}
+          >
+            <Moon className="w-4 h-4 text-amber-400" />
+            <span className="text-xs">Тёмная (Glass)</span>
+          </button>
+
+          <button
+            onClick={() => {
+              soundEffects.click();
+              setTheme('light');
+            }}
+            className={`p-3 rounded-2xl border text-center transition-all flex items-center justify-center gap-2 ${
+              theme === 'light'
+                ? 'border-orange-500 bg-white text-black font-semibold shadow-md'
+                : 'border-[var(--app-glass-border)] bg-[var(--app-pill-glass-bg)] text-[var(--app-text)] hover:opacity-90'
+            }`}
+          >
+            <Sun className="w-4 h-4 text-orange-500" />
+            <span className="text-xs">Светлая (Canvas)</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 3. Scenario Flows Exhibition Link */}
+      <Link
+        to="/gallery"
+        className="liquid-glass p-4.5 flex items-center justify-between group hover:border-orange-500/40 transition-all relative z-10 block"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400">
+            <Layers className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <h3 className="text-sm font-medium text-[var(--app-text)]">
+                Галерея сценариев (scrn.gallery)
+              </h3>
+              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-orange-500/15 text-orange-400 font-bold uppercase">
+                NEW
+              </span>
+            </div>
+            <p className="text-xs opacity-70 font-light mt-0.5">
+              Интерактивный просмотр всех 432 экранов и сценариев в рамке iPhone
+            </p>
+          </div>
+        </div>
+        <ChevronRight className="w-4 h-4 opacity-50 group-hover:translate-x-1 group-hover:opacity-100 transition-all" />
+      </Link>
+
+      {/* 4. Daily Goal Card (Liquid Glass) */}
+      <div className="liquid-glass p-5 space-y-3 relative z-10">
         <div className="flex items-center gap-2">
           <Target className="w-4 h-4 text-amber-400" />
-          <h3 className="text-sm font-medium text-white">
+          <h3 className="text-sm font-medium text-[var(--app-text)]">
             Цель на день
           </h3>
         </div>
@@ -140,14 +213,14 @@ export const SettingsPage: React.FC = () => {
               }}
               className={`p-3 rounded-2xl border text-center transition-all ${
                 selectedGoal === goal.id
-                  ? 'border-white bg-white text-black font-semibold shadow-[0_0_15px_rgba(255,255,255,0.2)]'
-                  : 'border-white/10 bg-white/[0.04] text-neutral-300 hover:bg-white/[0.08]'
+                  ? 'border-orange-500 bg-[var(--app-cta-bg)] text-[var(--app-cta-text)] font-semibold shadow-sm'
+                  : 'border-[var(--app-glass-border)] bg-[var(--app-pill-glass-bg)] text-[var(--app-text)] hover:opacity-90'
               }`}
             >
               <span className="block text-xs leading-tight">
                 {goal.label}
               </span>
-              <span className={`block text-[10px] mt-1 font-light ${selectedGoal === goal.id ? 'text-neutral-700' : 'text-neutral-500'}`}>
+              <span className="block text-[10px] mt-1 opacity-70 font-light">
                 {goal.desc}
               </span>
             </button>
@@ -155,43 +228,43 @@ export const SettingsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. Voice Settings (Microsoft Edge Neural) */}
-      <div className="liquid-glass p-5 space-y-3 border border-white/15 relative z-10">
+      {/* 5. Voice Settings (Microsoft Edge Neural) */}
+      <div className="liquid-glass p-5 space-y-3 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Volume2 className="w-4 h-4 text-cyan-400" />
-            <h3 className="text-sm font-medium text-white">
+            <h3 className="text-sm font-medium text-[var(--app-text)]">
               Голосовой движок
             </h3>
           </div>
           <button
             onClick={handleTestVoice}
-            className="text-[11px] font-medium text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1"
+            className="text-[11px] font-medium text-cyan-400 hover:opacity-80 transition-opacity flex items-center gap-1"
           >
             Проверить звук
           </button>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-between">
+        <div className="p-3.5 rounded-2xl bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-between">
           <div>
-            <span className="text-xs font-medium text-white block">
+            <span className="text-xs font-medium text-[var(--app-text)] block">
               Нейросетевой голос
             </span>
-            <span className="text-[11px] text-neutral-400 font-light">
+            <span className="text-[11px] opacity-70 font-light">
               Microsoft Edge Neural (Живые интонации и естественные акценты)
             </span>
           </div>
-          <span className="text-[10px] font-semibold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 px-2.5 py-1 rounded-full">
+          <span className="text-[10px] font-semibold bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 px-2.5 py-1 rounded-full">
             Активен
           </span>
         </div>
       </div>
 
-      {/* 4. Language Selection */}
-      <div className="liquid-glass p-5 space-y-3 border border-white/15 relative z-10">
+      {/* 6. Language Selection */}
+      <div className="liquid-glass p-5 space-y-3 relative z-10">
         <div className="flex items-center gap-2">
           <Globe className="w-4 h-4 text-purple-400" />
-          <h3 className="text-sm font-medium text-white">
+          <h3 className="text-sm font-medium text-[var(--app-text)]">
             Язык изучения
           </h3>
         </div>
@@ -207,8 +280,8 @@ export const SettingsPage: React.FC = () => {
               onClick={() => setLang(item.id as any)}
               className={`p-3 rounded-2xl border flex items-center justify-center gap-2 transition-all ${
                 lang === item.id
-                  ? 'border-white bg-white text-black font-semibold shadow-sm'
-                  : 'border-white/10 bg-white/[0.04] text-neutral-300 hover:bg-white/[0.08] font-normal'
+                  ? 'border-orange-500 bg-[var(--app-cta-bg)] text-[var(--app-cta-text)] font-semibold shadow-sm'
+                  : 'border-[var(--app-glass-border)] bg-[var(--app-pill-glass-bg)] text-[var(--app-text)] hover:opacity-90 font-normal'
               }`}
             >
               <span className="text-base">{item.flag}</span>
@@ -218,7 +291,7 @@ export const SettingsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 5. Minimalistic Reset Option */}
+      {/* 7. Reset Option */}
       <div className="pt-2 text-center relative z-10">
         <button
           onClick={() => {
@@ -226,7 +299,7 @@ export const SettingsPage: React.FC = () => {
               resetProgress();
             }
           }}
-          className="text-xs text-neutral-500 hover:text-rose-400 transition-colors inline-flex items-center gap-1 font-light"
+          className="text-xs opacity-50 hover:text-rose-400 hover:opacity-100 transition-colors inline-flex items-center gap-1 font-light"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>Сбросить прогресс к началу</span>

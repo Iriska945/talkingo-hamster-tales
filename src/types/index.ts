@@ -1,4 +1,5 @@
 export type Language = 'ru' | 'en' | 'kk';
+export type AppTheme = 'dark' | 'light';
 
 export interface Character {
   id: string;

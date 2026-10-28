@@ -46,7 +46,7 @@ export const BottomNav: React.FC = () => {
 
   return (
     <nav className="fixed bottom-3 inset-x-0 z-40 px-4 safe-area-bottom pointer-events-none">
-      <div className="max-w-md mx-auto bg-black/60 backdrop-blur-3xl border border-white/15 rounded-full p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.85)] flex items-center justify-between gap-1 pointer-events-auto">
+      <div className="max-w-md mx-auto bg-[var(--app-nav-bg)] backdrop-blur-3xl border border-[var(--app-glass-border)] rounded-full p-1.5 shadow-2xl flex items-center justify-between gap-1 pointer-events-auto transition-colors duration-300">
         {navItems.map((item) => {
           const Icon = item.icon;
 
@@ -58,15 +58,15 @@ export const BottomNav: React.FC = () => {
                 className={({ isActive }) => `
                   relative flex items-center justify-center
                   w-12 h-12 rounded-full
-                  bg-white text-black
-                  shadow-[0_0_24px_rgba(255,255,255,0.35)] hover:bg-neutral-200
+                  bg-[var(--app-cta-bg)] text-[var(--app-cta-text)]
+                  shadow-lg hover:scale-105
                   active:scale-90 transition-all group
-                  ${isActive ? 'ring-2 ring-white ring-offset-2 ring-offset-black' : ''}
+                  ${isActive ? 'ring-2 ring-orange-500 ring-offset-2 ring-offset-[var(--app-bg)]' : ''}
                 `}
                 title="Начать голосовой диалог"
               >
                 <div className="relative flex items-center justify-center">
-                  <Icon className="w-5 h-5 text-black" />
+                  <Icon className="w-5 h-5 text-[var(--app-cta-text)]" />
                   <span className="absolute -top-1.5 -right-2 text-[10px] leading-none animate-bounce">
                     {activeCharacter.emoji}
                   </span>
@@ -82,8 +82,8 @@ export const BottomNav: React.FC = () => {
               className={({ isActive }) => `
                 flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-full transition-all
                 ${isActive
-                  ? 'text-white font-medium bg-white/15 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]'
-                  : 'text-neutral-400 hover:text-white font-normal hover:bg-white/[0.05]'
+                  ? 'text-[var(--app-text)] font-medium bg-[var(--app-pill-glass-bg)] shadow-[inset_0_1px_1px_var(--app-glass-specular)]'
+                  : 'opacity-60 hover:opacity-100 font-normal hover:bg-[var(--app-pill-glass-bg)]'
                 }
               `}
             >

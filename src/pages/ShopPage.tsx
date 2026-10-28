@@ -48,24 +48,24 @@ export const ShopPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pb-28 pt-4 px-4 max-w-lg mx-auto space-y-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-28 pt-4 px-4 max-w-lg mx-auto space-y-4 relative overflow-hidden transition-colors duration-300">
       
       {/* Ambient background glow */}
       <div className="ambient-glow-orb w-[350px] h-[350px] bg-yellow-600/15 top-[-40px] left-[-80px] pointer-events-none" />
       <div className="ambient-glow-orb w-[300px] h-[300px] bg-indigo-600/10 top-[200px] right-[-60px] pointer-events-none" />
 
       {/* 1. Header & Balance Card (Liquid Glass) */}
-      <div className="liquid-glass p-5 border border-white/15 relative z-10">
+      <div className="liquid-glass p-5 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-white/[0.08] border border-white/15 flex items-center justify-center text-white">
+            <div className="w-11 h-11 rounded-2xl bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-[var(--app-text)]">
               <ShoppingBag className="w-5 h-5 text-amber-400" />
             </div>
             <div>
-              <h1 className="text-lg font-medium text-white leading-tight">
+              <h1 className="text-lg font-medium text-[var(--app-text)] leading-tight">
                 Магазин компаньонов
               </h1>
-              <span className="text-xs text-neutral-400 font-light">
+              <span className="text-xs opacity-70 font-light">
                 Открывай персонажей за успехи в речи
               </span>
             </div>

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Character, DailyQuest, DictionaryPhrase, Language, UserProfile, UserResources, VoiceSettings } from '../types';
+import { AppTheme, Character, DailyQuest, DictionaryPhrase, Language, UserProfile, UserResources, VoiceSettings } from '../types';
 import { CHARACTERS } from '../data/characters';
 import { INITIAL_PHRASES, INITIAL_PROFILE, INITIAL_QUESTS, INITIAL_RESOURCES, INITIAL_VOICE_SETTINGS } from '../data/initialData';
 import { soundEffects } from '../services/voice';
@@ -7,6 +7,9 @@ import { soundEffects } from '../services/voice';
 interface AppContextType {
   lang: Language;
   setLang: (lang: Language) => void;
+  theme: AppTheme;
+  toggleTheme: () => void;
+  setTheme: (theme: AppTheme) => void;
   t: (key: string) => string;
   characters: Character[];
   activeCharacter: Character;
@@ -228,6 +231,46 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
 const AppContext = createContext<AppContextType | null>(null);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [theme, setThemeState] = useState<AppTheme>(() => {
+    try {
+      const saved = localStorage.getItem('tg_theme') || localStorage.getItem('tg_gallery_theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
+
+  const toggleTheme = () => {
+    soundEffects.click();
+    setThemeState(prev => (prev === 'light' ? 'dark' : 'light'));
+  };
+
+  const setTheme = (t: AppTheme) => {
+    setThemeState(t);
+  };
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('tg_theme', theme);
+      localStorage.setItem('tg_gallery_theme', theme);
+      document.documentElement.dataset.theme = theme;
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      }
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) {
+        meta.setAttribute('content', theme === 'light' ? '#f4f4f1' : '#000000');
+      }
+    } catch (e) {
+      console.warn('Theme update error:', e);
+    }
+  }, [theme]);
+
   const [lang, setLangState] = useState<Language>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.LANG);
     return (saved === 'ru' || saved === 'en' || saved === 'kk') ? saved : 'ru';
@@ -563,6 +606,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       value={{
         lang,
         setLang,
+        theme,
+        toggleTheme,
+        setTheme,
         t,
         characters: CHARACTERS,
         activeCharacter,
