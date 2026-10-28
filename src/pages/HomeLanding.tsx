@@ -68,14 +68,14 @@ export const HomeLanding: React.FC = () => {
             <div className="absolute w-40 h-40 rounded-full bg-white/[0.03] border border-white/10 animate-pulse pointer-events-none" />
             
             {/* Central Liquid Glass Capsule */}
-            <div className="relative p-5 rounded-full liquid-glass border border-white/20 shadow-[0_0_50px_rgba(255,255,255,0.12)]">
+            <div className="relative p-5 rounded-full liquid-glass border border-[var(--app-glass-border)] shadow-[0_0_50px_rgba(255,107,26,0.12)]">
               <TalkingoLogo size="xl" className="scale-110" />
             </div>
 
             {/* Glowing Tag Pill */}
-            <div className="absolute -bottom-3 bg-white/10 backdrop-blur-xl text-white text-[11px] font-medium px-3.5 py-0.5 rounded-full border border-white/20 shadow-lg flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Голосовой ИИ {activeCharacter.name.split(' ')[0]}</span>
+            <div className="absolute -bottom-3 bg-[var(--app-pill-glass-bg)] backdrop-blur-xl text-[var(--app-text)] text-[11px] font-medium px-3.5 py-0.5 rounded-full border border-[var(--app-glass-border)] shadow-md flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <span className="font-medium">Голосовой ИИ {activeCharacter.name.split(' ')[0]}</span>
             </div>
           </div>
         </div>
@@ -88,7 +88,7 @@ export const HomeLanding: React.FC = () => {
         {/* Editorial Minimalist Title */}
         <h1 className="text-4xl sm:text-6xl font-light text-[var(--app-text)] tracking-tight max-w-xl mx-auto leading-[1.12]">
           Говори уверенно. <br />
-          <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-300 dark:from-white dark:via-neutral-200 dark:to-neutral-400">
+          <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-amber-500 to-amber-600 dark:from-white dark:via-neutral-200 dark:to-neutral-400">
             Каждый день.
           </span>
         </h1>

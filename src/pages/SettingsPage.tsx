@@ -63,7 +63,7 @@ export const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-20 md:pb-12 pt-6 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-5 relative transition-colors duration-300 motion-page-enter">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-24 lg:pb-12 pt-6 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-5 relative transition-colors duration-300 motion-page-enter">
       
       {/* Ambient background glow */}
       <div className="ambient-glow-orb w-[350px] h-[350px] bg-indigo-600/15 top-[-40px] left-[-80px] pointer-events-none" />
@@ -72,22 +72,34 @@ export const SettingsPage: React.FC = () => {
       {/* 1. User Profile & Real Google Sign-In Card (Liquid Glass) */}
       <div className="liquid-glass p-5 rounded-3xl relative z-10">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-2xl shadow-sm">
-              {profile.avatar || '🐹'}
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-12 h-12 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-2xl shadow-sm overflow-hidden shrink-0">
+              {profile.avatar && (profile.avatar.startsWith('http') || profile.avatar.startsWith('data:') || profile.avatar.includes('/')) ? (
+                <img
+                  src={profile.avatar}
+                  alt={profile.name}
+                  className="w-full h-full object-cover rounded-full"
+                  onError={(e) => {
+                    // Fallback to emoji if image URL fails
+                    (e.currentTarget as HTMLElement).style.display = 'none';
+                  }}
+                />
+              ) : (
+                <span>{profile.avatar || '🐹'}</span>
+              )}
             </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <h2 className="text-base font-semibold text-[var(--app-text)] leading-tight">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <h2 className="text-base font-semibold text-[var(--app-text)] leading-tight truncate">
                   {profile.name}
                 </h2>
                 {profile.isLoggedIn && (
-                  <span className="text-[10px] bg-blue-500/20 text-blue-400 border border-blue-400/30 px-1.5 py-0.2 rounded-full font-medium flex items-center gap-0.5">
+                  <span className="text-[10px] bg-blue-500/20 text-blue-400 border border-blue-400/30 px-1.5 py-0.5 rounded-full font-medium flex items-center gap-0.5 shrink-0">
                     <ShieldCheck className="w-3 h-3 text-blue-400" /> Google
                   </span>
                 )}
               </div>
-              <span className="text-xs opacity-70 font-light block mt-0.5">
+              <span className="text-xs opacity-70 font-light block mt-0.5 truncate">
                 {profile.isLoggedIn && profile.email
                   ? profile.email
                   : t('guestProfile')}

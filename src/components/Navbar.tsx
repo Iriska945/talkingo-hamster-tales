@@ -66,8 +66,8 @@ export const Navbar: React.FC = () => {
           </Link>
         </div>
 
-        {/* Center: Desktop Navigation Bar (Anchored for Laptop/Desktop, Hidden on Phones) */}
-        <nav className="hidden md:flex items-center gap-1 p-1 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] shadow-sm backdrop-blur-xl">
+        {/* Center: Desktop Navigation Bar (Anchored for Laptop/Desktop, Hidden on Tablets/Phones) */}
+        <nav className="hidden lg:flex items-center gap-1 p-1 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] shadow-sm backdrop-blur-xl">
           {desktopNavLinks.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.to;

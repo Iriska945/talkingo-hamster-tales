@@ -75,7 +75,7 @@ export const LeaderboardPage: React.FC = () => {
       { id: '1', name: 'Алихан', avatar: '🦊', xp: 580, league: selectedLeague, rank: 1 },
       { id: '2', name: 'София', avatar: '🐱', xp: 460, league: selectedLeague, rank: 2 },
       { id: '3', name: 'Данияр', avatar: '🐼', xp: 390, league: selectedLeague, rank: 3 },
-      { id: 'me', name: profile.name || 'Ты', avatar: '🐹', xp: resources.xp, league: selectedLeague, rank: 4, isCurrentUser: true },
+      { id: 'me', name: profile.name || 'Ты', avatar: profile.avatar || '🐹', xp: resources.xp, league: selectedLeague, rank: 4, isCurrentUser: true },
       { id: '4', name: 'Елена', avatar: '🐨', xp: 220, league: selectedLeague, rank: 5 },
       { id: '5', name: 'Тимур', avatar: '🦁', xp: 180, league: selectedLeague, rank: 6 },
       { id: '6', name: 'Айзере', avatar: '🐰', xp: 110, league: selectedLeague, rank: 7 },
@@ -84,10 +84,26 @@ export const LeaderboardPage: React.FC = () => {
     setCompetitors(list.map((item, i) => ({ ...item, rank: i + 1 })));
   };
 
+  const renderAvatar = (avatar?: string, name?: string) => {
+    if (avatar && (avatar.startsWith('http') || avatar.startsWith('data:') || avatar.includes('/'))) {
+      return (
+        <img
+          src={avatar}
+          alt={name || 'Avatar'}
+          className="w-full h-full object-cover rounded-full"
+          onError={(e) => {
+            (e.currentTarget as HTMLElement).style.display = 'none';
+          }}
+        />
+      );
+    }
+    return <span>{avatar || '🐹'}</span>;
+  };
+
   const top3 = competitors.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-20 md:pb-12 pt-6 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-5 relative transition-colors duration-300 motion-page-enter">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-24 lg:pb-12 pt-6 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-5 relative transition-colors duration-300 motion-page-enter">
       
       {/* Ambient background glow */}
       <div className="ambient-glow-orb w-[350px] h-[350px] bg-purple-600/15 top-[-40px] left-[-80px] pointer-events-none" />
@@ -150,8 +166,8 @@ export const LeaderboardPage: React.FC = () => {
           {/* 2nd Place */}
           <div className="liquid-glass p-3 text-center order-1 border border-[var(--app-glass-border)]">
             <div className="text-lg mb-1">🥈</div>
-            <div className="w-10 h-10 mx-auto rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-lg shadow-sm">
-              {top3[1]?.avatar}
+            <div className="w-10 h-10 mx-auto rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-lg shadow-sm overflow-hidden shrink-0">
+              {renderAvatar(top3[1]?.avatar, top3[1]?.name)}
             </div>
             <span className="text-xs font-medium text-[var(--app-text)] block truncate mt-1.5">
               {top3[1]?.name}
@@ -164,8 +180,8 @@ export const LeaderboardPage: React.FC = () => {
           {/* 1st Place (Centerpiece with Amber Light Glow) */}
           <div className="liquid-glass-elevated p-4 text-center order-2 border border-yellow-500/40 shadow-[0_0_30px_rgba(234,179,8,0.2)] relative -top-2">
             <div className="text-2xl mb-1">🥇</div>
-            <div className="w-12 h-12 mx-auto rounded-full bg-yellow-500/20 border border-yellow-400/40 flex items-center justify-center text-2xl shadow-sm">
-              {top3[0]?.avatar}
+            <div className="w-12 h-12 mx-auto rounded-full bg-yellow-500/20 border border-yellow-400/40 flex items-center justify-center text-2xl shadow-sm overflow-hidden shrink-0">
+              {renderAvatar(top3[0]?.avatar, top3[0]?.name)}
             </div>
             <span className="text-xs font-semibold text-[var(--app-text)] block truncate mt-1.5">
               {top3[0]?.name}
@@ -178,8 +194,8 @@ export const LeaderboardPage: React.FC = () => {
           {/* 3rd Place */}
           <div className="liquid-glass p-3 text-center order-3 border border-[var(--app-glass-border)]">
             <div className="text-lg mb-1">🥉</div>
-            <div className="w-10 h-10 mx-auto rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-lg shadow-sm">
-              {top3[2]?.avatar}
+            <div className="w-10 h-10 mx-auto rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-lg shadow-sm overflow-hidden shrink-0">
+              {renderAvatar(top3[2]?.avatar, top3[2]?.name)}
             </div>
             <span className="text-xs font-medium text-[var(--app-text)] block truncate mt-1.5">
               {top3[2]?.name}
@@ -227,8 +243,8 @@ export const LeaderboardPage: React.FC = () => {
                     {item.rank}
                   </span>
 
-                  <div className="w-9 h-9 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-base shrink-0 shadow-sm">
-                    {item.avatar}
+                  <div className="w-9 h-9 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-base shrink-0 shadow-sm overflow-hidden">
+                    {renderAvatar(item.avatar, item.name)}
                   </div>
 
                   <div>

@@ -104,9 +104,9 @@ export const TalkingoLogo: React.FC<LogoProps> = ({
 
       {/* Editorial Open-Style Spaced Wordmark */}
       {withText && (
-        <div className="flex flex-col">
-          <div className="flex items-center gap-1.5 sm:gap-2 leading-none">
-            <span className={`${current.text} font-semibold text-[var(--app-text)] tracking-wider sm:tracking-[0.25em] uppercase font-sans`}>
+        <div className="flex flex-col shrink-0">
+          <div className="flex items-center gap-1.5 leading-none">
+            <span className={`${current.text} font-bold text-[var(--app-text)] tracking-wider uppercase font-sans`}>
               talkingo
             </span>
             <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_8px_#ff6b1a] shrink-0" />
@@ -114,7 +114,7 @@ export const TalkingoLogo: React.FC<LogoProps> = ({
               ai
             </span>
           </div>
-          <span className="hidden sm:block text-[9px] font-medium opacity-60 tracking-[0.2em] uppercase mt-1">
+          <span className="hidden sm:block text-[9px] font-medium opacity-60 tracking-wider uppercase mt-1">
             mindful speech
           </span>
         </div>
