@@ -499,7 +499,7 @@ If no new idiom fits this specific turn, return "new_phrases": [].`;
             temperature: 0.7,
             max_tokens: 1000
           }),
-          signal: AbortSignal.timeout(3000)
+          signal: AbortSignal.timeout(1200)
         });
 
         if (aiRes.ok) {
@@ -541,7 +541,7 @@ If no new idiom fits this specific turn, return "new_phrases": [].`;
             langCode: language.toUpperCase(),
             character: charName.split(' ')[0]
           }),
-          signal: AbortSignal.timeout(6000)
+          signal: AbortSignal.timeout(2200)
         });
 
         if (supabaseRes.ok) {
