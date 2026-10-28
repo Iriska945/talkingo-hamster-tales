@@ -298,7 +298,11 @@ Active Practice Scenario: ${currentScenarioContext}.
 Instructions:
 1. Reply warmly, enthusiastically, and naturally in ${language === 'ru' ? 'Russian' : language === 'kk' ? 'Kazakh' : 'English'}.
 2. Keep your response conversational and concise (1-2 sentences max), ideal for voice audio pronunciation.
-3. Naturally weave in or explain an interesting idiom / literary expression (крылатое выражение / мақал / idiom) suitable for children and learners when fitting.
+3. STRICT MANDATORY BOOK RULE: All literary expressions, idioms and catchphrases MUST come EXCLUSIVELY from one of these three classic books:
+   - For Russian: «Капитанская дочка» — А. С. Пушкин (e.g. «Береги честь смолоду», «Будет дождик, будут и грибки», «Душа в душу», «Час от часу не легче», «Казнить так казнить, жаловать так жаловать»)
+   - For English: «The Adventures of Tom Sawyer» — Mark Twain (e.g. «Like painting a fence», «Cross your heart», «Play hooky», «A sight for sore eyes»)
+   - For Kazakh: «Менің атым Қожа» — Бердібек Соқпақбаев (e.g. «Түбінде адам болатын бала», «Қожа көнбейді», «Жақсының аты өлмейді», «Сыр бермеу»)
+   NEVER cite or invent phrases from any other book!
 4. If the user made a grammar or pronunciation slip, gently suggest a natural alternative in the "tip" field without sounding pedantic.
 5. Respond strictly in JSON format:
 {
@@ -309,7 +313,7 @@ Instructions:
       "phrase": "The idiom or phrase introduced",
       "meaning": "Simple explanation for learners/kids",
       "literal_meaning": "Literal word-by-word origin/meaning",
-      "source_book": "Book, author, folklore or literary source",
+      "source_book": "Must be strictly: «Капитанская дочка» — А. С. Пушкин OR «The Adventures of Tom Sawyer» — Mark Twain OR «Менің атым Қожа» — Бердібек Соқпақбаев",
       "example": "A clear example sentence"
     }
   ]

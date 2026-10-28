@@ -48,7 +48,7 @@ export const ShopPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-28 pt-4 px-4 max-w-lg mx-auto space-y-4 relative overflow-hidden transition-colors duration-300">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-28 pt-6 px-4 max-w-4xl mx-auto space-y-4 relative transition-colors duration-300 motion-page-enter">
       
       {/* Ambient background glow */}
       <div className="ambient-glow-orb w-[350px] h-[350px] bg-yellow-600/15 top-[-40px] left-[-80px] pointer-events-none" />
@@ -85,9 +85,9 @@ export const ShopPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Character Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 relative z-10">
-        {characters.map((char) => {
+      {/* 2. Character Grid in Responsive 4-Column Layout */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 relative z-10">
+        {characters.map((char, idx) => {
           const isOwned = ownedCharacterIds.includes(char.id);
           const isActive = activeCharacter.id === char.id;
           const rarity = getRarityBadge(char.rarity);
@@ -97,9 +97,9 @@ export const ShopPage: React.FC = () => {
           return (
             <div
               key={char.id}
-              className={`liquid-glass p-4.5 flex flex-col justify-between transition-all relative border ${
+              className={`liquid-glass p-4.5 flex flex-col justify-between transition-all relative border interactive-card motion-card-enter stagger-${(idx % 6) + 1} ${
                 isActive
-                  ? 'border-emerald-400/60 shadow-[0_0_25px_rgba(16,185,129,0.25)]'
+                  ? 'border-emerald-400/60 shadow-[0_0_25px_rgba(16,185,129,0.25)] ring-1 ring-emerald-400/30'
                   : 'border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)]'
               }`}
             >

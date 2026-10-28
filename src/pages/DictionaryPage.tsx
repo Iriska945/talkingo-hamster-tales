@@ -20,95 +20,111 @@ const STARTER_PHRASES: Record<Language, Array<Omit<DictionaryPhrase, 'id' | 'dat
   ru: [
     {
       language: 'ru',
-      phrase: 'Бить баклуши',
-      kidExplanation: 'Бездельничать, проводить время праздно и ничего не делать.',
-      literalMeaning: 'Раскалывать поленья на заготовки (баклуши) для деревянных ложек — считалось лёгкой работой.',
-      sourceBook: 'Русский народный фольклор',
-      example: 'Хватит бить баклуши, пора за интересные уроки с Хэмми!',
+      phrase: 'Береги честь смолоду',
+      kidExplanation: 'Главный жизненный завет: всегда поступать честно, искренне и благородно с самого детства.',
+      literalMeaning: 'Береги свою честь и доброе имя смолоду, точно так же, как берегут новую одежду.',
+      sourceBook: '«Капитанская дочка» — А. С. Пушкин',
+      example: '«Береги честь смолоду, а платье снову», — напутствовал отец Петра Гринёва.',
+    },
+    {
+      language: 'ru',
+      phrase: 'Будет дождик, будут и грибки',
+      kidExplanation: 'Всё наладится! Любые временные трудности пройдут, и обязательно наступит радость и успех.',
+      literalMeaning: 'После тёплого дождя в лесу всегда вырастают грибы — примета веры в доброе будущее.',
+      sourceBook: '«Капитанская дочка» — А. С. Пушкин',
+      example: 'Не бойся делать ошибки при разговоре: будет дождик, будут и грибки!',
     },
     {
       language: 'ru',
       phrase: 'Душа в душу',
-      kidExplanation: 'Жить очень дружно, в полном согласии, любви и взаимопонимании.',
-      literalMeaning: 'Словно две души дышат и чувствуют одинаково.',
-      sourceBook: '«Война и мир» — Л. Н. Толстой',
-      example: 'Мы с Хэмми живём душа в душу и каждый день учим новые фразы!',
+      kidExplanation: 'Жить в согласии, верности, взаимной поддержке и глубоком понимании.',
+      literalMeaning: 'Быть настолько близкими друзьями, словно у вас одно дыхание и одно сердце.',
+      sourceBook: '«Капитанская дочка» — А. С. Пушкин',
+      example: 'Маша Миронова и Петруша жили душа в душу, оставаясь верными своей любви.',
     },
     {
       language: 'ru',
-      phrase: 'Не разлей вода',
-      kidExplanation: 'Очень крепкая и верная дружба, которую ничто не может разрушить.',
-      literalMeaning: 'Даже вода не может протечь между лучшими друзьями.',
-      sourceBook: 'Русские народные сказки',
-      example: 'Мы с Хэмми теперь настоящие друзья — не разлей вода!',
+      phrase: 'Час от часу не легче',
+      kidExplanation: 'Когда неожиданно наступает череда новых интересных событий или испытаний.',
+      literalMeaning: 'С каждым новым часом задача становится глубже, требуя смелости.',
+      sourceBook: '«Капитанская дочка» — А. С. Пушкин',
+      example: 'Час от часу не легче — хомячок Хэмми приготовил для нас новый скоростной диалог!',
     },
     {
       language: 'ru',
-      phrase: 'Взять себя в руки',
-      kidExplanation: 'Успокоиться, побороть волнение и собраться с мыслями.',
-      literalMeaning: 'Словно удержать себя от лишних движений.',
-      sourceBook: '«Отцы и дети» — И. С. Тургенев',
-      example: 'Перед тем как говорить в микрофон, возьми себя в руки и сделай вдох.',
-    },
-    {
-      language: 'ru',
-      phrase: 'Светлая голова',
-      kidExplanation: 'Очень умный, сообразительный и находчивый человек.',
-      literalMeaning: 'Голова, полная ясных и добрых мыслей.',
-      sourceBook: '«Детство» — Л. Н. Толстой',
-      example: 'Ты отлично произнес фразу, у тебя поистине светлая голова!',
+      phrase: 'Казнить так казнить, жаловать так жаловать',
+      kidExplanation: 'Делать дело с открытой душой, щедро и на все сто процентов.',
+      literalMeaning: 'Атаманское правило: проявлять великодушие и решительность без полумер.',
+      sourceBook: '«Капитанская дочка» — А. С. Пушкин',
+      example: 'Учить иностранный язык надо смело: казнить так казнить, жаловать так жаловать!',
     },
   ],
   en: [
     {
       language: 'en',
-      phrase: 'Piece of cake',
-      kidExplanation: 'Something very easy and pleasant to do.',
-      literalMeaning: 'As easy as enjoying a slice of sweet cake.',
-      sourceBook: 'Classic English Idioms',
-      example: 'Speaking English with Talkingo is a piece of cake!',
+      phrase: 'Like painting a fence',
+      kidExplanation: 'Turning any difficult task into a thrilling game so that everyone wants to take part!',
+      literalMeaning: 'Clever Tom turned the boring whitewashing of Aunt Polly’s fence into the most coveted game in town.',
+      sourceBook: '«The Adventures of Tom Sawyer» — Mark Twain',
+      example: 'Practicing English with Talkingo is like painting a fence — pure joy and adventure!',
     },
     {
       language: 'en',
-      phrase: 'Once in a blue moon',
-      kidExplanation: 'Something that happens very rarely.',
-      literalMeaning: 'The rare appearance of a second full moon in a single calendar month.',
-      sourceBook: 'Astronomical & Folklore Sayings',
-      example: 'I only miss a speaking practice once in a blue moon!',
+      phrase: 'Cross your heart',
+      kidExplanation: 'A solemn promise between true friends to always speak the truth.',
+      literalMeaning: 'Crossing your hand over your heart as an unbreakable oath of loyalty.',
+      sourceBook: '«The Adventures of Tom Sawyer» — Mark Twain',
+      example: 'Cross your heart, Tom! Promise that you will practice new phrases with Hammy today!',
     },
     {
       language: 'en',
-      phrase: 'Break a leg',
-      kidExplanation: 'A friendly and theatrical way to wish someone great luck and success.',
-      literalMeaning: 'To fracture a bone in your leg (superstition saying).',
-      sourceBook: 'Theatre & Stage Folklore',
-      example: 'You are going to do great with your speech, break a leg!',
+      phrase: 'Play hooky',
+      kidExplanation: 'To skip boring routine chores in order to embark on a brave adventure.',
+      literalMeaning: 'To playfully hook away from the classroom toward freedom in nature.',
+      sourceBook: '«The Adventures of Tom Sawyer» — Mark Twain',
+      example: 'Tom and Huck played hooky to explore the mysterious riverbanks of Mississippi.',
     },
     {
       language: 'en',
-      phrase: 'Bite the bullet',
-      kidExplanation: 'To be brave and face a challenge with confidence.',
-      literalMeaning: 'Biting a lead bullet during medical care in ancient times.',
-      sourceBook: 'Classic Adventure Tales',
-      example: 'Do not be afraid of mistakes, just bite the bullet and speak!',
+      phrase: 'A sight for sore eyes',
+      kidExplanation: 'Someone or something you are overjoyed and deeply relieved to see after a long separation.',
+      literalMeaning: 'A welcome vision so heartwarming that it soothes tired, longing eyes.',
+      sourceBook: '«The Adventures of Tom Sawyer» — Mark Twain',
+      example: 'When Tom and Becky safely returned from the cave, they were truly a sight for sore eyes!',
     },
   ],
   kk: [
     {
       language: 'kk',
-      phrase: 'Көзі ашық',
-      kidExplanation: 'Білімді, көкірегі ояу және парасатты адам.',
-      literalMeaning: 'Көзі ашық, дүниені көре алатын.',
-      sourceBook: 'Қазақ әдебиеті',
-      example: 'Кітап оқып, білім жинаған адамның көзі ашық болады.',
+      phrase: 'Түбінде адам болатын бала',
+      kidExplanation: 'Қиындықтан қорықпайтын, жүрегі ашық әрі келешекте үлкен азамат болатын дарынды бала.',
+      literalMeaning: 'Бойында намыс пен жігері бар, есейгенде үлкен ел азаматы болатын жас өркен.',
+      sourceBook: '«Менің атым Қожа» — Бердібек Соқпақбаев',
+      example: 'Майқанова мұғалім Қожаның тентек болса да, түбінде адам болатынына кәміл сенді.',
     },
     {
       language: 'kk',
-      phrase: 'Ат салысу',
-      kidExplanation: 'Бір игі іске шын жүректен көмектесу және үлес қосу.',
-      literalMeaning: 'Атпен қатарласа жүріп жәрдемдесу.',
-      sourceBook: 'Қазақ халық даналығы',
-      example: 'Тіл үйрену жолында бәріміз ат салысайық!',
+      phrase: 'Қожа көнбейді',
+      kidExplanation: 'Әділетсіздікке мойымайтын, шындық үшін тайсалмай күресетін қайсар мінез.',
+      literalMeaning: 'Қожаның өзіне тән намысты, тайсалмас қайсар мінезі.',
+      sourceBook: '«Менің атым Қожа» — Бердібек Соқпақбаев',
+      example: '«Қожа көнбейді!» — деп өзіне серт беріп, сөздік пен сабаққа құлшына кірісті.',
+    },
+    {
+      language: 'kk',
+      phrase: 'Жақсының аты өлмейді',
+      kidExplanation: 'Ізгі іс пен таза абырой ешқашан ұмытылмайды, ұрпаққа өнеге болып қалады.',
+      literalMeaning: 'Жақсы адамның соңында қалдырған асыл мұрасы мен игі есімі мәңгі жасайды.',
+      sourceBook: '«Менің атым Қожа» — Бердібек Соқпақбаев',
+      example: 'Қожа әкесі Қадырды мақтан тұтып: «Жақсының аты өлмейді», — деп тебіренді.',
+    },
+    {
+      language: 'kk',
+      phrase: 'Сыр бермеу',
+      kidExplanation: 'Қиын кезде көңіл-күйін жасырып, сабыр сақтап, сыртқа білдірмеу.',
+      literalMeaning: 'Ішкі сырды берік сақтап, қиындықта жасымау.',
+      sourceBook: '«Менің атым Қожа» — Бердібек Соқпақбаев',
+      example: 'Қожа қанша қысылса да, достарының алдында сыр бермеуге тырысты.',
     },
   ],
 };
@@ -176,7 +192,7 @@ export const DictionaryPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-28 pt-4 px-4 max-w-lg mx-auto space-y-4 relative overflow-hidden transition-colors duration-300">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-28 pt-6 px-4 max-w-4xl mx-auto space-y-4 relative transition-colors duration-300 motion-page-enter">
       
       {/* Ambient background glow */}
       <div className="ambient-glow-orb w-[350px] h-[350px] bg-cyan-600/15 top-[-40px] left-[-80px] pointer-events-none" />
@@ -387,9 +403,9 @@ export const DictionaryPage: React.FC = () => {
         </div>
       )}
 
-      {/* 3. List Mode: Phrase Cards */}
+      {/* 3. List Mode: Phrase Cards in Responsive Grid */}
       {viewMode === 'list' && (
-        <div className="space-y-3 relative z-10">
+        <div className="relative z-10">
           {filteredPhrases.length === 0 ? (
             <div className="liquid-glass p-8 text-center border border-[var(--app-glass-border)]">
               <div className="w-12 h-12 mx-auto rounded-full bg-[var(--app-pill-glass-bg)] flex items-center justify-center text-2xl mb-2">
@@ -401,66 +417,70 @@ export const DictionaryPage: React.FC = () => {
               </p>
             </div>
           ) : (
-            filteredPhrases.map((item) => (
-              <div
-                key={item.id}
-                className="liquid-glass p-4.5 transition-all hover:border-[var(--app-glass-border-hover)] space-y-2.5 border border-[var(--app-glass-border)]"
-              >
-                {/* Header row: Phrase & Audio Button */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1">
-                    <span className="text-sm font-medium text-[var(--app-text)] block leading-snug">
-                      «{item.phrase}»
-                    </span>
-                    <span className="text-[10px] font-mono text-[var(--app-text)] opacity-50 uppercase tracking-wider">
-                      {item.language === 'ru' ? 'Русский' : item.language === 'en' ? 'English' : 'Қазақша'}
-                    </span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredPhrases.map((item, idx) => (
+                <div
+                  key={item.id}
+                  className={`liquid-glass p-5 flex flex-col justify-between transition-all interactive-card motion-card-enter border border-[var(--app-glass-border)] space-y-3 stagger-${(idx % 6) + 1}`}
+                >
+                  <div className="space-y-3">
+                    {/* Header row: Phrase & Audio Button */}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1">
+                        <span className="text-base font-semibold text-[var(--app-text)] block leading-snug tracking-tight">
+                          «{item.phrase}»
+                        </span>
+                        <span className="text-[10px] font-mono text-[var(--app-text)] opacity-50 uppercase tracking-wider">
+                          {item.language === 'ru' ? '🇷🇺 Русский' : item.language === 'en' ? '🇬🇧 English' : '🇰🇿 Қазақша'}
+                        </span>
+                      </div>
+
+                      <button
+                        onClick={() => handleSpeakPhrase(item.id, item.phrase, item.language)}
+                        className="w-9 h-9 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] flex items-center justify-center text-[var(--app-text)] shrink-0 transition-transform active:scale-90 interactive-btn"
+                        title="Озвучить"
+                      >
+                        <Volume2 className={`w-4 h-4 ${speakingId === item.id ? 'animate-pulse text-emerald-400' : ''}`} />
+                      </button>
+                    </div>
+
+                    {/* Kid-friendly meaning */}
+                    <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/25">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-500 dark:text-emerald-400 block mb-0.5">
+                        ✨ Простое объяснение
+                      </span>
+                      <p className="text-xs text-[var(--app-text)] font-light leading-relaxed">
+                        {item.kidExplanation}
+                      </p>
+                    </div>
+
+                    {/* Literal meaning */}
+                    {item.literalMeaning && (
+                      <div className="text-xs text-[var(--app-text)] opacity-70 font-light">
+                        <span className="text-[var(--app-text)] font-normal">Буквально: </span>
+                        <span>{item.literalMeaning}</span>
+                      </div>
+                    )}
+
+                    {/* Example */}
+                    {item.example && (
+                      <div className="text-xs text-[var(--app-text)] bg-[var(--app-pill-glass-bg)] p-2.5 rounded-2xl border border-[var(--app-glass-border)] font-light">
+                        <span className="text-[var(--app-text)] opacity-60 font-normal">Пример: </span>
+                        <span className="italic text-[var(--app-text)] font-normal">«{item.example}»</span>
+                      </div>
+                    )}
                   </div>
 
-                  <button
-                    onClick={() => handleSpeakPhrase(item.id, item.phrase, item.language)}
-                    className="w-8 h-8 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] flex items-center justify-center text-[var(--app-text)] shrink-0 transition-colors"
-                    title="Озвучить"
-                  >
-                    <Volume2 className={`w-3.5 h-3.5 ${speakingId === item.id ? 'animate-pulse text-emerald-400' : ''}`} />
-                  </button>
+                  {/* Source Book Citation Badge */}
+                  {item.sourceBook && (
+                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-amber-400 pt-2 border-t border-[var(--app-glass-border)]">
+                      <BookOpen className="w-3.5 h-3.5 shrink-0 text-amber-400" />
+                      <span className="truncate font-medium">{item.sourceBook}</span>
+                    </div>
+                  )}
                 </div>
-
-                {/* Kid-friendly meaning */}
-                <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/25">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-500 dark:text-emerald-400 block mb-0.5">
-                    ✨ Простое объяснение
-                  </span>
-                  <p className="text-xs text-[var(--app-text)] font-light leading-relaxed">
-                    {item.kidExplanation}
-                  </p>
-                </div>
-
-                {/* Literal meaning */}
-                {item.literalMeaning && (
-                  <div className="text-xs text-[var(--app-text)] opacity-70 font-light">
-                    <span className="text-[var(--app-text)] font-normal">Буквально: </span>
-                    <span>{item.literalMeaning}</span>
-                  </div>
-                )}
-
-                {/* Example */}
-                {item.example && (
-                  <div className="text-xs text-[var(--app-text)] bg-[var(--app-pill-glass-bg)] p-2.5 rounded-2xl border border-[var(--app-glass-border)] font-light">
-                    <span className="text-[var(--app-text)] opacity-60 font-normal">Пример: </span>
-                    <span className="italic text-[var(--app-text)] font-normal">«{item.example}»</span>
-                  </div>
-                )}
-
-                {/* Source Book Citation */}
-                {item.sourceBook && (
-                  <div className="flex items-center gap-1.5 text-[11px] font-medium text-amber-400 pt-0.5">
-                    <BookOpen className="w-3.5 h-3.5 shrink-0" />
-                    <span className="truncate">{item.sourceBook}</span>
-                  </div>
-                )}
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
       )}

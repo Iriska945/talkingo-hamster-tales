@@ -117,6 +117,101 @@ if (!demoUser) {
   db.prepare('INSERT OR IGNORE INTO user_characters (user_id, character_id) VALUES (?, ?)').run('demo-user', '3afffcee-f386-49bd-9358-8661fd63b822');
 }
 
+// Ensure dictionary phrases are strictly from the 3 allowed classic books:
+// 1. «Капитанская дочка» (А. С. Пушкин)
+// 2. «The Adventures of Tom Sawyer» (Mark Twain)
+// 3. «Менің атым Қожа» (Бердібек Соқпақбаев)
+db.prepare(`
+  DELETE FROM dictionary_phrases
+  WHERE source_book NOT LIKE '%Капитанская дочка%'
+    AND source_book NOT LIKE '%Tom Sawyer%'
+    AND source_book NOT LIKE '%Менің атым Қожа%'
+`).run();
+
+const countPhrases = db.prepare('SELECT COUNT(*) as count FROM dictionary_phrases WHERE user_id = ?').get('demo-user').count;
+if (countPhrases === 0) {
+  const seedPhrases = [
+    {
+      id: 'phrase-1',
+      user_id: 'demo-user',
+      language: 'ru',
+      phrase: 'Береги честь смолоду',
+      kid_explanation: 'Главный жизненный завет: всегда поступать честно, искренне и благородно с самого детства.',
+      literal_meaning: 'Береги свою честь и доброе имя смолоду, точно так же, как берегут новую одежду.',
+      source_book: '«Капитанская дочка» — А. С. Пушкин',
+      example: '«Береги честь смолоду, а платье снову», — напутствовал отец Петра Гринёва.'
+    },
+    {
+      id: 'phrase-2',
+      user_id: 'demo-user',
+      language: 'ru',
+      phrase: 'Будет дождик, будут и грибки',
+      kid_explanation: 'Всё наладится! Любые временные трудности пройдут, и обязательно наступит радость и успех.',
+      literal_meaning: 'После тёплого дождя в лесу всегда вырастают грибы — добрая примета надежды.',
+      source_book: '«Капитанская дочка» — А. С. Пушкин',
+      example: 'Не бойся делать ошибки при разговоре: будет дождик, будут и грибки!'
+    },
+    {
+      id: 'phrase-3',
+      user_id: 'demo-user',
+      language: 'ru',
+      phrase: 'Душа в душу',
+      kid_explanation: 'Жить в полном согласии, преданности, искренней дружбе и глубоком понимании.',
+      literal_meaning: 'Быть настолько близкими людьми, словно у вас одно дыхание и одно сердце.',
+      source_book: '«Капитанская дочка» — А. С. Пушкин',
+      example: 'Маша Миронова и Петруша жили душа в душу, преодолевая любые жизненные бури.'
+    },
+    {
+      id: 'phrase-4',
+      user_id: 'demo-user',
+      language: 'en',
+      phrase: 'Like painting a fence',
+      kid_explanation: 'Turning any difficult task into a thrilling game so that everyone wants to take part!',
+      literal_meaning: 'Clever Tom turned the boring whitewashing of Aunt Polly’s fence into the most coveted game in town.',
+      source_book: '«The Adventures of Tom Sawyer» — Mark Twain',
+      example: 'Practicing English with Talkingo is like painting a fence — pure joy and adventure!'
+    },
+    {
+      id: 'phrase-5',
+      user_id: 'demo-user',
+      language: 'en',
+      phrase: 'Cross your heart',
+      kid_explanation: 'A solemn promise between true friends to always speak the truth.',
+      literal_meaning: 'Crossing your hand over your heart as an unbreakable oath of loyalty.',
+      source_book: '«The Adventures of Tom Sawyer» — Mark Twain',
+      example: 'Cross your heart, Tom! Promise that you will practice new phrases with Hammy today!'
+    },
+    {
+      id: 'phrase-6',
+      user_id: 'demo-user',
+      language: 'kk',
+      phrase: 'Түбінде адам болатын бала',
+      kid_explanation: 'Қиындықтан қорықпайтын, жүрегі ашық әрі келешекте үлкен азамат болатын дарынды бала.',
+      literal_meaning: 'Бойында намыс пен жігері бар, есейгенде үлкен ел азаматы болатын жас өркен.',
+      source_book: '«Менің атым Қожа» — Бердібек Соқпақбаев',
+      example: 'Майқанова мұғалім Қожаның тентек болса да, түбінде адам болатынына кәміл сенді.'
+    },
+    {
+      id: 'phrase-7',
+      user_id: 'demo-user',
+      language: 'kk',
+      phrase: 'Қожа көнбейді',
+      kid_explanation: 'Әділетсіздікке мойымайтын, шындық үшін тайсалмай күресетін қайсар мінез.',
+      literal_meaning: 'Қожаның өзіне тән намысты, тайсалмас қайсар мінезі.',
+      source_book: '«Менің атым Қожа» — Бердібек Соқпақбаев',
+      example: '«Қожа көнбейді!» — деп өзіне серт беріп, сөздік пен сабаққа құлшына кірісті.'
+    }
+  ];
+
+  const insertP = db.prepare(`
+    INSERT OR REPLACE INTO dictionary_phrases (id, user_id, language, phrase, kid_explanation, literal_meaning, source_book, example)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+  for (const p of seedPhrases) {
+    insertP.run(p.id, p.user_id, p.language, p.phrase, p.kid_explanation, p.literal_meaning, p.source_book, p.example);
+  }
+}
+
 // Database helper functions
 export const userDb = {
   getById(id) {

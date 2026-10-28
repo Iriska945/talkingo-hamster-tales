@@ -69,7 +69,7 @@ export const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-28 pt-4 px-4 max-w-lg mx-auto space-y-4 relative overflow-hidden transition-colors duration-300">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-28 pt-6 px-4 max-w-2xl mx-auto space-y-4 relative transition-colors duration-300 motion-page-enter">
       
       {/* Ambient background glow */}
       <div className="ambient-glow-orb w-[350px] h-[350px] bg-indigo-600/15 top-[-40px] left-[-80px] pointer-events-none" />
@@ -223,9 +223,9 @@ export const SettingsPage: React.FC = () => {
                 soundEffects.click();
                 setSelectedGoal(goal.id);
               }}
-              className={`p-3 rounded-2xl border text-center transition-all ${
+              className={`p-3 rounded-2xl border text-center transition-all interactive-btn ${
                 selectedGoal === goal.id
-                  ? 'border-orange-500 bg-[var(--app-cta-bg)] text-[var(--app-cta-text)] font-semibold shadow-sm'
+                  ? 'border-orange-500 bg-orange-500 text-white font-semibold shadow-[0_0_16px_rgba(255,107,26,0.3)]'
                   : 'border-[var(--app-glass-border)] bg-[var(--app-pill-glass-bg)] text-[var(--app-text)] hover:opacity-90'
               }`}
             >

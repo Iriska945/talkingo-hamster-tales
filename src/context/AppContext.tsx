@@ -319,6 +319,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [phrases, setPhrases] = useState<DictionaryPhrase[]>(() => {
     try {
+      if (!localStorage.getItem('tg_phrases_v3_curated')) {
+        localStorage.setItem(STORAGE_KEYS.PHRASES, JSON.stringify(INITIAL_PHRASES));
+        localStorage.setItem('tg_phrases_v3_curated', '1');
+        return INITIAL_PHRASES;
+      }
       const saved = localStorage.getItem(STORAGE_KEYS.PHRASES);
       return saved ? JSON.parse(saved) : INITIAL_PHRASES;
     } catch {

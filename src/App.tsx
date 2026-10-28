@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AppProvider } from './context/AppContext';
 import { Navbar } from './components/Navbar';
 import { BottomNav } from './components/BottomNav';
+import { ScrollToTop } from './components/ScrollToTop';
 import { HomeLanding } from './pages/HomeLanding';
 import { LearnPage } from './pages/LearnPage';
 import { TalkPage } from './pages/TalkPage';
@@ -32,6 +33,7 @@ export const App: React.FC = () => {
   return (
     <AppProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <AppLayout>
           <Routes>
             <Route path="/" element={<HomeLanding />} />

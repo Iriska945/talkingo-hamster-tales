@@ -20,7 +20,7 @@ export const LearnPage: React.FC = () => {
   const todayIndex = (new Date().getDay() + 6) % 7;
 
   return (
-    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-28 pt-4 px-4 max-w-lg mx-auto space-y-4 relative overflow-hidden transition-colors duration-300">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-28 pt-6 px-4 max-w-2xl mx-auto space-y-4 relative transition-colors duration-300 motion-page-enter">
       
       {/* Ambient background glow */}
       <div className="ambient-glow-orb w-[350px] h-[350px] bg-indigo-600/15 top-[-60px] left-[-80px] pointer-events-none" />
