@@ -146,15 +146,12 @@ export const soundEffects = {
 };
 
 export interface TTSOptions {
-  engine?: 'elevenlabs' | 'edgeneural' | 'webspeech' | 'openai';
   voiceId?: string;
-  voiceName?: string;
   rate?: number;
   pitch?: number;
-  apiKey?: string;
 }
 
-// Unified high-quality TTS: ElevenLabs studio female voice (default) with automatic Edge Neural fallback
+// Exclusive ElevenLabs studio female neural voice synthesizer
 export async function speakWithTTS(
   text: string,
   lang: Language,
@@ -168,10 +165,6 @@ export async function speakWithTTS(
 
   if (!cleanText) return;
 
-  if (options?.engine === 'webspeech') {
-    return speakWithBrowser(cleanText, lang, options);
-  }
-
   try {
     const res = await fetch("/api/tts", {
       method: "POST",
@@ -181,16 +174,12 @@ export async function speakWithTTS(
       body: JSON.stringify({
         text: cleanText,
         language: lang,
-        engine: options?.engine ?? 'elevenlabs',
         voiceId: options?.voiceId ?? 'cgSgspJ2msm6clMCkdW9', // Default female: Jessica
-        voiceName: options?.voiceName,
-        rate: options?.rate ?? 1.0,
-        pitch: options?.pitch ?? 0,
       })
     });
 
     if (!res.ok) {
-      throw new Error(`TTS HTTP ${res.status}`);
+      throw new Error(`ElevenLabs TTS HTTP ${res.status}`);
     }
 
     const blob = await res.blob();
@@ -209,12 +198,11 @@ export async function speakWithTTS(
       audio.play().catch(() => resolve());
     });
   } catch (err) {
-    console.warn("TTS backend failed, falling back to browser speech:", err);
-    return speakWithBrowser(cleanText, lang, options);
+    console.error("ElevenLabs TTS error:", err);
   }
 }
 
-// High-quality TTS helper (defaults to ElevenLabs female voice)
+// High-quality TTS helper (ElevenLabs studio female voice)
 export async function speakWithEdgeNeural(
   text: string,
   lang: Language,

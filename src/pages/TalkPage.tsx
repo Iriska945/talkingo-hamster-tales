@@ -6,7 +6,7 @@ import {
   isSpeechRecognitionSupported,
   soundEffects,
   speakWithBrowser,
-  speakWithEdgeNeural,
+  speakWithTTS,
   stopSpeaking,
 } from '../services/voice';
 import { generateTalkResponse } from '../services/deepseek';
@@ -127,19 +127,10 @@ export const TalkPage: React.FC = () => {
   const speakAssistant = async (text: string) => {
     setVoiceState('speaking');
     try {
-      if (voiceSettings.ttsEngine === 'webspeech') {
-        await speakWithBrowser(text, lang, {
-          rate: voiceSpeed,
-          pitch: voiceSettings.voicePitch,
-          voiceName: voiceSettings.voiceName,
-        });
-      } else {
-        await speakWithEdgeNeural(text, lang, {
-          engine: voiceSettings.ttsEngine || 'elevenlabs',
-          voiceId: voiceSettings.elevenlabsVoiceId || 'cgSgspJ2msm6clMCkdW9',
-          rate: voiceSpeed,
-        });
-      }
+      await speakWithTTS(text, lang, {
+        voiceId: voiceSettings.elevenlabsVoiceId || 'cgSgspJ2msm6clMCkdW9',
+        rate: voiceSpeed,
+      });
     } catch (e) {
       console.warn('TTS fallback to browser speech:', e);
       await speakWithBrowser(text, lang, { rate: voiceSpeed });

@@ -87,10 +87,9 @@ export interface VoiceSettings {
   deepseekApiKey: string;
   deepseekBaseUrl: string;
   deepseekModel: string;
-  ttsEngine: 'edgeneural' | 'webspeech' | 'elevenlabs' | 'openai';
+  ttsEngine: 'elevenlabs';
   elevenlabsApiKey?: string;
   elevenlabsVoiceId?: string;
-  openaiApiKey?: string;
   voiceRate: number;
   voicePitch: number;
   voiceName?: string;

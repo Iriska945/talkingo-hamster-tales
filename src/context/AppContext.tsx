@@ -233,7 +233,12 @@ const AppContext = createContext<AppContextType | null>(null);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<AppTheme>(() => {
     try {
-      const saved = localStorage.getItem('tg_theme') || localStorage.getItem('tg_gallery_theme');
+      if (!localStorage.getItem('tg_theme_force_v4')) {
+        localStorage.setItem('tg_theme', 'dark');
+        localStorage.setItem('tg_theme_force_v4', '1');
+        return 'dark';
+      }
+      const saved = localStorage.getItem('tg_theme');
       if (saved === 'light' || saved === 'dark') return saved;
       return 'dark';
     } catch {
@@ -328,7 +333,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return {
         ...INITIAL_VOICE_SETTINGS,
         ...parsed,
-        ttsEngine: parsed.ttsEngine || 'elevenlabs',
+        ttsEngine: 'elevenlabs',
         elevenlabsVoiceId: parsed.elevenlabsVoiceId || 'cgSgspJ2msm6clMCkdW9',
       };
     } catch {
