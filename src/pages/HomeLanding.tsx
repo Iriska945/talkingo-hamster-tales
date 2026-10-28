@@ -121,7 +121,7 @@ export const HomeLanding: React.FC = () => {
 
         {/* Footnote */}
         <p className="mt-5 text-[11px] text-[var(--app-text)] opacity-60 tracking-wide font-light">
-          Русский • English • Қазақша • Edge Neural HD Voice
+          Русский • English • Қазақша • ElevenLabs Studio HD Voice
         </p>
       </div>
 

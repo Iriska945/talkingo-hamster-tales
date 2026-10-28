@@ -150,7 +150,8 @@ export const INITIAL_VOICE_SETTINGS: VoiceSettings = {
   deepseekApiKey: "",
   deepseekBaseUrl: "",
   deepseekModel: "deepseek-v4-flash",
-  ttsEngine: "edgeneural",
+  ttsEngine: "elevenlabs",
+  elevenlabsVoiceId: "cgSgspJ2msm6clMCkdW9",
   voiceRate: 0.95,
   voicePitch: 1.1,
   soundEffects: true

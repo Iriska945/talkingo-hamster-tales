@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { speakWithBrowser, soundEffects } from '../services/voice';
+import { speakWithBrowser, speakWithEdgeNeural, soundEffects } from '../services/voice';
 import {
   Volume2,
   Globe,
@@ -15,6 +15,7 @@ import {
   Moon,
   Layers,
   ChevronRight,
+  Radio,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -28,6 +29,7 @@ export const SettingsPage: React.FC = () => {
   const { lang, setLang, theme, setTheme, profile, voiceSettings, updateVoiceSettings, resetProgress } = useApp();
   const [selectedGoal, setSelectedGoal] = useState<number>(10);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isPlayingTest, setIsPlayingTest] = useState(false);
   const [userProfile, setUserProfile] = useState<{ name: string; email: string; avatar: string }>({
     name: profile.name,
     email: 'user@gmail.com',
@@ -45,15 +47,30 @@ export const SettingsPage: React.FC = () => {
     soundEffects.success();
   };
 
-  const handleTestVoice = () => {
+  const handleTestVoice = async () => {
     soundEffects.click();
+    setIsPlayingTest(true);
     const testPhrase =
       lang === 'ru'
-        ? 'Привет! Я твой голосовой помощник Talkingo.'
+        ? 'Привет! Это живой женский голос ElevenLabs в Talkingo.'
         : lang === 'en'
-        ? 'Hello! I am your Talkingo voice companion.'
-        : 'Сәлем! Мен сенің Talkingo серігіңмін.';
-    speakWithBrowser(testPhrase, lang);
+        ? 'Hello! This is ElevenLabs studio female voice in Talkingo.'
+        : 'Сәлем! Бұл Talkingo-дағы ElevenLabs студиялық дауысы.';
+
+    try {
+      if (voiceSettings.ttsEngine === 'webspeech') {
+        await speakWithBrowser(testPhrase, lang);
+      } else {
+        await speakWithEdgeNeural(testPhrase, lang, {
+          engine: voiceSettings.ttsEngine || 'elevenlabs',
+          voiceId: voiceSettings.elevenlabsVoiceId || 'cgSgspJ2msm6clMCkdW9',
+        });
+      }
+    } catch {
+      await speakWithBrowser(testPhrase, lang);
+    } finally {
+      setIsPlayingTest(false);
+    }
   };
 
   return (
@@ -228,36 +245,112 @@ export const SettingsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 5. Voice Settings (Microsoft Edge Neural) */}
-      <div className="liquid-glass p-5 space-y-3 relative z-10">
+      {/* 5. Voice Settings (ElevenLabs Studio Female Voice & Fallbacks) */}
+      <div className="liquid-glass p-5 space-y-4 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Volume2 className="w-4 h-4 text-cyan-400" />
             <h3 className="text-sm font-medium text-[var(--app-text)]">
-              Голосовой движок
+              Голосовой движок и озвучка
             </h3>
           </div>
           <button
             onClick={handleTestVoice}
-            className="text-[11px] font-medium text-cyan-400 hover:opacity-80 transition-opacity flex items-center gap-1"
+            disabled={isPlayingTest}
+            className="text-[11px] font-semibold text-cyan-500 dark:text-cyan-400 hover:opacity-80 transition-opacity flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/25 active:scale-95"
           >
-            Проверить звук
+            <Sparkles className={`w-3 h-3 ${isPlayingTest ? 'animate-spin' : ''}`} />
+            <span>{isPlayingTest ? 'Озвучиваю...' : 'Тест звука'}</span>
           </button>
         </div>
 
-        <div className="p-3.5 rounded-2xl bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-between">
-          <div>
-            <span className="text-xs font-medium text-[var(--app-text)] block">
-              Нейросетевой голос
+        {/* Engine Switcher */}
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => {
+              soundEffects.click();
+              updateVoiceSettings({ ttsEngine: 'elevenlabs' });
+            }}
+            className={`p-3 rounded-2xl border text-left transition-all ${
+              (voiceSettings.ttsEngine === 'elevenlabs' || !voiceSettings.ttsEngine)
+                ? 'border-emerald-500/60 bg-emerald-500/10 text-[var(--app-text)] shadow-sm'
+                : 'border-[var(--app-glass-border)] bg-[var(--app-pill-glass-bg)] opacity-70 hover:opacity-100'
+            }`}
+          >
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-semibold">ElevenLabs AI</span>
+              {(voiceSettings.ttsEngine === 'elevenlabs' || !voiceSettings.ttsEngine) && (
+                <span className="text-[9px] bg-emerald-500 text-white font-bold px-1.5 py-0.2 rounded-full">HD</span>
+              )}
+            </div>
+            <span className="text-[10px] opacity-70 block font-light leading-snug">
+              Премиум студийный женский голос (Multilingual V2)
             </span>
-            <span className="text-[11px] opacity-70 font-light">
-              Microsoft Edge Neural (Живые интонации и естественные акценты)
+          </button>
+
+          <button
+            onClick={() => {
+              soundEffects.click();
+              updateVoiceSettings({ ttsEngine: 'edgeneural' });
+            }}
+            className={`p-3 rounded-2xl border text-left transition-all ${
+              voiceSettings.ttsEngine === 'edgeneural'
+                ? 'border-emerald-500/60 bg-emerald-500/10 text-[var(--app-text)] shadow-sm'
+                : 'border-[var(--app-glass-border)] bg-[var(--app-pill-glass-bg)] opacity-70 hover:opacity-100'
+            }`}
+          >
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-semibold">Edge Neural</span>
+              {voiceSettings.ttsEngine === 'edgeneural' && (
+                <span className="text-[9px] bg-emerald-500 text-white font-bold px-1.5 py-0.2 rounded-full">OK</span>
+              )}
+            </div>
+            <span className="text-[10px] opacity-70 block font-light leading-snug">
+              Быстрый нейросетевой голос Microsoft
             </span>
-          </div>
-          <span className="text-[10px] font-semibold bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 px-2.5 py-1 rounded-full">
-            Активен
-          </span>
+          </button>
         </div>
+
+        {/* ElevenLabs Female Voices Selector */}
+        {(voiceSettings.ttsEngine === 'elevenlabs' || !voiceSettings.ttsEngine) && (
+          <div className="space-y-2 pt-1 border-t border-[var(--app-glass-border)]">
+            <span className="text-[11px] font-medium opacity-70 block">
+              Выбор женского тембра (ElevenLabs):
+            </span>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { id: 'cgSgspJ2msm6clMCkdW9', name: 'Jessica', emoji: '🌸', desc: 'Игривый, тёплый, яркий' },
+                { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Sarah', emoji: '✨', desc: 'Мягкий, естественный' },
+                { id: 'XrExE9yKIg1WjnnlVkGX', name: 'Matilda', emoji: '📖', desc: 'Литературный, спокойный' },
+                { id: 'Xb7hH8MSUJpSbSDYk0k2', name: 'Alice', emoji: '🎓', desc: 'Чёткий, образовательный' },
+              ].map((v) => {
+                const isSelected = (voiceSettings.elevenlabsVoiceId || 'cgSgspJ2msm6clMCkdW9') === v.id;
+                return (
+                  <button
+                    key={v.id}
+                    onClick={() => {
+                      soundEffects.click();
+                      updateVoiceSettings({ elevenlabsVoiceId: v.id });
+                    }}
+                    className={`p-2.5 rounded-xl border text-left transition-all ${
+                      isSelected
+                        ? 'border-orange-500 bg-[var(--app-cta-bg)] text-[var(--app-cta-text)] font-semibold shadow-sm'
+                        : 'border-[var(--app-glass-border)] bg-[var(--app-pill-glass-bg)] text-[var(--app-text)] opacity-75 hover:opacity-100'
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <span>{v.emoji}</span>
+                      <span className="text-xs font-medium">{v.name}</span>
+                    </div>
+                    <span className="text-[9px] opacity-70 block mt-0.5 truncate font-light">
+                      {v.desc}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 6. Language Selection */}

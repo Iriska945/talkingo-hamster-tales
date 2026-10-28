@@ -123,7 +123,7 @@ export const TalkPage: React.FC = () => {
     };
   }, [lang, activeCharacter, scenario]);
 
-  // Voice synthesis with Edge Neural & Speed Control
+  // Voice synthesis with ElevenLabs Studio Neural Voice (Female) & Speed Control
   const speakAssistant = async (text: string) => {
     setVoiceState('speaking');
     try {
@@ -134,10 +134,14 @@ export const TalkPage: React.FC = () => {
           voiceName: voiceSettings.voiceName,
         });
       } else {
-        await speakWithEdgeNeural(text, lang, { rate: voiceSpeed });
+        await speakWithEdgeNeural(text, lang, {
+          engine: voiceSettings.ttsEngine || 'elevenlabs',
+          voiceId: voiceSettings.elevenlabsVoiceId || 'cgSgspJ2msm6clMCkdW9',
+          rate: voiceSpeed,
+        });
       }
     } catch (e) {
-      console.warn('Edge TTS fallback to browser speech:', e);
+      console.warn('TTS fallback to browser speech:', e);
       await speakWithBrowser(text, lang, { rate: voiceSpeed });
     } finally {
       setVoiceState('idle');

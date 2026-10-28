@@ -22,7 +22,21 @@ const LINKBUS_API_KEY = process.env.LINKBUS_API_KEY || process.env.DEEPSEEK_API_
 const LINKBUS_BASE_URL = (process.env.LINKBUS_BASE_URL || "https://www.linkbus.net/v1").replace(/\/+$/, '');
 const DEFAULT_MODEL = process.env.LINKBUS_MODEL || "deepseek-v4-flash";
 
-// Voice mappings for Microsoft Edge Neural TTS
+// ElevenLabs configuration (Female voices)
+const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY || "";
+// Default female voice: Jessica (Playful, Bright, Warm, perfect companion tone)
+const DEFAULT_FEMALE_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || "cgSgspJ2msm6clMCkdW9";
+
+// Curated high-quality ElevenLabs female voices
+const ELEVENLABS_FEMALE_VOICES = [
+  { id: "cgSgspJ2msm6clMCkdW9", name: "Jessica", desc: "Игривый, тёплый, дружелюбный (Рекомендуется)" },
+  { id: "EXAVITQu4vr4xnSDxMaL", name: "Sarah", desc: "Мягкий, уверенный, естественный" },
+  { id: "XrExE9yKIg1WjnnlVkGX", name: "Matilda", desc: "Литературный, тёплый, спокойный" },
+  { id: "Xb7hH8MSUJpSbSDYk0k2", name: "Alice", desc: "Чёткий, образовательный, ясный" },
+  { id: "21m00Tcm4TlvDq8ikWAM", name: "Rachel", desc: "Спокойный, медитативный, классический" },
+];
+
+// Voice mappings for Microsoft Edge Neural TTS fallback
 const EDGE_VOICE_MAP = {
   ru: "ru-RU-SvetlanaNeural",
   en: "en-US-AnaNeural",       // Cute energetic mascot tone
@@ -36,14 +50,38 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
     provider: 'linkbus',
     defaultModel: DEFAULT_MODEL,
-    tts: 'edge-neural'
+    tts: {
+      primary: 'elevenlabs',
+      fallback: 'edge-neural',
+      elevenlabsConfigured: !!ELEVENLABS_API_KEY,
+      defaultVoiceId: DEFAULT_FEMALE_VOICE_ID,
+    }
   });
 });
 
-// 2. High-Quality Free Edge Neural TTS Endpoint
+// 2. Available TTS voices endpoint
+app.get('/api/tts/voices', (req, res) => {
+  res.json({
+    engine: 'elevenlabs',
+    configured: !!ELEVENLABS_API_KEY,
+    defaultVoiceId: DEFAULT_FEMALE_VOICE_ID,
+    voices: ELEVENLABS_FEMALE_VOICES,
+  });
+});
+
+// 3. High-Quality Neural TTS Endpoint (ElevenLabs with auto Edge Neural fallback)
 app.post('/api/tts', async (req, res) => {
   try {
-    const { text, language = 'ru', voiceName, rate = 1.0, pitch = 0 } = req.body;
+    const {
+      text,
+      language = 'ru',
+      engine = 'elevenlabs',
+      voiceId,
+      voiceName,
+      rate = 1.0,
+      pitch = 0
+    } = req.body;
+
     if (!text || !text.trim()) {
       return res.status(400).json({ error: 'Text is required' });
     }
@@ -53,6 +91,46 @@ app.post('/api/tts', async (req, res) => {
       .replace(/[*_#`~>]/g, '')
       .trim();
 
+    // 1. If engine is elevenlabs (default) and API key exists, synthesize with ElevenLabs
+    if ((engine === 'elevenlabs' || !engine) && ELEVENLABS_API_KEY) {
+      const selectedVoiceId = voiceId || DEFAULT_FEMALE_VOICE_ID;
+      try {
+        const elevenRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}`, {
+          method: "POST",
+          headers: {
+            "xi-api-key": ELEVENLABS_API_KEY.trim(),
+            "Content-Type": "application/json",
+            "Accept": "audio/mpeg"
+          },
+          body: JSON.stringify({
+            text: cleanText,
+            model_id: "eleven_multilingual_v2",
+            voice_settings: {
+              stability: 0.5,
+              similarity_boost: 0.85,
+              style: 0.2,
+              use_speaker_boost: true
+            }
+          })
+        });
+
+        if (elevenRes.ok) {
+          const buffer = await elevenRes.arrayBuffer();
+          res.setHeader('Content-Type', 'audio/mpeg');
+          res.setHeader('X-TTS-Engine', 'elevenlabs');
+          res.setHeader('X-TTS-Voice', selectedVoiceId);
+          res.setHeader('Cache-Control', 'public, max-age=86400');
+          return res.send(Buffer.from(buffer));
+        } else {
+          const errText = await elevenRes.text();
+          console.warn(`ElevenLabs API returned ${elevenRes.status}, falling back to Edge Neural:`, errText);
+        }
+      } catch (elevenErr) {
+        console.warn("ElevenLabs request failed, falling back to Edge Neural:", elevenErr);
+      }
+    }
+
+    // 2. Microsoft Edge Neural TTS (Primary Fallback)
     const selectedVoice = voiceName || EDGE_VOICE_MAP[language] || EDGE_VOICE_MAP.ru;
 
     const tts = new MsEdgeTTS();
@@ -66,6 +144,7 @@ app.post('/api/tts', async (req, res) => {
     const { audioStream } = tts.toStream(cleanText, { rate: rateStr, pitch: pitchStr });
 
     res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('X-TTS-Engine', 'edgeneural');
     res.setHeader('Cache-Control', 'public, max-age=86400');
     audioStream.pipe(res);
 

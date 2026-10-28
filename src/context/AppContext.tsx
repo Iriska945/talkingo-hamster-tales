@@ -324,7 +324,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [voiceSettings, setVoiceSettings] = useState<VoiceSettings>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.VOICE);
-      return saved ? { ...INITIAL_VOICE_SETTINGS, ...JSON.parse(saved) } : INITIAL_VOICE_SETTINGS;
+      const parsed = saved ? JSON.parse(saved) : {};
+      return {
+        ...INITIAL_VOICE_SETTINGS,
+        ...parsed,
+        ttsEngine: parsed.ttsEngine || 'elevenlabs',
+        elevenlabsVoiceId: parsed.elevenlabsVoiceId || 'cgSgspJ2msm6clMCkdW9',
+      };
     } catch {
       return INITIAL_VOICE_SETTINGS;
     }
