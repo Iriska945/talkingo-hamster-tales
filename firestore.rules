@@ -1,0 +1,372 @@
+rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// This security rules file assumes the following data structures:
+//
+// Collection: users
+// Document ID: {userId} (matches request.auth.uid)
+// Fields:
+//   - name: string (required, 1-100 chars) - User display name
+//   - email: string (optional, 3-100 chars, valid email format) - User email (PII)
+//   - avatar: string (optional, 1-500 chars) - Avatar emoji, URL, or asset path
+//   - googleId: string (optional, 1-128 chars) - Google account UID
+//   - google_id: string (optional, 1-128 chars) - Google account UID (snake_case)
+//   - streak: number (optional, >= 0) - Current daily study streak
+//   - currentStreak: number (optional, >= 0) - Current daily study streak
+//   - current_streak: number (optional, >= 0) - Current daily study streak (snake_case)
+//   - xp: number (optional, >= 0) - Experience points
+//   - coins: number (optional, >= 0) - In-app coins balance
+//   - diamonds: number (optional, >= 0) - Premium diamonds balance
+//   - energy: number (optional, >= 0) - Current energy points
+//   - maxEnergy: number (optional, >= 0) - Max energy points
+//   - activeCharacterId: string (optional, 1-100 chars) - Currently selected character
+//   - active_character_id: string (optional, 1-100 chars) - Selected character (snake_case)
+//   - unlockedCharacters: list (optional, max 100 items) - List of unlocked character IDs
+//   - lastStudyDate: string (optional, 1-50 chars) - Last active study date (YYYY-MM-DD)
+//   - last_study_date: string (optional, 1-50 chars) - Last active study date (snake_case)
+//   - streakDays: list (optional, max 366 items) - Historical streak dates
+//   - totalLessonsCompleted: number (optional, >= 0) - Total lessons completed
+//   - totalWordsLearned: number (optional, >= 0) - Total vocabulary learned
+//   - league: string (optional, 1-50 chars) - Leaderboard league (bronze, silver, etc.)
+//   - isLoggedIn: bool (optional) - Login status flag
+//   - createdAt: timestamp or string (optional, immutable) - Document creation time
+//   - created_at: timestamp or string (optional, immutable) - Creation time (snake_case)
+//   - updatedAt: timestamp or string (optional) - Last update time
+//   - updated_at: timestamp or string (optional) - Last update time (snake_case)
+//
+// Collection: users/{userId}/phrases
+// Document ID: {phraseId}
+// Fields:
+//   - id: string (optional, 1-100 chars, immutable) - Phrase identifier
+//   - userId: string (optional, 1-100 chars, immutable) - Scoped user ID (must match {userId})
+//   - user_id: string (optional, 1-100 chars, immutable) - Scoped user ID (snake_case)
+//   - language: string (required, 2-10 chars) - Language code ('ru', 'en', 'kk')
+//   - phrase: string (required, 1-500 chars) - Idiomatic or literary phrase text
+//   - kidExplanation: string (optional, 0-2000 chars) - Child-friendly explanation
+//   - kid_explanation: string (optional, 0-2000 chars) - Child-friendly explanation
+//   - literalMeaning: string (optional, 0-2000 chars) - Literal meaning of the phrase
+//   - literal_meaning: string (optional, 0-2000 chars) - Literal meaning
+//   - sourceBook: string (optional, 0-500 chars) - Literary origin (e.g., Pushkin, Mark Twain)
+//   - source_book: string (optional, 0-500 chars) - Literary origin
+//   - example: string (optional, 0-2000 chars) - Sentence example
+//   - dateAdded: timestamp or string (optional, immutable) - Date added
+//   - createdAt: timestamp or string (optional, immutable) - Creation timestamp
+//   - created_at: timestamp or string (optional, immutable) - Creation timestamp
+//   - updatedAt: timestamp or string (optional) - Update timestamp
+//   - updated_at: timestamp or string (optional) - Update timestamp
+//
+// Collection: users/{userId}/quests
+// Document ID: {questId}
+// Fields:
+//   - id: string (optional, 1-100 chars, immutable) - Quest identifier
+//   - key: string (required, 1-100 chars, immutable) - Quest key (e.g., 'speak_3', 'learn_2')
+//   - title: string or map (required, string <= 300 chars, or localized map <= 10 keys)
+//   - target: number (required, >= 0) - Target goal
+//   - progress: number (required, >= 0) - Current progress
+//   - completed: bool (required) - Completion state
+//   - claimed: bool (required) - Reward claimed state
+//   - rewardCoins: number (optional, >= 0) - Reward in coins
+//   - reward_coins: number (optional, >= 0) - Reward in coins (snake_case)
+//   - rewardDiamonds: number (optional, >= 0) - Reward in diamonds
+//   - reward_diamonds: number (optional, >= 0) - Reward in diamonds (snake_case)
+//   - icon: string (optional, 1-50 chars) - Quest icon / emoji
+//   - createdAt: timestamp or string (optional, immutable) - Creation time
+//   - created_at: timestamp or string (optional, immutable) - Creation time
+//   - lastUpdated: timestamp or string (optional) - Last update time
+//   - updatedAt: timestamp or string (optional) - Last update time
+//   - updated_at: timestamp or string (optional) - Last update time
+//
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Core Security & Auth Helpers
+    // ===============================================================
+
+    // Check if the request is from an authenticated user
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if authenticated user owns the document path
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Validate that all specified required fields exist in the incoming document
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    // Validate that incoming document contains only allowed schema keys (prevents schema pollution)
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // Ensure immutable field remains unchanged on document update
+    function isImmutableFieldUnchanged(field) {
+      return !(field in resource.data) ||
+             (field in request.resource.data && request.resource.data[field] == resource.data[field]);
+    }
+
+    // ===============================================================
+    // Field Type & Bound Validators (DoS & Type Safety Protection)
+    // ===============================================================
+
+    // Validate optional string with length bounds
+    function isValidOptionalString(field, minLen, maxLen) {
+      return !(field in request.resource.data) ||
+             (request.resource.data[field] is string &&
+              request.resource.data[field].size() >= minLen &&
+              request.resource.data[field].size() <= maxLen);
+    }
+
+    // Validate optional email format and length
+    function isValidOptionalEmail(field) {
+      return !(field in request.resource.data) ||
+             (request.resource.data[field] is string &&
+              request.resource.data[field].size() >= 3 &&
+              request.resource.data[field].size() <= 100 &&
+              request.resource.data[field].matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"));
+    }
+
+    // Validate optional non-negative numeric field with upper bound protection
+    function isValidOptionalNonNegativeNumber(field) {
+      return !(field in request.resource.data) ||
+             (request.resource.data[field] is number &&
+              request.resource.data[field] >= 0 &&
+              request.resource.data[field] <= 100000000);
+    }
+
+    // Validate optional boolean field
+    function isValidOptionalBool(field) {
+      return !(field in request.resource.data) || request.resource.data[field] is bool;
+    }
+
+    // Validate optional list with size upper bound (prevents array-bloat DoS)
+    function isValidOptionalList(field, maxSize) {
+      return !(field in request.resource.data) ||
+             (request.resource.data[field] is list && request.resource.data[field].size() <= maxSize);
+    }
+
+    // Validate optional timestamp or ISO date string
+    function isValidDateOrTimestamp(field) {
+      return !(field in request.resource.data) ||
+             request.resource.data[field] is timestamp ||
+             (request.resource.data[field] is string && request.resource.data[field].size() <= 50);
+    }
+
+    // Validate quest title (string or localized map)
+    function isValidQuestTitle(title) {
+      return (title is string && title.size() >= 1 && title.size() <= 300) ||
+             (title is map && title.keys().size() >= 1 && title.keys().size() <= 10);
+    }
+
+    // ===============================================================
+    // Domain Validators (Used in BOTH create AND update rules)
+    // ===============================================================
+
+    // Domain validator for User documents
+    function isValidUser(data) {
+      return hasOnlyAllowedFields([
+               'name', 'email', 'avatar',
+               'googleId', 'google_id',
+               'streak', 'currentStreak', 'current_streak',
+               'xp', 'coins', 'diamonds', 'energy', 'maxEnergy',
+               'activeCharacterId', 'active_character_id',
+               'unlockedCharacters',
+               'lastStudyDate', 'last_study_date',
+               'streakDays',
+               'totalLessonsCompleted', 'totalWordsLearned',
+               'league', 'isLoggedIn',
+               'createdAt', 'created_at',
+               'updatedAt', 'updated_at'
+             ]) &&
+             hasRequiredFields(['name']) &&
+             data.name is string && data.name.size() >= 1 && data.name.size() <= 100 &&
+             isValidOptionalEmail('email') &&
+             isValidOptionalString('avatar', 1, 500) &&
+             isValidOptionalString('googleId', 1, 128) &&
+             isValidOptionalString('google_id', 1, 128) &&
+             isValidOptionalNonNegativeNumber('streak') &&
+             isValidOptionalNonNegativeNumber('currentStreak') &&
+             isValidOptionalNonNegativeNumber('current_streak') &&
+             isValidOptionalNonNegativeNumber('xp') &&
+             isValidOptionalNonNegativeNumber('coins') &&
+             isValidOptionalNonNegativeNumber('diamonds') &&
+             isValidOptionalNonNegativeNumber('energy') &&
+             isValidOptionalNonNegativeNumber('maxEnergy') &&
+             isValidOptionalString('activeCharacterId', 1, 100) &&
+             isValidOptionalString('active_character_id', 1, 100) &&
+             isValidOptionalList('unlockedCharacters', 100) &&
+             isValidOptionalString('lastStudyDate', 1, 50) &&
+             isValidOptionalString('last_study_date', 1, 50) &&
+             isValidOptionalList('streakDays', 366) &&
+             isValidOptionalNonNegativeNumber('totalLessonsCompleted') &&
+             isValidOptionalNonNegativeNumber('totalWordsLearned') &&
+             isValidOptionalString('league', 1, 50) &&
+             isValidOptionalBool('isLoggedIn') &&
+             isValidDateOrTimestamp('createdAt') &&
+             isValidDateOrTimestamp('created_at') &&
+             isValidDateOrTimestamp('updatedAt') &&
+             isValidDateOrTimestamp('updated_at');
+    }
+
+    // Additional invariants on User update
+    function isValidUserUpdate() {
+      return isImmutableFieldUnchanged('createdAt') &&
+             isImmutableFieldUnchanged('created_at') &&
+             isImmutableFieldUnchanged('googleId') &&
+             isImmutableFieldUnchanged('google_id');
+    }
+
+    // Domain validator for Dictionary Phrases subcollection
+    function isValidPhrase(data, userId) {
+      return hasOnlyAllowedFields([
+               'id', 'userId', 'user_id',
+               'language', 'phrase',
+               'kidExplanation', 'kid_explanation',
+               'literalMeaning', 'literal_meaning',
+               'sourceBook', 'source_book',
+               'example',
+               'dateAdded', 'createdAt', 'created_at',
+               'updatedAt', 'updated_at'
+             ]) &&
+             hasRequiredFields(['language', 'phrase']) &&
+             data.language is string && data.language.size() >= 2 && data.language.size() <= 10 &&
+             data.phrase is string && data.phrase.size() >= 1 && data.phrase.size() <= 500 &&
+             isValidOptionalString('id', 1, 100) &&
+             (!('userId' in data) || data.userId == userId) &&
+             (!('user_id' in data) || data.user_id == userId) &&
+             isValidOptionalString('kidExplanation', 0, 2000) &&
+             isValidOptionalString('kid_explanation', 0, 2000) &&
+             isValidOptionalString('literalMeaning', 0, 2000) &&
+             isValidOptionalString('literal_meaning', 0, 2000) &&
+             isValidOptionalString('sourceBook', 0, 500) &&
+             isValidOptionalString('source_book', 0, 500) &&
+             isValidOptionalString('example', 0, 2000) &&
+             isValidDateOrTimestamp('dateAdded') &&
+             isValidDateOrTimestamp('createdAt') &&
+             isValidDateOrTimestamp('created_at') &&
+             isValidDateOrTimestamp('updatedAt') &&
+             isValidDateOrTimestamp('updated_at');
+    }
+
+    // Additional invariants on Phrase update
+    function isValidPhraseUpdate() {
+      return isImmutableFieldUnchanged('id') &&
+             isImmutableFieldUnchanged('userId') &&
+             isImmutableFieldUnchanged('user_id') &&
+             isImmutableFieldUnchanged('dateAdded') &&
+             isImmutableFieldUnchanged('createdAt') &&
+             isImmutableFieldUnchanged('created_at');
+    }
+
+    // Domain validator for Quests subcollection
+    function isValidQuest(data) {
+      return hasOnlyAllowedFields([
+               'id', 'key', 'title',
+               'target', 'progress', 'completed', 'claimed',
+               'rewardCoins', 'reward_coins',
+               'rewardDiamonds', 'reward_diamonds',
+               'icon',
+               'createdAt', 'created_at',
+               'lastUpdated', 'updatedAt', 'updated_at'
+             ]) &&
+             hasRequiredFields(['key', 'title', 'target', 'progress', 'completed', 'claimed']) &&
+             data.key is string && data.key.size() >= 1 && data.key.size() <= 100 &&
+             isValidQuestTitle(data.title) &&
+             data.target is number && data.target >= 0 && data.target <= 1000000 &&
+             data.progress is number && data.progress >= 0 && data.progress <= 1000000 &&
+             data.completed is bool &&
+             data.claimed is bool &&
+             isValidOptionalString('id', 1, 100) &&
+             isValidOptionalString('icon', 1, 50) &&
+             isValidOptionalNonNegativeNumber('rewardCoins') &&
+             isValidOptionalNonNegativeNumber('reward_coins') &&
+             isValidOptionalNonNegativeNumber('rewardDiamonds') &&
+             isValidOptionalNonNegativeNumber('reward_diamonds') &&
+             isValidDateOrTimestamp('createdAt') &&
+             isValidDateOrTimestamp('created_at') &&
+             isValidDateOrTimestamp('lastUpdated') &&
+             isValidDateOrTimestamp('updatedAt') &&
+             isValidDateOrTimestamp('updated_at');
+    }
+
+    // Additional invariants on Quest update
+    function isValidQuestUpdate() {
+      return isImmutableFieldUnchanged('id') &&
+             isImmutableFieldUnchanged('key') &&
+             isImmutableFieldUnchanged('createdAt') &&
+             isImmutableFieldUnchanged('created_at');
+    }
+
+    // ===============================================================
+    // Match Rules
+    // ===============================================================
+
+    // Default Deny: All collections and paths are denied by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // -------------------------------------------------------------
+    // User Profile Documents
+    // Path: /users/{userId}
+    // -------------------------------------------------------------
+    match /users/{userId} {
+      // Owner only: prevents public scraping or PII exposure
+      allow read: if isOwner(userId);
+
+      // Create: Only owner can create their profile with valid schema
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+
+      // Update: Only owner, enforces validator on update to eliminate Update Bypass
+      allow update: if isOwner(userId) &&
+                       isValidUser(request.resource.data) &&
+                       isValidUserUpdate();
+
+      // Delete: Only owner can delete their own profile document
+      allow delete: if isOwner(userId);
+
+      // -----------------------------------------------------------
+      // Phrases Subcollection (Literary dictionary idioms/expressions)
+      // Path: /users/{userId}/phrases/{phraseId}
+      // -----------------------------------------------------------
+      match /phrases/{phraseId} {
+        allow read: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidPhrase(request.resource.data, userId);
+
+        allow update: if isOwner(userId) &&
+                         isValidPhrase(request.resource.data, userId) &&
+                         isValidPhraseUpdate();
+
+        allow delete: if isOwner(userId);
+      }
+
+      // -----------------------------------------------------------
+      // Quests Subcollection (Daily quests progress)
+      // Path: /users/{userId}/quests/{questId}
+      // -----------------------------------------------------------
+      match /quests/{questId} {
+        allow read: if isOwner(userId);
+
+        allow create: if isOwner(userId) &&
+                         isValidQuest(request.resource.data);
+
+        allow update: if isOwner(userId) &&
+                         isValidQuest(request.resource.data) &&
+                         isValidQuestUpdate();
+
+        allow delete: if isOwner(userId);
+      }
+    }
+  }
+}

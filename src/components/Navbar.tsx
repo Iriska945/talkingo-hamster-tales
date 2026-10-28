@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { Language } from '../types';
@@ -27,7 +27,23 @@ const LANGUAGES: Array<{ code: Language; label: string; flag: string }> = [
 export const Navbar: React.FC = () => {
   const { lang, setLang, theme, toggleTheme, resources, profile, t } = useApp();
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const langMenuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+
+  useEffect(() => {
+    if (!langMenuOpen) return;
+    const close = (e: MouseEvent | KeyboardEvent) => {
+      if (e instanceof KeyboardEvent ? e.key === 'Escape' : !langMenuRef.current?.contains(e.target as Node)) {
+        setLangMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', close);
+    document.addEventListener('keydown', close);
+    return () => {
+      document.removeEventListener('mousedown', close);
+      document.removeEventListener('keydown', close);
+    };
+  }, [langMenuOpen]);
 
   const currentLangObj = LANGUAGES.find(l => l.code === lang) || LANGUAGES[0];
 
@@ -99,18 +115,18 @@ export const Navbar: React.FC = () => {
           </button>
 
           {/* Language Switcher Liquid Glass Pill */}
-          <div className="relative shrink-0">
+          <div ref={langMenuRef} className="relative shrink-0">
             <button
               onClick={() => setLangMenuOpen(!langMenuOpen)}
               className="flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-[var(--app-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] text-xs font-medium text-[var(--app-text)] transition-all shadow-sm active:scale-95 backdrop-blur-xl"
             >
               <span className="text-sm">{currentLangObj.flag}</span>
-              <span className="hidden lg:inline text-neutral-300 dark:text-neutral-300">{currentLangObj.label}</span>
+              <span className="hidden lg:inline">{currentLangObj.label}</span>
               <ChevronDown className={`w-3 h-3 opacity-60 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {langMenuOpen && (
-              <div className="absolute top-full mt-2 right-0 w-36 liquid-glass-elevated py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+              <div className="liquid-glass-elevated !absolute top-full mt-2 right-0 w-36 !rounded-2xl py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
                 {LANGUAGES.map((item) => (
                   <button
                     key={item.code}

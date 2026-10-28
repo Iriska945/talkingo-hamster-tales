@@ -3,6 +3,13 @@ import { AppTheme, Character, DailyQuest, DictionaryPhrase, Language, UserProfil
 import { CHARACTERS } from '../data/characters';
 import { INITIAL_PHRASES, INITIAL_PROFILE, INITIAL_QUESTS, INITIAL_RESOURCES, INITIAL_VOICE_SETTINGS } from '../data/initialData';
 import { soundEffects } from '../services/voice';
+import {
+  signOutFirebase,
+  syncUserDataToFirestore,
+  loadUserDataFromFirestore,
+  savePhraseToFirestore,
+  loadPhrasesFromFirestore,
+} from '../services/firebase';
 
 interface AppContextType {
   lang: Language;
@@ -872,6 +879,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
       })
     }).catch(() => {});
+
+    // Persist to Cloud Firestore if logged in
+    if (profile.googleId && profile.isLoggedIn) {
+      savePhraseToFirestore(profile.googleId, {
+        ...phrase,
+        id: newId,
+        dateAdded: today,
+        language: phrase.language || lang,
+      });
+    }
   };
 
   const updateVoiceSettings = (newSettings: Partial<VoiceSettings>) => {
@@ -944,10 +961,41 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setProfile(updatedProfile);
     localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(updatedProfile));
     soundEffects.success();
+    // Cloud Firestore Real-time Sync & Hydration
+    if (authData.googleId) {
+      loadUserDataFromFirestore(authData.googleId).then((remoteData) => {
+        if (remoteData) {
+          if (remoteData.xp != null) {
+            setResources((prev) => ({
+              ...prev,
+              xp: remoteData.xp ?? prev.xp,
+              coins: remoteData.coins ?? prev.coins,
+              diamonds: remoteData.diamonds ?? prev.diamonds,
+            }));
+          }
+          if (Array.isArray(remoteData.unlockedCharacters) && remoteData.unlockedCharacters.length > 0) {
+            setOwnedCharacterIds((prev) => Array.from(new Set([...prev, ...remoteData.unlockedCharacters])));
+          }
+        } else {
+          syncUserDataToFirestore(authData.googleId, updatedProfile, resources, ownedCharacterIds, quests);
+        }
+      }).catch((err) => console.warn('Firestore user hydration error:', err));
+
+      loadPhrasesFromFirestore(authData.googleId).then((remotePhrases) => {
+        if (remotePhrases && remotePhrases.length > 0) {
+          setPhrases((prev) => {
+            const existingIds = new Set(prev.map((p) => p.id));
+            const newOnes = remotePhrases.filter((p) => !existingIds.has(p.id));
+            return [...newOnes, ...prev];
+          });
+        }
+      }).catch((err) => console.warn('Firestore phrases hydration error:', err));
+    }
   };
 
   const logout = () => {
     soundEffects.click();
+    signOutFirebase();
     const guestProfile: UserProfile = {
       ...INITIAL_PROFILE,
       name: 'Любознательный Ученик',
