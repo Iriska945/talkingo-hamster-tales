@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Character } from '../types';
-import { speakWithBrowser, soundEffects } from '../services/voice';
+import { speakWithTTS, soundEffects } from '../services/voice';
 import { ShoppingBag, Coins, Gem, Check, Volume2 } from 'lucide-react';
 
 export const ShopPage: React.FC = () => {
@@ -22,7 +22,7 @@ export const ShopPage: React.FC = () => {
     soundEffects.click();
     setPreviewingId(c.id);
     const greeting = c.greeting[lang] || c.greeting.ru;
-    speakWithBrowser(greeting, lang).then(() => {
+    speakWithTTS(greeting, lang).finally(() => {
       setPreviewingId(null);
     });
   };

@@ -151,6 +151,40 @@ export interface TTSOptions {
   pitch?: number;
 }
 
+// Stop any currently playing audio / synthesis & abort in-flight requests
+let currentAudio: HTMLAudioElement | null = null;
+let currentSpeechId = 0;
+let currentAbortController: AbortController | null = null;
+
+export function stopSpeaking() {
+  currentSpeechId++;
+  if (currentAbortController) {
+    try {
+      currentAbortController.abort();
+    } catch {
+      // ignore
+    }
+    currentAbortController = null;
+  }
+  if (currentAudio) {
+    try {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio.src = '';
+    } catch (e) {
+      console.warn(e);
+    }
+    currentAudio = null;
+  }
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+}
+
 // Exclusive ElevenLabs studio female neural voice synthesizer
 export async function speakWithTTS(
   text: string,
@@ -158,6 +192,10 @@ export async function speakWithTTS(
   options?: TTSOptions
 ): Promise<void> {
   stopSpeaking();
+  const mySpeechId = currentSpeechId;
+  const abortCtrl = new AbortController();
+  currentAbortController = abortCtrl;
+
   const cleanText = text
     .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
     .replace(/[*_#`~>]/g, '')
@@ -175,29 +213,52 @@ export async function speakWithTTS(
         text: cleanText,
         language: lang,
         voiceId: options?.voiceId ?? 'cgSgspJ2msm6clMCkdW9', // Default female: Jessica
-      })
+      }),
+      signal: abortCtrl.signal,
     });
+
+    if (mySpeechId !== currentSpeechId) {
+      return;
+    }
 
     if (!res.ok) {
       throw new Error(`ElevenLabs TTS HTTP ${res.status}`);
     }
 
     const blob = await res.blob();
-    const audio = new Audio(URL.createObjectURL(blob));
+    if (mySpeechId !== currentSpeechId) return;
+
+    const audioUrl = URL.createObjectURL(blob);
+    const audio = new Audio(audioUrl);
     currentAudio = audio;
 
     return new Promise((resolve) => {
       audio.onended = () => {
-        currentAudio = null;
+        if (currentAudio === audio) {
+          currentAudio = null;
+        }
+        URL.revokeObjectURL(audioUrl);
         resolve();
       };
       audio.onerror = () => {
-        currentAudio = null;
+        if (currentAudio === audio) {
+          currentAudio = null;
+        }
+        URL.revokeObjectURL(audioUrl);
         resolve();
       };
-      audio.play().catch(() => resolve());
+      audio.play().catch(() => {
+        if (currentAudio === audio) {
+          currentAudio = null;
+        }
+        URL.revokeObjectURL(audioUrl);
+        resolve();
+      });
     });
-  } catch (err) {
+  } catch (err: any) {
+    if (err?.name === 'AbortError') {
+      return;
+    }
     console.error("ElevenLabs TTS error:", err);
   }
 }
@@ -235,22 +296,6 @@ export function createSpeechRecognizer(lang: Language) {
   return recognition;
 }
 
-// Stop any currently playing audio / synthesis
-let currentAudio: HTMLAudioElement | null = null;
-
-export function stopSpeaking() {
-  if (currentAudio) {
-    try {
-      currentAudio.pause();
-      currentAudio = null;
-    } catch (e) {
-      console.warn(e);
-    }
-  }
-  if (typeof window !== 'undefined' && window.speechSynthesis) {
-    window.speechSynthesis.cancel();
-  }
-}
 
 // Speak text using Web Speech Synthesis API
 export function speakWithBrowser(

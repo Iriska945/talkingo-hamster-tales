@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { speakWithBrowser, speakWithTTS, soundEffects } from '../services/voice';
+import { speakWithTTS, soundEffects } from '../services/voice';
 import { GoogleAuthModal } from '../components/GoogleAuthModal';
 import {
   Volume2,
@@ -12,7 +12,6 @@ import {
   RotateCcw,
   Sun,
   Moon,
-  Layers,
   ChevronRight,
   ShieldCheck,
 } from 'lucide-react';
@@ -56,8 +55,8 @@ export const SettingsPage: React.FC = () => {
       await speakWithTTS(testPhrase, lang, {
         voiceId: voiceSettings.elevenlabsVoiceId || 'cgSgspJ2msm6clMCkdW9',
       });
-    } catch {
-      await speakWithBrowser(testPhrase, lang);
+    } catch (e) {
+      console.warn('ElevenLabs test speech error:', e);
     } finally {
       setIsPlayingTest(false);
     }

@@ -10,7 +10,6 @@ import {
   ChevronDown,
   Sun,
   Moon,
-  Layers,
   BookOpen,
   Bookmark,
   ShoppingBag,
@@ -161,15 +160,6 @@ export const Navbar: React.FC = () => {
           >
             <Coins className="w-3.5 h-3.5 text-yellow-400" />
             <span>{resources.coins}</span>
-          </Link>
-
-          {/* Gallery exhibition link (Desktop) */}
-          <Link
-            to="/gallery"
-            className="hidden md:flex w-8 h-8 rounded-full bg-[var(--app-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] items-center justify-center text-orange-400 transition-transform active:scale-90 shadow-sm shrink-0"
-            title="Галерея сценариев Talkingo (scrn.gallery)"
-          >
-            <Layers className="w-4 h-4" />
           </Link>
         </div>
 

@@ -14,10 +14,9 @@ import {
   Briefcase,
   Play,
   CheckCircle2,
-  Layers,
 } from 'lucide-react';
 import { TalkingoLogo } from '../components/TalkingoLogo';
-import { speakWithEdgeNeural, speakWithBrowser, soundEffects } from '../services/voice';
+import { speakWithTTS, soundEffects } from '../services/voice';
 
 export const HomeLanding: React.FC = () => {
   const { activeCharacter, lang } = useApp();
@@ -34,9 +33,9 @@ export const HomeLanding: React.FC = () => {
         : "Hello! I'm your Talkingo voice companion. Let's practice speaking naturally and have fun!";
 
     try {
-      await speakWithEdgeNeural(sampleText, lang);
-    } catch {
-      await speakWithBrowser(sampleText, lang);
+      await speakWithTTS(sampleText, lang);
+    } catch (e) {
+      console.warn('ElevenLabs preview error:', e);
     } finally {
       setIsPlayingSample(false);
     }
@@ -134,9 +133,8 @@ export const HomeLanding: React.FC = () => {
               Выбери сценарий практики
             </h2>
           </div>
-          <Link to="/gallery" className="text-xs text-orange-400 hover:text-orange-300 flex items-center gap-1 font-medium transition-colors">
-            <Layers className="w-3.5 h-3.5" />
-            <span>Все сценарии (scrn.gallery) →</span>
+          <Link to="/learn" className="text-xs text-orange-400 hover:text-orange-300 flex items-center gap-1 font-medium transition-colors">
+            <span>Все сценарии →</span>
           </Link>
         </div>
 
