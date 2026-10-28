@@ -15,71 +15,99 @@ export interface TalkResponse {
 const LOCAL_FALLBACK_PHRASES: Record<Language, Array<{ phrase: string; meaning: string; literal: string; source: string; example: string }>> = {
   ru: [
     {
-      phrase: "Не разлей вода",
-      meaning: "Очень крепкая и неразлучная дружба.",
-      literal: "Даже вода не может пройти между близкими друзьями.",
-      source: "Русские сказки и былины",
-      example: "Мы с тобой теперь друзья — не разлей вода!"
+      phrase: "Береги честь смолоду",
+      meaning: "Поступать честно, достойно и благородно с самого детства.",
+      literal: "Сохранять незапятнанным свое честное имя с юных лет.",
+      source: "«Капитанская дочка» — А. С. Пушкин",
+      example: "Как завещал отец Петру Гриневу: береги честь смолоду!"
     },
     {
-      phrase: "Взять себя в руки",
-      meaning: "Справиться со своим волнением, успокоиться и собраться.",
-      literal: "Физически удержать свои руки.",
-      source: "«Отцы и дети» — И. С. Тургенев",
-      example: "Когда сложно говорить на новом языке, просто возьми себя в руки и улыбнись!"
+      phrase: "Будет дождик, будут и грибки",
+      meaning: "После трудностей и испытаний обязательно наступит радость и успех.",
+      literal: "После благодатного дождя в лесу всегда вырастают грибы.",
+      source: "«Капитанская дочка» — А. С. Пушкин",
+      example: "Не огорчайся ошибкам в учебе: будет дождик, будут и грибки!"
     },
     {
-      phrase: "Светлая голова",
-      meaning: "Очень умный, сообразительный и способный человек.",
-      literal: "Голова, излучающая свет.",
-      source: "«Детство» — Л. Н. Толстой",
-      example: "Ты отлично говоришь, у тебя поистине светлая голова!"
+      phrase: "Душа в душу",
+      meaning: "Жить в полном согласии, любви, дружбе и взаимопонимании.",
+      literal: "Когда два сердца бьются в унисон, словно одна душа.",
+      source: "«Капитанская дочка» — А. С. Пушкин",
+      example: "Мы с тобой общаемся душа в душу!"
     },
     {
-      phrase: "Семи пядей во лбу",
-      meaning: "Выдающийся ум, чрезвычайно умный человек.",
-      literal: "Лоб высотой в семь старинных мер длины (пядей).",
-      source: "Русский эпос",
-      example: "Не обязательно быть семи пядей во лбу, главное — тренироваться каждый день!"
+      phrase: "Час от часу не легче",
+      meaning: "Неожиданный новый поворот событий, требующий смелости.",
+      literal: "С каждым прошедшим часом задача становится серьезнее.",
+      source: "«Капитанская дочка» — А. С. Пушкин",
+      example: "Час от часу не легче, но мы обязательно справимся с любым заданием!"
+    },
+    {
+      phrase: "Казнить так казнить, жаловать так жаловать",
+      meaning: "Поступать решительно, широко и великодушно.",
+      literal: "Слова Пугачева о решительности и широте души.",
+      source: "«Капитанская дочка» — А. С. Пушкин",
+      example: "Учиться так учиться, говорить так говорить!"
     }
   ],
   en: [
     {
-      phrase: "Break a leg",
-      meaning: "Good luck! A theatrical way to wish someone great success.",
-      literal: "To fracture a bone in your leg.",
-      source: "Classic Theatre & Literature Lore",
-      example: "You are doing great with your English practice, break a leg!"
+      phrase: "Like painting a fence",
+      meaning: "Turning hard work or practice into an exciting, enjoyable game.",
+      literal: "Tom Sawyer convincing his friends that whitewashing a fence is a rare privilege.",
+      source: "«The Adventures of Tom Sawyer» — Mark Twain",
+      example: "Practicing new words with me is just like painting a fence — pure fun!"
     },
     {
-      phrase: "Bite the bullet",
-      meaning: "To face a difficult situation with courage and bravery.",
-      literal: "To literally bite on a lead bullet during medicine treatment long ago.",
-      source: "Historical Tales of Courage",
-      example: "Don't be shy to speak, just bite the bullet and try!"
+      phrase: "Cross your heart",
+      meaning: "To solemnly promise and swear you are telling the absolute truth.",
+      literal: "Drawing an imaginary cross over your chest as an oath.",
+      source: "«The Adventures of Tom Sawyer» — Mark Twain",
+      example: "Cross your heart that you will practice speaking every single day!"
     },
     {
-      phrase: "Hit the books",
-      meaning: "To study enthusiastically and learn something new.",
-      literal: "To physically hit books with your hands.",
-      source: "Modern Student Colloquial Sayings",
-      example: "It's always fun to hit the books together with your hamster friend!"
+      phrase: "Play hooky",
+      meaning: "To skip routine duties to go on an adventurous, exciting journey.",
+      literal: "To stay away from school without permission.",
+      source: "«The Adventures of Tom Sawyer» — Mark Twain",
+      example: "Tom loved to play hooky and explore the mighty Mississippi river!"
+    },
+    {
+      phrase: "A sight for sore eyes",
+      meaning: "Someone or something you are truly delighted and overjoyed to see.",
+      literal: "A welcome vision that eases pain and brings comfort.",
+      source: "«The Adventures of Tom Sawyer» — Mark Twain",
+      example: "Your voice is a sight for sore eyes, my brave friend!"
     }
   ],
   kk: [
     {
-      phrase: "Ат салысу",
-      meaning: "Бір іске бар ықыласпен көмектесу, қолдау көрсету.",
-      literal: "Атпен қатарласа жүріп көмектесу.",
-      source: "Қазақ салт-дәстүрлері",
-      example: "Тіл үйренуге барлығымыз бірге ат салысайық!"
+      phrase: "Түбінде адам болатын бала",
+      meaning: "Болашағынан зор үміт күттіретін, парасатты да дарынды бала.",
+      literal: "Келешекте нағыз азамат болатын жас өрен.",
+      source: "«Менің атым Қожа» — Бердібек Соқпақбаев",
+      example: "Сенің талпынысың зор, түбінде адам болатын баласың!"
     },
     {
-      phrase: "Көңілі түсу",
-      meaning: "Біреуге немесе бір нәрсеге деген ықыласы, ниеті ауу.",
-      literal: "Көңілдің төмен түсуі немесе бейімделуі.",
-      source: "Абайдың қара сөздері",
-      example: "Сенің талпынысыңа қарап, көңілім толқып тұр!"
+      phrase: "Қожа көнбейді",
+      meaning: "Ешқашан мойымау, әділдік үшін соңына дейін күресу.",
+      literal: "Қожаның ерік-жігері мен қайсар мінезі.",
+      source: "«Менің атым Қожа» — Бердібек Соқпақбаев",
+      example: "Қиындықтарға еш мойыма, Қожа көнбейді деген осы!"
+    },
+    {
+      phrase: "Жақсының аты өлмейді",
+      meaning: "Игі іс пен білімнің сәулесі ешқашан өшпейді.",
+      literal: "Жақсы адамның аты да, оның қалдырған ісі де ғасырлар бойы сақталады.",
+      source: "«Менің атым Қожа» — Бердібек Соқпақбаев",
+      example: "Білім жинаған жанның еңбегі далаға кетпейді, жақсының аты өлмейді!"
+    },
+    {
+      phrase: "Сыр бермеу",
+      meaning: "Өзіңді сабырлы ұстау, сыр білдірмей, батыл болу.",
+      literal: "Іштегі сезім мен толқуды сыртқа көрсетпеу.",
+      source: "«Менің атым Қожа» — Бердібек Соқпақбаев",
+      example: "Жаңа тілде сөйлегенде еш қорықпа, сыр бермей батыл сөйле!"
     }
   ]
 };
