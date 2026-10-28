@@ -35,6 +35,10 @@ export interface UserResources {
 
 export interface UserProfile {
   name: string;
+  email?: string;
+  avatar?: string;
+  googleId?: string;
+  isLoggedIn?: boolean;
   activeCharacterId: string;
   currentStreak: number;
   lastStudyDate: string;

@@ -36,16 +36,16 @@ export const LearnPage: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 leading-none">
                 <span className="text-xl font-medium text-[var(--app-text)]">
-                  {profile.currentStreak} {profile.currentStreak === 1 ? 'день' : 'дней'}
+                  {profile.currentStreak} {profile.currentStreak === 1 ? t('streakDay1') : t('streakDays')}
                 </span>
                 <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-500 dark:text-amber-300">
-                  Ударный режим
+                  {t('streakTitle')}
                 </span>
               </div>
               <span className="text-xs opacity-70 mt-1 block font-light">
                 {profile.currentStreak > 0
-                  ? 'Практика активна сегодня. Так держать!'
-                  : 'Сделай 1 голосовой диалог, чтобы зажечь огонёк.'}
+                  ? t('streakActive')
+                  : t('streakInactive')}
               </span>
             </div>
           </div>
@@ -93,11 +93,11 @@ export const LearnPage: React.FC = () => {
             <div className="flex items-center gap-1.5 mb-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" />
               <span className="text-[10px] font-semibold uppercase tracking-widest opacity-60">
-                Голосовая комната
+                {t('voiceRoom')}
               </span>
             </div>
             <h2 className="text-lg font-medium text-[var(--app-text)] leading-snug">
-              Поговори с {activeCharacter.name}
+              {t('talkWith')} {activeCharacter.name}
             </h2>
             <p className="text-xs opacity-70 mt-1 leading-relaxed font-light line-clamp-2">
               «{activeCharacter.greeting[lang] || activeCharacter.greeting.ru}»
@@ -117,10 +117,10 @@ export const LearnPage: React.FC = () => {
         <div className="mt-4 pt-3 border-t border-[var(--app-glass-border)] flex items-center justify-between text-xs opacity-80 font-light">
           <span className="flex items-center gap-1 text-amber-500 dark:text-amber-300 font-medium">
             <Sparkles className="w-3.5 h-3.5" />
-            +30 монет • +1 алмаз за диалог
+            {t('voiceRoomReward')}
           </span>
           <span className="text-[var(--app-text)] font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-            Войти <ChevronRight className="w-4 h-4" />
+            {t('enter')} <ChevronRight className="w-4 h-4" />
           </span>
         </div>
       </Link>
@@ -135,7 +135,7 @@ export const LearnPage: React.FC = () => {
             </h3>
           </div>
           <span className="text-[11px] font-normal opacity-60">
-            Ежедневно
+            {t('daily')}
           </span>
         </div>
 
@@ -176,7 +176,7 @@ export const LearnPage: React.FC = () => {
                 <div className="shrink-0">
                   {q.claimed ? (
                     <span className="text-[10px] font-medium opacity-50 px-2 py-1 rounded-full bg-[var(--app-pill-glass-bg)]">
-                      Завершено
+                      {t('completed')}
                     </span>
                   ) : q.progress >= q.target ? (
                     <button
@@ -205,14 +205,14 @@ export const LearnPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-cyan-400" />
             <h3 className="text-sm font-medium text-[var(--app-text)]">
-              Крылатые выражения в словаре
+              {t('dictPreview')}
             </h3>
           </div>
           <Link
             to="/dictionary"
             className="text-xs opacity-70 hover:opacity-100 flex items-center gap-0.5"
           >
-            Все ({phrases.length}) <ChevronRight className="w-3.5 h-3.5" />
+            {t('all')} ({phrases.length}) <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
@@ -235,7 +235,7 @@ export const LearnPage: React.FC = () => {
           </div>
         ) : (
           <div className="text-center py-4 text-xs opacity-60 font-light">
-            Общайся с хомячком в голосовой комнате, чтобы находить новые цитаты и идиомы!
+            {t('emptyDict')}
           </div>
         )}
       </div>

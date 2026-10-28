@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { speakWithBrowser, speakWithTTS, soundEffects } from '../services/voice';
+import { GoogleAuthModal } from '../components/GoogleAuthModal';
 import {
   Volume2,
   Globe,
@@ -9,43 +10,37 @@ import {
   CheckCircle2,
   LogOut,
   RotateCcw,
-  Check,
-  User,
   Sun,
   Moon,
   Layers,
   ChevronRight,
-  Radio,
+  ShieldCheck,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const DAILY_GOALS = [
-  { id: 5, label: '5 мин/день', desc: 'Лёгкий старт' },
-  { id: 10, label: '10 мин/день', desc: 'Оптимально' },
-  { id: 15, label: '15 мин/день', desc: 'Ударный темп' },
-];
-
 export const SettingsPage: React.FC = () => {
-  const { lang, setLang, theme, setTheme, profile, voiceSettings, updateVoiceSettings, resetProgress } = useApp();
-  const [selectedGoal, setSelectedGoal] = useState<number>(10);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isPlayingTest, setIsPlayingTest] = useState(false);
-  const [userProfile, setUserProfile] = useState<{ name: string; email: string; avatar: string }>({
-    name: profile.name,
-    email: 'user@gmail.com',
-    avatar: '🐹'
-  });
+  const {
+    lang,
+    setLang,
+    theme,
+    setTheme,
+    profile,
+    voiceSettings,
+    updateVoiceSettings,
+    resetProgress,
+    logout,
+    t,
+  } = useApp();
 
-  const handleGoogleLogin = () => {
-    soundEffects.click();
-    setIsLoggedIn(true);
-    setUserProfile({
-      name: 'Ученик Google',
-      email: 'alex.study@gmail.com',
-      avatar: '🎓'
-    });
-    soundEffects.success();
-  };
+  const [selectedGoal, setSelectedGoal] = useState<number>(10);
+  const [showGoogleModal, setShowGoogleModal] = useState<boolean>(false);
+  const [isPlayingTest, setIsPlayingTest] = useState(false);
+
+  const dailyGoals = [
+    { id: 5, label: t('goal5'), desc: t('goalLight') },
+    { id: 10, label: t('goal10'), desc: t('goalOptimal') },
+    { id: 15, label: t('goal15'), desc: t('goalIntense') },
+  ];
 
   const handleTestVoice = async () => {
     soundEffects.click();
@@ -75,40 +70,49 @@ export const SettingsPage: React.FC = () => {
       <div className="ambient-glow-orb w-[350px] h-[350px] bg-indigo-600/15 top-[-40px] left-[-80px] pointer-events-none" />
       <div className="ambient-glow-orb w-[300px] h-[300px] bg-cyan-600/10 top-[200px] right-[-60px] pointer-events-none" />
 
-      {/* 1. User Profile & Google Sign-In Card (Liquid Glass) */}
-      <div className="liquid-glass p-5 relative z-10">
+      {/* 1. User Profile & Real Google Sign-In Card (Liquid Glass) */}
+      <div className="liquid-glass p-5 rounded-3xl relative z-10">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-2xl shadow-sm">
-              {isLoggedIn ? userProfile.avatar : '🐹'}
+              {profile.avatar || '🐹'}
             </div>
             <div>
-              <h2 className="text-base font-medium text-[var(--app-text)] leading-tight">
-                {isLoggedIn ? userProfile.name : profile.name}
-              </h2>
-              <span className="text-xs opacity-70 font-light">
-                {isLoggedIn ? userProfile.email : 'Гостевой профиль (прогресс сохранён)'}
+              <div className="flex items-center gap-1.5">
+                <h2 className="text-base font-semibold text-[var(--app-text)] leading-tight">
+                  {profile.name}
+                </h2>
+                {profile.isLoggedIn && (
+                  <span className="text-[10px] bg-blue-500/20 text-blue-400 border border-blue-400/30 px-1.5 py-0.2 rounded-full font-medium flex items-center gap-0.5">
+                    <ShieldCheck className="w-3 h-3 text-blue-400" /> Google
+                  </span>
+                )}
+              </div>
+              <span className="text-xs opacity-70 font-light block mt-0.5">
+                {profile.isLoggedIn && profile.email
+                  ? profile.email
+                  : t('guestProfile')}
               </span>
             </div>
           </div>
 
-          {isLoggedIn ? (
+          {profile.isLoggedIn ? (
             <button
-              onClick={() => {
-                soundEffects.click();
-                setIsLoggedIn(false);
-              }}
+              onClick={logout}
               className="p-2.5 rounded-full bg-[var(--app-pill-glass-bg)] opacity-70 hover:opacity-100 hover:text-rose-400 transition-colors"
-              title="Выйти"
+              title={t('signOut')}
             >
               <LogOut className="w-4 h-4" />
             </button>
           ) : (
             <button
-              onClick={handleGoogleLogin}
-              className="px-4 py-2 liquid-pill-white text-xs flex items-center gap-2 active:scale-95"
+              onClick={() => {
+                soundEffects.click();
+                setShowGoogleModal(true);
+              }}
+              className="px-4 py-2 liquid-pill-white text-xs flex items-center gap-2 active:scale-95 shadow-md"
             >
-              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -126,7 +130,7 @@ export const SettingsPage: React.FC = () => {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                 />
               </svg>
-              <span>Войти</span>
+              <span>{t('signInWithGoogle')}</span>
             </button>
           )}
         </div>
@@ -134,16 +138,16 @@ export const SettingsPage: React.FC = () => {
         {/* Sync status badge */}
         <div className="flex items-center gap-1.5 p-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-[11px] text-emerald-400 font-medium">
           <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-500" />
-          <span>Синхронизация в базу данных SQLite активна</span>
+          <span>{t('syncSuccess')}</span>
         </div>
       </div>
 
       {/* 2. Theme Selection Card (Light / Dark) */}
-      <div className="liquid-glass p-5 space-y-3 relative z-10">
+      <div className="liquid-glass p-5 rounded-3xl space-y-3 relative z-10">
         <div className="flex items-center gap-2">
           {theme === 'dark' ? <Moon className="w-4 h-4 text-amber-400" /> : <Sun className="w-4 h-4 text-orange-500" />}
           <h3 className="text-sm font-medium text-[var(--app-text)]">
-            Тема оформления
+            {t('themeTitle')}
           </h3>
         </div>
 
@@ -160,7 +164,7 @@ export const SettingsPage: React.FC = () => {
             }`}
           >
             <Moon className="w-4 h-4 text-amber-400" />
-            <span className="text-xs">Тёмная (Glass)</span>
+            <span className="text-xs">{t('themeDark')}</span>
           </button>
 
           <button
@@ -175,48 +179,22 @@ export const SettingsPage: React.FC = () => {
             }`}
           >
             <Sun className="w-4 h-4 text-orange-500" />
-            <span className="text-xs">Светлая (Canvas)</span>
+            <span className="text-xs">{t('themeLight')}</span>
           </button>
         </div>
       </div>
 
-      {/* 3. Scenario Flows Exhibition Link */}
-      <Link
-        to="/gallery"
-        className="liquid-glass p-4.5 flex items-center justify-between group hover:border-orange-500/40 transition-all relative z-10 block"
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400">
-            <Layers className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <h3 className="text-sm font-medium text-[var(--app-text)]">
-                Галерея сценариев (scrn.gallery)
-              </h3>
-              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-orange-500/15 text-orange-400 font-bold uppercase">
-                NEW
-              </span>
-            </div>
-            <p className="text-xs opacity-70 font-light mt-0.5">
-              Интерактивный просмотр всех 432 экранов и сценариев в рамке iPhone
-            </p>
-          </div>
-        </div>
-        <ChevronRight className="w-4 h-4 opacity-50 group-hover:translate-x-1 group-hover:opacity-100 transition-all" />
-      </Link>
-
-      {/* 4. Daily Goal Card (Liquid Glass) */}
-      <div className="liquid-glass p-5 space-y-3 relative z-10">
+      {/* 3. Daily Goal Card (Liquid Glass) */}
+      <div className="liquid-glass p-5 rounded-3xl space-y-3 relative z-10">
         <div className="flex items-center gap-2">
           <Target className="w-4 h-4 text-amber-400" />
           <h3 className="text-sm font-medium text-[var(--app-text)]">
-            Цель на день
+            {t('dailyGoalTitle')}
           </h3>
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          {DAILY_GOALS.map((goal) => (
+          {dailyGoals.map((goal) => (
             <button
               key={goal.id}
               onClick={() => {
@@ -229,7 +207,7 @@ export const SettingsPage: React.FC = () => {
                   : 'border-[var(--app-glass-border)] bg-[var(--app-pill-glass-bg)] text-[var(--app-text)] hover:opacity-90'
               }`}
             >
-              <span className="block text-xs leading-tight">
+              <span className="block text-xs leading-tight font-medium">
                 {goal.label}
               </span>
               <span className="block text-[10px] mt-1 opacity-70 font-light">
@@ -240,13 +218,13 @@ export const SettingsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 5. Voice Settings (ElevenLabs Studio Female Voice & Fallbacks) */}
-      <div className="liquid-glass p-5 space-y-4 relative z-10">
+      {/* 4. Voice Settings (ElevenLabs Studio Female Voice) */}
+      <div className="liquid-glass p-5 rounded-3xl space-y-4 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Volume2 className="w-4 h-4 text-cyan-400" />
             <h3 className="text-sm font-medium text-[var(--app-text)]">
-              Голосовой движок и озвучка
+              {t('voiceSettings')}
             </h3>
           </div>
           <button
@@ -255,7 +233,7 @@ export const SettingsPage: React.FC = () => {
             className="text-[11px] font-semibold text-cyan-500 dark:text-cyan-400 hover:opacity-80 transition-opacity flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/25 active:scale-95"
           >
             <Sparkles className={`w-3 h-3 ${isPlayingTest ? 'animate-spin' : ''}`} />
-            <span>{isPlayingTest ? 'Озвучиваю...' : 'Тест звука'}</span>
+            <span>{isPlayingTest ? t('testingVoice') : t('testVoiceBtn')}</span>
           </button>
         </div>
 
@@ -264,26 +242,26 @@ export const SettingsPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold text-[var(--app-text)]">
-                ElevenLabs AI Studio
+                ElevenLabs Studio Neural Voice
               </span>
               <span className="text-[9px] font-bold bg-emerald-500 text-white px-1.5 py-0.2 rounded-full">
-                HD Voice
+                HD
               </span>
             </div>
             <span className="text-[10px] opacity-70 block font-light leading-snug mt-0.5">
-              Эксклюзивный студийный женский тембр (Multilingual V2)
+              {t('elevenLabsActive')}
             </span>
           </div>
           <span className="text-[11px] font-medium text-emerald-400 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Активен
+            {t('activeStatus')}
           </span>
         </div>
 
         {/* ElevenLabs Female Voices Selector */}
         <div className="space-y-2 pt-1 border-t border-[var(--app-glass-border)]">
           <span className="text-[11px] font-medium opacity-70 block">
-            Выбор женского тембра (ElevenLabs):
+            Женские тембры (ElevenLabs Multilingual V2):
           </span>
           <div className="grid grid-cols-2 gap-2">
             {[
@@ -321,12 +299,12 @@ export const SettingsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 6. Language Selection */}
-      <div className="liquid-glass p-5 space-y-3 relative z-10">
+      {/* 5. Language Selection */}
+      <div className="liquid-glass p-5 rounded-3xl space-y-3 relative z-10">
         <div className="flex items-center gap-2">
           <Globe className="w-4 h-4 text-purple-400" />
           <h3 className="text-sm font-medium text-[var(--app-text)]">
-            Язык изучения
+            {t('interfaceLang')}
           </h3>
         </div>
 
@@ -352,20 +330,26 @@ export const SettingsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 7. Reset Option */}
+      {/* 6. Reset Option */}
       <div className="pt-2 text-center relative z-10">
         <button
           onClick={() => {
-            if (confirm('Сбросить накопленный прогресс и начать сначала?')) {
+            if (confirm(t('resetConfirm'))) {
               resetProgress();
             }
           }}
           className="text-xs opacity-50 hover:text-rose-400 hover:opacity-100 transition-colors inline-flex items-center gap-1 font-light"
         >
           <RotateCcw className="w-3.5 h-3.5" />
-          <span>Сбросить прогресс к началу</span>
+          <span>{t('resetProgressBtn')}</span>
         </button>
       </div>
+
+      {/* Google Authentication Modal */}
+      <GoogleAuthModal
+        isOpen={showGoogleModal}
+        onClose={() => setShowGoogleModal(false)}
+      />
 
     </div>
   );

@@ -26,18 +26,18 @@ const LANGUAGES: Array<{ code: Language; label: string; flag: string }> = [
 ];
 
 export const Navbar: React.FC = () => {
-  const { lang, setLang, theme, toggleTheme, resources, profile } = useApp();
+  const { lang, setLang, theme, toggleTheme, resources, profile, t } = useApp();
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const location = useLocation();
 
   const currentLangObj = LANGUAGES.find(l => l.code === lang) || LANGUAGES[0];
 
   const desktopNavLinks = [
-    { to: '/learn', label: 'Уроки', icon: BookOpen },
-    { to: '/dictionary', label: 'Словарь', icon: Bookmark },
-    { to: '/shop', label: 'Магазин', icon: ShoppingBag },
-    { to: '/leaderboard', label: 'Лига', icon: Trophy },
-    { to: '/settings', label: 'Профиль', icon: User },
+    { to: '/learn', label: t('navLearn'), icon: BookOpen },
+    { to: '/dictionary', label: t('navDict'), icon: Bookmark },
+    { to: '/shop', label: t('navShop'), icon: ShoppingBag },
+    { to: '/leaderboard', label: t('navLeague'), icon: Trophy },
+    { to: '/settings', label: t('navProfile'), icon: User },
   ];
 
   return (
@@ -78,7 +78,7 @@ export const Navbar: React.FC = () => {
             className="ml-1 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs shadow-[0_0_16px_rgba(255,107,26,0.35)] hover:scale-105 active:scale-95 transition-all"
           >
             <Mic className="w-3.5 h-3.5 animate-pulse" />
-            <span>Диалог</span>
+            <span>{t('navTalk')}</span>
           </NavLink>
         </nav>
 

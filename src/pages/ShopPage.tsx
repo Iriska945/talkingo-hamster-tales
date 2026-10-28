@@ -31,17 +31,17 @@ export const ShopPage: React.FC = () => {
     switch (rarity) {
       case 'legendary':
         return {
-          label: 'Легендарный',
+          label: t('rarityLegendary'),
           badge: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
         };
       case 'rare':
         return {
-          label: 'Редкий',
+          label: t('rarityRare'),
           badge: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30',
         };
       default:
         return {
-          label: 'Обычный',
+          label: t('rarityCommon'),
           badge: 'bg-white/[0.06] text-neutral-400 border-white/10',
         };
     }
@@ -63,10 +63,10 @@ export const ShopPage: React.FC = () => {
             </div>
             <div>
               <h1 className="text-xl font-semibold text-[var(--app-text)] leading-tight">
-                Магазин компаньонов
+                {t('shopHeader')}
               </h1>
               <span className="text-xs opacity-70 font-light block mt-0.5">
-                Открывай персонажей за успехи в речи
+                {t('shopSub')}
               </span>
             </div>
           </div>
@@ -75,11 +75,11 @@ export const ShopPage: React.FC = () => {
           <div className="flex items-center gap-2 self-start sm:self-auto">
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/25 text-xs font-semibold text-yellow-300 shadow-sm">
               <Coins className="w-3.5 h-3.5 text-yellow-400" />
-              <span>{resources.coins} монет</span>
+              <span>{resources.coins} {t('coinsUnit')}</span>
             </div>
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/25 text-xs font-semibold text-cyan-300 shadow-sm">
               <Gem className="w-3.5 h-3.5 text-cyan-300" />
-              <span>{resources.diamonds} алмазов</span>
+              <span>{resources.diamonds} {t('diamondsUnit')}</span>
             </div>
           </div>
         </div>
@@ -138,7 +138,7 @@ export const ShopPage: React.FC = () => {
                   onClick={() => handlePreviewVoice(char)}
                   disabled={previewingId === char.id}
                   className="w-9 h-9 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] flex items-center justify-center text-[var(--app-text)] opacity-80 hover:opacity-100 transition-colors shrink-0"
-                  title="Прослушать голос"
+                  title={t('listenVoice')}
                 >
                   <Volume2 className={`w-4 h-4 ${previewingId === char.id ? 'animate-pulse text-emerald-400' : ''}`} />
                 </button>
@@ -154,7 +154,7 @@ export const ShopPage: React.FC = () => {
                         : 'liquid-pill-glass'
                     }`}
                   >
-                    {isActive ? 'Активен' : 'Выбрать'}
+                    {isActive ? t('activeStatus') : t('selectBtn')}
                   </button>
                 ) : (
                   <button
@@ -163,7 +163,7 @@ export const ShopPage: React.FC = () => {
                         buyCharacter(char);
                       } else {
                         soundEffects.click();
-                        alert('Недостаточно монет или алмазов! Практикуйся в речевом тренажёре.');
+                        alert(t('notEnoughFunds'));
                       }
                     }}
                     className={`flex-1 py-2 px-3 rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
@@ -172,7 +172,7 @@ export const ShopPage: React.FC = () => {
                         : 'bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] text-[var(--app-text)] opacity-40 cursor-not-allowed'
                     }`}
                   >
-                    <span>Купить</span>
+                    <span>{t('buyBtn')}</span>
                     {char.price_coins > 0 && (
                       <span className="flex items-center gap-0.5 text-yellow-500 dark:text-yellow-400 font-mono">
                         <Coins className="w-3 h-3" />

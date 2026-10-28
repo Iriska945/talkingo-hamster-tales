@@ -4,7 +4,7 @@ import { BookOpen, Mic, Bookmark, ShoppingBag, User, Trophy } from 'lucide-react
 import { useApp } from '../context/AppContext';
 
 export const BottomNav: React.FC = () => {
-  const { activeCharacter } = useApp();
+  const { activeCharacter, t } = useApp();
   const location = useLocation();
 
   const isTalkPage = location.pathname === '/talk';
@@ -14,33 +14,33 @@ export const BottomNav: React.FC = () => {
     {
       to: '/learn',
       icon: BookOpen,
-      label: 'Уроки',
+      label: t('navLearn'),
     },
     {
       to: '/leaderboard',
       icon: Trophy,
-      label: 'Лига',
+      label: t('navLeague'),
     },
     {
       to: '/talk',
       icon: Mic,
-      label: 'Диалог',
+      label: t('navTalk'),
       isCenter: true,
     },
     {
       to: '/dictionary',
       icon: Bookmark,
-      label: 'Словарь',
+      label: t('navDict'),
     },
     {
       to: '/shop',
       icon: ShoppingBag,
-      label: 'Магазин',
+      label: t('navShop'),
     },
     {
       to: '/settings',
       icon: User,
-      label: 'Профиль',
+      label: t('navProfile'),
     },
   ];
 

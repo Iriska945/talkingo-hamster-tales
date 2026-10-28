@@ -26,6 +26,8 @@ interface AppContextType {
   claimQuest: (questId: string) => void;
   addDictionaryPhrase: (phrase: Omit<DictionaryPhrase, 'id' | 'dateAdded'>) => void;
   updateVoiceSettings: (settings: Partial<VoiceSettings>) => void;
+  loginWithGoogle: (authData: { googleId: string; email: string; name: string; avatar?: string; credential?: string }) => Promise<void>;
+  logout: () => void;
   resetProgress: () => void;
 }
 
@@ -53,22 +55,112 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
     personalTraining: "Речевой тренажёр",
     tapToStart: "Нажми, чтобы говорить с",
     dailyQuests: "Ежедневные задания",
+    questsTitle: "Ежедневные задания",
+    daily: "Ежедневно",
+    streakDay1: "день",
+    streakDays: "дней",
+    streakTitle: "Ударный режим",
+    streakActive: "Практика активна сегодня. Так держать!",
+    streakInactive: "Сделай 1 голосовой диалог, чтобы зажечь огонёк.",
+    voiceRoom: "Голосовая комната",
+    talkWith: "Поговори с",
+    voiceRoomReward: "+30 монет • +1 алмаз за диалог",
+    enter: "Войти",
+    completed: "Завершено",
+    dictPreview: "Крылатые выражения в словаре",
+    all: "Все",
+    emptyDict: "Общайся с хомячком в голосовой комнате, чтобы открывать цитаты!",
     speak3times: "Поговори 3 раза сегодня",
     learn2phrases: "Выучи 2 новые фразы",
     finishLesson: "Закончи 1 урок речи",
     claim: "Забрать",
     claimed: "Получено",
+    
+    // Navigation
+    navLearn: "Уроки",
+    navDict: "Словарь",
+    navShop: "Магазин",
+    navLeague: "Лига",
+    navProfile: "Профиль",
+    navTalk: "Диалог",
+
+    // Shop
     shopTitle: "Магазин персонажей",
-    shopSub: "Выбирай собеседника с уникальными способностями и бонусами!",
+    shopHeader: "Магазин компаньонов",
+    shopSub: "Открывай персонажей за успехи в речи",
     own: "В наличии",
     buy: "Купить",
     select: "Выбрать",
     active: "Активный",
+    activeStatus: "Активен",
+    listenVoice: "Прослушать голос",
+    rarityCommon: "Обычный",
+    rarityRare: "Редкий",
+    rarityLegendary: "Легендарный",
+    selectBtn: "Выбрать",
+    buyBtn: "Купить",
+    coinsUnit: "монет",
+    diamondsUnit: "алмазов",
+    notEnoughFunds: "Недостаточно монет или алмазов! Практикуйся в речевом тренажёре.",
+
+    // Dictionary
     dictTitle: "Мой словарь",
-    dictSub: "Крылатые выражения, идиомы и пословицы из книг",
+    dictHeader: "Словарь выражений",
+    dictSub: "Крылатые выражения, идиомы и пословицы из классических книг",
     dictEmpty: "Пока пусто. Поговори с хомячком, чтобы открыть крылатые фразы!",
-    searchPhrases: "Поиск по фразам и значениям...",
+    searchPhrases: "Поиск по фразам, книгам и значениям...",
+    searchPlaceholder: "Поиск по фразам, книгам и значениям...",
     allLanguages: "Все языки",
+    filterAll: "Все книги",
+    learnedCount: "Выучено:",
+    phrasesUnit: "фраз",
+    listTab: "Список",
+    cardsTab: "Карточки",
+    flipCard: "Нажми, чтобы перевернуть",
+    quizNext: "Следующая фраза",
+    quizFinish: "Завершить",
+    quizComplete: "Тренировка завершена!",
+    quizReviewAgain: "Повторить снова",
+
+    // Leaderboard
+    leagueTitle: "лига",
+    tournament: "Турнир",
+    timeRemaining: "Итоги недели через 3 дня",
+    yourXp: "Твой опыт",
+    participant: "Участник",
+    xpCol: "Опыт (XP)",
+    promotionZone: "Переход наверх",
+    demotionZone: "Зона вылета",
+    safeZone: "Безопасная зона",
+    youBadge: "Ты",
+
+    // Settings & Profile
+    profileTitle: "Профиль",
+    guestProfile: "Гостевой профиль (прогресс сохранён)",
+    syncSuccess: "Прогресс и словарь автоматически сохраняются",
+    signInWithGoogle: "Войти через Google",
+    signOut: "Выйти",
+    dailyGoalTitle: "Цель на день",
+    goal5: "5 мин/день",
+    goal10: "10 мин/день",
+    goal15: "15 мин/день",
+    goalLight: "Лёгкий старт",
+    goalOptimal: "Оптимально",
+    goalIntense: "Ударный темп",
+    interfaceLang: "Язык обучения",
+    themeTitle: "Тема оформления",
+    themeDark: "Тёмная тема (Liquid Glass)",
+    themeLight: "Светлая тема (Clear Day)",
+    voiceSettings: "Голос и синтез речи (ElevenLabs)",
+    elevenLabsActive: "ElevenLabs Studio Voice активен",
+    testVoiceBtn: "Тест голоса",
+    testingVoice: "Воспроизведение...",
+    resetProgressTitle: "Сброс прогресса",
+    resetProgressDesc: "Очистить локальный прогресс, сбросить серию и начать заново",
+    resetProgressBtn: "Сбросить весь прогресс",
+    resetConfirm: "Вы уверены, что хотите сбросить весь прогресс?",
+
+    // Voice & System
     tapToTalk: "Нажми микрофон и говори",
     listening: "Слушаю тебя…",
     thinking: "Думаю над ответом…",
@@ -94,8 +186,8 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
     testKey: "Проверить ключ",
     ttsEngineLabel: "Движок озвучки",
     browserSpeech: "Встроенный в браузер (Бесплатно, быстро)",
-    openAiTts: "OpenAI TTS (Требует ключ OpenAI)",
-    elevenLabsTts: "ElevenLabs (Требует ключ ElevenLabs)",
+    openAiTts: "OpenAI TTS",
+    elevenLabsTts: "ElevenLabs",
     speechRate: "Скорость речи",
     speechPitch: "Высота голоса (тон)",
     startPracticing: "Начать урок",
@@ -115,22 +207,112 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
     personalTraining: "Speaking Trainer",
     tapToStart: "Tap to chat with",
     dailyQuests: "Daily Quests",
+    questsTitle: "Daily Quests",
+    daily: "Daily",
+    streakDay1: "day",
+    streakDays: "days",
+    streakTitle: "Day Streak",
+    streakActive: "Practice is active today. Keep it up!",
+    streakInactive: "Complete 1 voice lesson to ignite your streak.",
+    voiceRoom: "Voice Room",
+    talkWith: "Talk with",
+    voiceRoomReward: "+30 coins • +1 diamond per chat",
+    enter: "Enter",
+    completed: "Completed",
+    dictPreview: "Literary Idioms in Dictionary",
+    all: "All",
+    emptyDict: "Chat with your companion in the voice room to discover book quotes!",
     speak3times: "Speak 3 times today",
     learn2phrases: "Learn 2 new phrases",
     finishLesson: "Finish 1 speaking lesson",
     claim: "Claim",
     claimed: "Claimed",
+
+    // Navigation
+    navLearn: "Lessons",
+    navDict: "Dictionary",
+    navShop: "Shop",
+    navLeague: "League",
+    navProfile: "Profile",
+    navTalk: "Talk",
+
+    // Shop
     shopTitle: "Character Shop",
-    shopSub: "Choose a study buddy with special powers and rewards!",
+    shopHeader: "Companion Shop",
+    shopSub: "Unlock new buddies through speaking achievements",
     own: "Owned",
     buy: "Buy",
     select: "Select",
     active: "Active",
+    activeStatus: "Active",
+    listenVoice: "Preview voice",
+    rarityCommon: "Common",
+    rarityRare: "Rare",
+    rarityLegendary: "Legendary",
+    selectBtn: "Select",
+    buyBtn: "Buy",
+    coinsUnit: "coins",
+    diamondsUnit: "diamonds",
+    notEnoughFunds: "Not enough coins or diamonds! Keep practicing in the voice room.",
+
+    // Dictionary
     dictTitle: "My Dictionary",
+    dictHeader: "Idiom Dictionary",
     dictSub: "Literary idioms and classic book expressions",
     dictEmpty: "Empty for now. Chat with your character to collect phrases!",
-    searchPhrases: "Search phrases or meanings...",
+    searchPhrases: "Search phrases, books, and meanings...",
+    searchPlaceholder: "Search phrases, books, and meanings...",
     allLanguages: "All languages",
+    filterAll: "All books",
+    learnedCount: "Mastered:",
+    phrasesUnit: "phrases",
+    listTab: "List",
+    cardsTab: "Flashcards",
+    flipCard: "Tap to flip card",
+    quizNext: "Next phrase",
+    quizFinish: "Finish",
+    quizComplete: "Review complete!",
+    quizReviewAgain: "Practice again",
+
+    // Leaderboard
+    leagueTitle: "League",
+    tournament: "Tournament",
+    timeRemaining: "Weekly season ends in 3 days",
+    yourXp: "Your Experience",
+    participant: "Learner",
+    xpCol: "Experience (XP)",
+    promotionZone: "Promotion zone",
+    demotionZone: "Demotion zone",
+    safeZone: "Safe zone",
+    youBadge: "You",
+
+    // Settings & Profile
+    profileTitle: "Profile",
+    guestProfile: "Guest profile (progress saved)",
+    syncSuccess: "Progress and dictionary synced automatically",
+    signInWithGoogle: "Sign in with Google",
+    signOut: "Sign out",
+    dailyGoalTitle: "Daily Goal",
+    goal5: "5 min/day",
+    goal10: "10 min/day",
+    goal15: "15 min/day",
+    goalLight: "Gentle start",
+    goalOptimal: "Optimal",
+    goalIntense: "Fast pace",
+    interfaceLang: "Study Language",
+    themeTitle: "Appearance",
+    themeDark: "Dark Theme (Liquid Glass)",
+    themeLight: "Light Theme (Clear Day)",
+    voiceSettings: "Voice & Speech Synthesis (ElevenLabs)",
+    elevenLabsActive: "ElevenLabs Studio Voice active",
+    testVoiceBtn: "Test Voice",
+    testingVoice: "Playing audio...",
+    resetProgressTitle: "Reset Progress",
+    resetProgressDesc: "Clear local progress, reset streak, and restart from scratch",
+    resetProgressBtn: "Reset All Progress",
+    resetConfirm: "Are you sure you want to reset all progress?",
+
+    // Voice & System
     tapToTalk: "Tap mic and speak",
     listening: "Listening…",
     thinking: "Thinking…",
@@ -156,8 +338,8 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
     testKey: "Test Key",
     ttsEngineLabel: "Voice Engine",
     browserSpeech: "Built-in Browser (Free, zero latency)",
-    openAiTts: "OpenAI TTS (Requires OpenAI Key)",
-    elevenLabsTts: "ElevenLabs (Requires ElevenLabs Key)",
+    openAiTts: "OpenAI TTS",
+    elevenLabsTts: "ElevenLabs",
     speechRate: "Speech speed",
     speechPitch: "Pitch",
     startPracticing: "Start Practice",
@@ -177,22 +359,112 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
     personalTraining: "Сөйлеу жаттықтырушысы",
     tapToStart: "Сөйлесу үшін бас",
     dailyQuests: "Күнделікті тапсырмалар",
+    questsTitle: "Күнделікті тапсырмалар",
+    daily: "Күнделікті",
+    streakDay1: "күн",
+    streakDays: "күн",
+    streakTitle: "Үздіксіз күн",
+    streakActive: "Бүгінгі сабақ белсенді. Жарарайсың!",
+    streakInactive: "Жалынды жағу үшін 1 дауыстық диалог өт.",
+    voiceRoom: "Дауыстық бөлме",
+    talkWith: "Сөйлес:",
+    voiceRoomReward: "+30 монета • +1 алмаз диалог үшін",
+    enter: "Кіру",
+    completed: "Аяқталды",
+    dictPreview: "Сөздіктегі қанатты сөздер",
+    all: "Барлығы",
+    emptyDict: "Кітап дәйексөздерін табу үшін кейіпкермен дауыстық бөлмеде сөйлес!",
     speak3times: "Бүгін 3 рет сөйлес",
     learn2phrases: "2 жаңа сөз үйрен",
     finishLesson: "1 сөйлесу сабағын аяқта",
     claim: "Алу",
     claimed: "Алынды",
+
+    // Navigation
+    navLearn: "Сабақтар",
+    navDict: "Сөздік",
+    navShop: "Дүкен",
+    navLeague: "Лига",
+    navProfile: "Профиль",
+    navTalk: "Диалог",
+
+    // Shop
     shopTitle: "Кейіпкерлер дүкені",
-    shopSub: "Өзіңе ұнайтын ерекше қабілеті бар кейіпкерді таңда!",
+    shopHeader: "Серіктестер дүкені",
+    shopSub: "Сөйлеу жетістіктерің үшін жаңа кейіпкерлерді аш",
     own: "Бар",
     buy: "Сатып алу",
     select: "Таңдау",
     active: "Белсенді",
+    activeStatus: "Белсенді",
+    listenVoice: "Дауысын тыңдау",
+    rarityCommon: "Қарапайым",
+    rarityRare: "Сирек",
+    rarityLegendary: "Аңызға айналған",
+    selectBtn: "Таңдау",
+    buyBtn: "Сатып алу",
+    coinsUnit: "монета",
+    diamondsUnit: "алмаз",
+    notEnoughFunds: "Монета немесе алмаз жеткіліксіз! Сөйлеу тренажерінде жаттық.",
+
+    // Dictionary
     dictTitle: "Менің сөздігім",
+    dictHeader: "Тіркестер сөздігі",
     dictSub: "Кітаптардан алынған қанатты сөздер мен мақал-мәтелдер",
     dictEmpty: "Әзірше бос. Досыңмен сөйлесіп, жаңа тіркестер жина!",
-    searchPhrases: "Сөздер мен мағынаны іздеу...",
+    searchPhrases: "Тіркестер, кітаптар мен мағыналар бойынша іздеу...",
+    searchPlaceholder: "Тіркестер, кітаптар мен мағыналар бойынша іздеу...",
     allLanguages: "Барлық тілдер",
+    filterAll: "Барлық кітаптар",
+    learnedCount: "Үйрендің:",
+    phrasesUnit: "тіркес",
+    listTab: "Тізім",
+    cardsTab: "Карточкалар",
+    flipCard: "Аудару үшін бас",
+    quizNext: "Келесі тіркес",
+    quizFinish: "Аяқтау",
+    quizComplete: "Жаттығу аяқталды!",
+    quizReviewAgain: "Қайта қайталау",
+
+    // Leaderboard
+    leagueTitle: "лигасы",
+    tournament: "Турнир",
+    timeRemaining: "Апта қорытындысы 3 күннен соң",
+    yourXp: "Сенің тәжірибең",
+    participant: "Қатысушы",
+    xpCol: "Тәжірибе (XP)",
+    promotionZone: "Жоғарыға өту",
+    demotionZone: "Төмендеу аймағы",
+    safeZone: "Қауіпсіз аймақ",
+    youBadge: "Сен",
+
+    // Settings & Profile
+    profileTitle: "Профиль",
+    guestProfile: "Қонақ профилі (сақталған)",
+    syncSuccess: "Прогресс пен сөздік автоматты түрде сақталуда",
+    signInWithGoogle: "Google арқылы кіру",
+    signOut: "Шығу",
+    dailyGoalTitle: "Күндік мақсат",
+    goal5: "5 мин/күн",
+    goal10: "10 мин/күн",
+    goal15: "15 мин/күн",
+    goalLight: "Жеңіл бастама",
+    goalOptimal: "Оңтайлы",
+    goalIntense: "Жоғары қарқын",
+    interfaceLang: "Оқу тілі",
+    themeTitle: "Сыртқы түрі",
+    themeDark: "Қараңғы тақырып (Liquid Glass)",
+    themeLight: "Жарық тақырып (Clear Day)",
+    voiceSettings: "Дауыс және синтез (ElevenLabs)",
+    elevenLabsActive: "ElevenLabs Studio Voice белсенді",
+    testVoiceBtn: "Дауысты тексеру",
+    testingVoice: "Ойнатуда...",
+    resetProgressTitle: "Прогресті қалпына келтіру",
+    resetProgressDesc: "Жергілікті прогресті өшіріп, бәрін басынан бастау",
+    resetProgressBtn: "Барлық прогресті өшіру",
+    resetConfirm: "Барлық прогресті өшіргіңіз келетініне сенімдісіз бе?",
+
+    // Voice & System
     tapToTalk: "Микрофонды басып сөйле",
     listening: "Тыңдап тұрмын…",
     thinking: "Ойланудамын…",
@@ -218,8 +490,8 @@ const TRANSLATIONS: Record<Language, Record<string, string>> = {
     testKey: "Кілтті тексеру",
     ttsEngineLabel: "Дауыс қозғалтқышы",
     browserSpeech: "Браузерлік дауыс (Тегін)",
-    openAiTts: "OpenAI TTS (OpenAI кілті қажет)",
-    elevenLabsTts: "ElevenLabs (ElevenLabs кілті қажет)",
+    openAiTts: "OpenAI TTS",
+    elevenLabsTts: "ElevenLabs",
     speechRate: "Сөйлеу жылдамдығы",
     speechPitch: "Дауыс ырғағы",
     startPracticing: "Жаттығуды бастау",
@@ -606,6 +878,88 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setVoiceSettings(prev => ({ ...prev, ...newSettings }));
   };
 
+  const loginWithGoogle = async (authData: {
+    googleId: string;
+    email: string;
+    name: string;
+    avatar?: string;
+    credential?: string;
+  }) => {
+    try {
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          credential: authData.credential,
+          profile: {
+            googleId: authData.googleId,
+            email: authData.email,
+            name: authData.name,
+            picture: authData.avatar || '🎓'
+          }
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.user) {
+          const updatedProfile: UserProfile = {
+            ...profile,
+            name: data.user.name || authData.name,
+            email: data.user.email || authData.email,
+            avatar: data.user.avatar || authData.avatar || '🎓',
+            googleId: data.user.google_id || authData.googleId,
+            isLoggedIn: true,
+          };
+          setProfile(updatedProfile);
+          localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(updatedProfile));
+          if (data.user.xp != null) {
+            setResources(prev => ({
+              ...prev,
+              xp: data.user.xp,
+              coins: data.user.coins,
+              diamonds: data.user.diamonds,
+            }));
+          }
+          if (Array.isArray(data.user.unlockedCharacters) && data.user.unlockedCharacters.length > 0) {
+            setOwnedCharacterIds(prev => Array.from(new Set([...prev, ...data.user.unlockedCharacters])));
+          }
+          soundEffects.success();
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('Google auth server sync fallback:', e);
+    }
+
+    // Local fallback
+    const updatedProfile: UserProfile = {
+      ...profile,
+      name: authData.name,
+      email: authData.email,
+      avatar: authData.avatar || '🎓',
+      googleId: authData.googleId,
+      isLoggedIn: true,
+    };
+    setProfile(updatedProfile);
+    localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(updatedProfile));
+    soundEffects.success();
+  };
+
+  const logout = () => {
+    soundEffects.click();
+    const guestProfile: UserProfile = {
+      ...INITIAL_PROFILE,
+      name: 'Любознательный Ученик',
+      email: undefined,
+      avatar: '🐹',
+      googleId: undefined,
+      isLoggedIn: false,
+    };
+    setProfile(guestProfile);
+    localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(guestProfile));
+  };
+
   const resetProgress = () => {
     localStorage.clear();
     setResources(INITIAL_RESOURCES);
@@ -641,6 +995,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         claimQuest,
         addDictionaryPhrase,
         updateVoiceSettings,
+        loginWithGoogle,
+        logout,
         resetProgress,
       }}
     >

@@ -13,7 +13,7 @@ const LEAGUES = [
 ];
 
 export const LeaderboardPage: React.FC = () => {
-  const { profile, resources } = useApp();
+  const { profile, resources, t } = useApp();
   const [selectedLeague, setSelectedLeague] = useState('bronze');
   const [competitors, setCompetitors] = useState<Competitor[]>([]);
   const [loading, setLoading] = useState(true);
@@ -103,20 +103,20 @@ export const LeaderboardPage: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-medium text-[var(--app-text)]">
-                  {currentLeagueObj.label} лига
+                  {currentLeagueObj.label} {t('leagueTitle')}
                 </h1>
                 <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${currentLeagueObj.badge}`}>
-                  Турнир
+                  {t('tournament')}
                 </span>
               </div>
               <p className="text-xs text-neutral-400 mt-0.5 flex items-center gap-1 font-light">
                 <Clock className="w-3.5 h-3.5" />
-                <span>Итоги недели через 3 дня</span>
+                <span>{t('timeRemaining')}</span>
               </p>
             </div>
           </div>
           <div className="text-right">
-            <span className="text-xs text-neutral-400 block font-light">Твой опыт</span>
+            <span className="text-xs text-neutral-400 block font-light">{t('yourXp')}</span>
             <span className="text-base font-semibold text-white font-mono">{resources.xp} XP</span>
           </div>
         </div>
@@ -194,8 +194,8 @@ export const LeaderboardPage: React.FC = () => {
       {/* 3. Leaderboard List with Promotion & Demotion Indicators */}
       <div className="liquid-glass overflow-hidden border border-[var(--app-glass-border)] relative z-10">
         <div className="p-3.5 border-b border-[var(--app-glass-border)] flex items-center justify-between text-[11px] text-[var(--app-text)] opacity-60 font-medium">
-          <span>Участник</span>
-          <span>Опыт (XP)</span>
+          <span>{t('participant')}</span>
+          <span>{t('xpCol')}</span>
         </div>
 
         <div className="divide-y divide-[var(--app-glass-border)]">
@@ -238,21 +238,21 @@ export const LeaderboardPage: React.FC = () => {
                       </span>
                       {item.isCurrentUser && (
                         <span className="text-[9px] bg-emerald-500 text-white font-semibold px-1.5 py-0.2 rounded-full">
-                          Ты
+                          {t('youBadge')}
                         </span>
                       )}
                     </div>
                     <span className="text-[10px] text-[var(--app-text)] opacity-60 block font-light">
                       {isTop3 ? (
                         <span className="text-emerald-500 dark:text-emerald-400 font-normal flex items-center gap-0.5">
-                          <ArrowUp className="w-3 h-3" /> Переход наверх
+                          <ArrowUp className="w-3 h-3" /> {t('promotionZone')}
                         </span>
                       ) : isBottom3 ? (
                         <span className="text-rose-500 dark:text-rose-400 font-normal flex items-center gap-0.5">
-                          <ArrowDown className="w-3 h-3" /> Зона вылета
+                          <ArrowDown className="w-3 h-3" /> {t('demotionZone')}
                         </span>
                       ) : (
-                        <span>Безопасная зона</span>
+                        <span>{t('safeZone')}</span>
                       )}
                     </span>
                   </div>

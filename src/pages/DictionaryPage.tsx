@@ -130,7 +130,7 @@ const STARTER_PHRASES: Record<Language, Array<Omit<DictionaryPhrase, 'id' | 'dat
 };
 
 export const DictionaryPage: React.FC = () => {
-  const { lang, phrases, addDictionaryPhrase } = useApp();
+  const { lang, phrases, addDictionaryPhrase, t } = useApp();
   const [viewMode, setViewMode] = useState<'list' | 'quiz'>('list');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLang, setSelectedLang] = useState<Language | 'all'>('all');
@@ -207,10 +207,10 @@ export const DictionaryPage: React.FC = () => {
             </div>
             <div>
               <h1 className="text-lg font-medium text-[var(--app-text)] leading-tight">
-                Словарь выражений
+                {t('dictHeader')}
               </h1>
               <span className="text-xs opacity-70 font-light">
-                Выучено: <strong className="text-emerald-500 font-semibold">{allPhrases.length}</strong> фраз
+                {t('learnedCount')} <strong className="text-emerald-500 font-semibold">{allPhrases.length}</strong> {t('phrasesUnit')}
               </span>
             </div>
           </div>
@@ -228,7 +228,7 @@ export const DictionaryPage: React.FC = () => {
                   : 'text-neutral-400 hover:text-white'
               }`}
             >
-              Список
+              {t('listTab')}
             </button>
             <button
               onClick={() => {
@@ -245,7 +245,7 @@ export const DictionaryPage: React.FC = () => {
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
-              <span>Карточки</span>
+              <span>{t('cardsTab')}</span>
             </button>
           </div>
         </div>
@@ -259,7 +259,7 @@ export const DictionaryPage: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Поиск по фразе или автору..."
+                placeholder={t('searchPlaceholder')}
                 className="w-full pl-10 pr-4 py-2.5 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] text-xs text-[var(--app-text)] placeholder:opacity-40 focus:outline-none focus:border-[var(--app-glass-border-hover)] transition-colors"
               />
             </div>
