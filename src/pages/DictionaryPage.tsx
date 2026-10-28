@@ -192,14 +192,14 @@ export const DictionaryPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-28 pt-6 px-4 max-w-4xl mx-auto space-y-4 relative transition-colors duration-300 motion-page-enter">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] px-4 sm:px-6 lg:px-8 py-6 max-w-6xl mx-auto space-y-6 relative transition-colors duration-300 motion-page-enter">
       
       {/* Ambient background glow */}
       <div className="ambient-glow-orb w-[350px] h-[350px] bg-cyan-600/15 top-[-40px] left-[-80px] pointer-events-none" />
       <div className="ambient-glow-orb w-[300px] h-[300px] bg-indigo-600/10 top-[200px] right-[-60px] pointer-events-none" />
 
       {/* 1. Header with Mode Switcher (List vs Flashcards) */}
-      <div className="liquid-glass p-5 relative z-10">
+      <div className="liquid-glass p-5 rounded-3xl relative z-10">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] flex items-center justify-center text-[var(--app-text)]">
@@ -417,11 +417,11 @@ export const DictionaryPage: React.FC = () => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
               {filteredPhrases.map((item, idx) => (
                 <div
                   key={item.id}
-                  className={`liquid-glass p-5 flex flex-col justify-between transition-all interactive-card motion-card-enter border border-[var(--app-glass-border)] space-y-3 stagger-${(idx % 6) + 1}`}
+                  className={`liquid-glass p-5 rounded-3xl flex flex-col justify-between transition-all interactive-card motion-card-enter border border-[var(--app-glass-border)] space-y-3 stagger-${(idx % 6) + 1} h-full min-h-[250px]`}
                 >
                   <div className="space-y-3">
                     {/* Header row: Phrase & Audio Button */}

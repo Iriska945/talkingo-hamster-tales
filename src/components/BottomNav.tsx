@@ -45,8 +45,8 @@ export const BottomNav: React.FC = () => {
   ];
 
   return (
-    <nav className="fixed bottom-3 inset-x-0 z-40 px-4 safe-area-bottom pointer-events-none">
-      <div className="max-w-md mx-auto bg-[var(--app-nav-bg)] backdrop-blur-3xl border border-[var(--app-glass-border)] rounded-full p-1.5 shadow-2xl flex items-center justify-between gap-1 pointer-events-auto transition-colors duration-300">
+    <nav className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-[var(--app-nav-bg)] backdrop-blur-2xl border-t border-[var(--app-glass-border)] px-3 py-1.5 safe-area-bottom shadow-2xl transition-colors duration-300">
+      <div className="max-w-md mx-auto flex items-center justify-between gap-1">
         {navItems.map((item) => {
           const Icon = item.icon;
 

@@ -87,7 +87,7 @@ export const LeaderboardPage: React.FC = () => {
   const top3 = competitors.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-28 pt-6 px-4 max-w-2xl mx-auto space-y-4 relative transition-colors duration-300 motion-page-enter">
+    <div className="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] pb-20 md:pb-12 pt-6 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-5 relative transition-colors duration-300 motion-page-enter">
       
       {/* Ambient background glow */}
       <div className="ambient-glow-orb w-[350px] h-[350px] bg-purple-600/15 top-[-40px] left-[-80px] pointer-events-none" />

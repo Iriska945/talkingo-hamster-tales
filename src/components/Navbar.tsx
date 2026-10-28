@@ -1,8 +1,22 @@
 import React, { useState } from 'react';
+import { NavLink, Link, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { Language } from '../types';
-import { Flame, Gem, Coins, Trophy, ChevronDown, Sun, Moon, Layers } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import {
+  Flame,
+  Gem,
+  Coins,
+  Trophy,
+  ChevronDown,
+  Sun,
+  Moon,
+  Layers,
+  BookOpen,
+  Bookmark,
+  ShoppingBag,
+  User,
+  Mic,
+} from 'lucide-react';
 import { TalkingoLogo } from './TalkingoLogo';
 
 const LANGUAGES: Array<{ code: Language; label: string; flag: string }> = [
@@ -14,20 +28,62 @@ const LANGUAGES: Array<{ code: Language; label: string; flag: string }> = [
 export const Navbar: React.FC = () => {
   const { lang, setLang, theme, toggleTheme, resources, profile } = useApp();
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const location = useLocation();
 
   const currentLangObj = LANGUAGES.find(l => l.code === lang) || LANGUAGES[0];
 
-  return (
-    <header className="sticky top-0 z-40 bg-[var(--app-nav-bg)] backdrop-blur-2xl border-b border-[var(--app-glass-border)] px-4 py-3 transition-colors duration-300">
-      <div className="max-w-4xl mx-auto flex items-center justify-between">
-        
-        {/* Left: Open-style Spaced Logo */}
-        <Link to="/learn" className="group active:scale-95 transition-transform">
-          <TalkingoLogo size="md" withText={true} />
-        </Link>
+  const desktopNavLinks = [
+    { to: '/learn', label: 'Уроки', icon: BookOpen },
+    { to: '/dictionary', label: 'Словарь', icon: Bookmark },
+    { to: '/shop', label: 'Магазин', icon: ShoppingBag },
+    { to: '/leaderboard', label: 'Лига', icon: Trophy },
+    { to: '/settings', label: 'Профиль', icon: User },
+  ];
 
-        {/* Center: Controls (Language Selector + Sun/Moon Theme Toggle + Gallery Link) */}
-        <div className="flex items-center gap-2">
+  return (
+    <header className="sticky top-0 z-50 bg-[var(--app-nav-bg)] backdrop-blur-2xl border-b border-[var(--app-glass-border)] px-4 sm:px-6 py-2.5 transition-colors duration-300">
+      <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
+        
+        {/* Left: Brand Logo */}
+        <div className="flex items-center gap-3 shrink-0">
+          <Link to="/learn" className="group active:scale-95 transition-transform">
+            <TalkingoLogo size="md" withText={true} />
+          </Link>
+        </div>
+
+        {/* Center: Desktop Navigation Bar (Anchored for Laptop/Desktop, Hidden on Phones) */}
+        <nav className="hidden md:flex items-center gap-1 p-1 rounded-full bg-[var(--app-pill-glass-bg)] border border-[var(--app-glass-border)] shadow-sm backdrop-blur-xl">
+          {desktopNavLinks.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.to;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs transition-all ${
+                  isActive
+                    ? 'bg-[var(--app-cta-bg)] text-[var(--app-cta-text)] font-semibold shadow-sm'
+                    : 'text-[var(--app-text)] opacity-70 hover:opacity-100 hover:bg-white/5 font-medium'
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" strokeWidth={isActive ? 2.2 : 1.8} />
+                <span>{item.label}</span>
+              </NavLink>
+            );
+          })}
+
+          {/* Quick Talk Pill CTA */}
+          <NavLink
+            to="/talk"
+            className="ml-1 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-semibold text-xs shadow-[0_0_16px_rgba(255,107,26,0.35)] hover:scale-105 active:scale-95 transition-all"
+          >
+            <Mic className="w-3.5 h-3.5 animate-pulse" />
+            <span>Диалог</span>
+          </NavLink>
+        </nav>
+
+        {/* Right: Quick Controls & Gamification Counters */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           
           {/* Theme Toggle Button (Sun / Moon) */}
           <button
@@ -47,15 +103,15 @@ export const Navbar: React.FC = () => {
           <div className="relative">
             <button
               onClick={() => setLangMenuOpen(!langMenuOpen)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--app-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] text-xs font-medium text-[var(--app-text)] transition-all shadow-sm active:scale-95 backdrop-blur-xl"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-[var(--app-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] text-xs font-medium text-[var(--app-text)] transition-all shadow-sm active:scale-95 backdrop-blur-xl"
             >
               <span className="text-sm">{currentLangObj.flag}</span>
-              <span className="hidden sm:inline text-neutral-300 dark:text-neutral-300">{currentLangObj.label}</span>
-              <ChevronDown className={`w-3.5 h-3.5 opacity-60 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
+              <span className="hidden lg:inline text-neutral-300 dark:text-neutral-300">{currentLangObj.label}</span>
+              <ChevronDown className={`w-3 h-3 opacity-60 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {langMenuOpen && (
-              <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-40 liquid-glass-elevated py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
+              <div className="absolute top-full mt-2 right-0 w-36 liquid-glass-elevated py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
                 {LANGUAGES.map((item) => (
                   <button
                     key={item.code}
@@ -63,7 +119,7 @@ export const Navbar: React.FC = () => {
                       setLang(item.code);
                       setLangMenuOpen(false);
                     }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs text-left transition-colors ${
+                    className={`w-full flex items-center gap-2 px-3 py-2 text-xs text-left transition-colors ${
                       lang === item.code
                         ? 'bg-orange-500/15 text-orange-400 font-semibold'
                         : 'hover:bg-white/[0.08]'
@@ -76,30 +132,6 @@ export const Navbar: React.FC = () => {
               </div>
             )}
           </div>
-
-          {/* Gallery exhibition pill */}
-          <Link
-            to="/gallery"
-            className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--app-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] text-xs text-[var(--app-text)] transition-all active:scale-95 backdrop-blur-md"
-            title="Галерея сценариев Talkingo (scrn.gallery)"
-          >
-            <Layers className="w-3.5 h-3.5 text-orange-500" />
-            <span className="hidden md:inline text-[11px] font-medium opacity-80">Галерея</span>
-          </Link>
-        </div>
-
-        {/* Right: Gamification Badges (Liquid Glass Chips) */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          
-          {/* League Quick Link */}
-          <Link
-            to="/leaderboard"
-            className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--app-glass-bg)] hover:border-[var(--app-glass-border-hover)] border border-[var(--app-glass-border)] text-xs text-[var(--app-text)] transition-all active:scale-95 shadow-sm backdrop-blur-md"
-            title="Таблица лидеров"
-          >
-            <Trophy className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden sm:inline text-[11px] opacity-70 font-medium">Лига</span>
-          </Link>
 
           {/* Streak Flame Pill */}
           <Link
@@ -129,6 +161,15 @@ export const Navbar: React.FC = () => {
           >
             <Coins className="w-3.5 h-3.5 text-yellow-400" />
             <span>{resources.coins}</span>
+          </Link>
+
+          {/* Gallery exhibition link */}
+          <Link
+            to="/gallery"
+            className="w-8 h-8 rounded-full bg-[var(--app-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] flex items-center justify-center text-orange-400 transition-transform active:scale-90 shadow-sm"
+            title="Галерея сценариев Talkingo (scrn.gallery)"
+          >
+            <Layers className="w-4 h-4" />
           </Link>
         </div>
 

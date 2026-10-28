@@ -21,7 +21,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col bg-[var(--app-bg)] text-[var(--app-text)] selection:bg-orange-500/20 transition-colors duration-300">
       {!isImmersive && <Navbar />}
-      <main className="flex-1 pb-20">
+      <main className="flex-1 pb-24 md:pb-12">
         {children}
       </main>
       {!isImmersive && <BottomNav />}
