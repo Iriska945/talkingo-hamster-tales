@@ -83,27 +83,27 @@ export const Navbar: React.FC = () => {
         </nav>
 
         {/* Right: Quick Controls & Gamification Counters */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           
           {/* Theme Toggle Button (Sun / Moon) */}
           <button
             onClick={toggleTheme}
-            className="w-8 h-8 rounded-full bg-[var(--app-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] flex items-center justify-center text-[var(--app-text)] transition-transform active:scale-90 shadow-sm"
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[var(--app-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] flex items-center justify-center text-[var(--app-text)] transition-transform active:scale-90 shadow-sm shrink-0"
             title={theme === 'dark' ? 'Включить светлую тему' : 'Включить тёмную тему'}
             aria-label="Переключить тему"
           >
             {theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400" />
+              <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
             ) : (
-              <Moon className="w-4 h-4 text-indigo-600" />
+              <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-600" />
             )}
           </button>
 
           {/* Language Switcher Liquid Glass Pill */}
-          <div className="relative">
+          <div className="relative shrink-0">
             <button
               onClick={() => setLangMenuOpen(!langMenuOpen)}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-[var(--app-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] text-xs font-medium text-[var(--app-text)] transition-all shadow-sm active:scale-95 backdrop-blur-xl"
+              className="flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-[var(--app-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] text-xs font-medium text-[var(--app-text)] transition-all shadow-sm active:scale-95 backdrop-blur-xl"
             >
               <span className="text-sm">{currentLangObj.flag}</span>
               <span className="hidden lg:inline text-neutral-300 dark:text-neutral-300">{currentLangObj.label}</span>
@@ -136,17 +136,17 @@ export const Navbar: React.FC = () => {
           {/* Streak Flame Pill */}
           <Link
             to="/learn"
-            className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 font-bold text-xs text-amber-400 transition-all active:scale-95 shadow-[0_0_12px_rgba(245,158,11,0.15)]"
+            className="flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-full bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 font-bold text-xs text-amber-400 transition-all active:scale-95 shadow-[0_0_12px_rgba(245,158,11,0.15)] shrink-0"
             title="Дней подряд"
           >
             <Flame className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
             <span>{profile.currentStreak}</span>
           </Link>
 
-          {/* Gems Pill */}
+          {/* Gems Pill (Desktop/Tablet) */}
           <Link
             to="/shop"
-            className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/25 font-bold text-xs text-cyan-400 transition-all active:scale-95 shadow-[0_0_12px_rgba(6,182,212,0.15)]"
+            className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/25 font-bold text-xs text-cyan-400 transition-all active:scale-95 shadow-[0_0_12px_rgba(6,182,212,0.15)] shrink-0"
             title="Алмазы"
           >
             <Gem className="w-3.5 h-3.5 text-cyan-400" />
@@ -156,17 +156,17 @@ export const Navbar: React.FC = () => {
           {/* Coins Pill */}
           <Link
             to="/shop"
-            className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/25 font-bold text-xs text-yellow-400 transition-all active:scale-95 shadow-[0_0_12px_rgba(234,179,8,0.15)]"
+            className="flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-full bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/25 font-bold text-xs text-yellow-400 transition-all active:scale-95 shadow-[0_0_12px_rgba(234,179,8,0.15)] shrink-0"
             title="Монеты"
           >
             <Coins className="w-3.5 h-3.5 text-yellow-400" />
             <span>{resources.coins}</span>
           </Link>
 
-          {/* Gallery exhibition link */}
+          {/* Gallery exhibition link (Desktop) */}
           <Link
             to="/gallery"
-            className="w-8 h-8 rounded-full bg-[var(--app-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] flex items-center justify-center text-orange-400 transition-transform active:scale-90 shadow-sm"
+            className="hidden md:flex w-8 h-8 rounded-full bg-[var(--app-glass-bg)] border border-[var(--app-glass-border)] hover:border-[var(--app-glass-border-hover)] items-center justify-center text-orange-400 transition-transform active:scale-90 shadow-sm shrink-0"
             title="Галерея сценариев Talkingo (scrn.gallery)"
           >
             <Layers className="w-4 h-4" />

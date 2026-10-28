@@ -19,9 +19,9 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isImmersive = location.pathname === '/talk' || location.pathname === '/gallery';
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--app-bg)] text-[var(--app-text)] selection:bg-orange-500/20 transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-[var(--app-bg)] text-[var(--app-text)] selection:bg-orange-500/20 transition-colors duration-300 max-w-full overflow-x-clip">
       {!isImmersive && <Navbar />}
-      <main className="flex-1 pb-24 md:pb-12">
+      <main className="flex-1 pb-24 md:pb-12 max-w-full overflow-x-clip">
         {children}
       </main>
       {!isImmersive && <BottomNav />}
