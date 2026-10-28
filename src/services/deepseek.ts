@@ -107,7 +107,8 @@ export async function generateTalkResponse(params: {
         character,
         scenario,
         model: voiceSettings.deepseekModel || "deepseek-v4-flash"
-      })
+      }),
+      signal: AbortSignal.timeout(6000)
     });
 
     if (serverRes.ok) {

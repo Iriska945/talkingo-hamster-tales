@@ -212,7 +212,7 @@ export async function speakWithTTS(
       body: JSON.stringify({
         text: cleanText,
         language: lang,
-        voiceId: options?.voiceId ?? 'cgSgspJ2msm6clMCkdW9', // Default female: Jessica
+        voiceId: options?.voiceId ?? 'EXAVITQu4vr4xnSDxMaL', // Verified active female voice: Sarah
       }),
       signal: abortCtrl.signal,
     });

@@ -53,7 +53,7 @@ export const SettingsPage: React.FC = () => {
 
     try {
       await speakWithTTS(testPhrase, lang, {
-        voiceId: voiceSettings.elevenlabsVoiceId || 'cgSgspJ2msm6clMCkdW9',
+        voiceId: voiceSettings.elevenlabsVoiceId || 'EXAVITQu4vr4xnSDxMaL',
       });
     } catch (e) {
       console.warn('ElevenLabs test speech error:', e);

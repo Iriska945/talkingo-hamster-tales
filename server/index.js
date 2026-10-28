@@ -23,13 +23,13 @@ const DEFAULT_MODEL = process.env.LINKBUS_MODEL || "deepseek-v4-flash";
 
 // ElevenLabs configuration (Female voices)
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY || "";
-// Default female voice: Jessica (Playful, Bright, Warm, perfect companion tone)
-const DEFAULT_FEMALE_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || "cgSgspJ2msm6clMCkdW9";
+// Default verified female voice: Sarah (Multilingual V2 - Warm, clear, works on all ElevenLabs tiers)
+const DEFAULT_FEMALE_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || "EXAVITQu4vr4xnSDxMaL";
 
 // Curated high-quality ElevenLabs female voices
 const ELEVENLABS_FEMALE_VOICES = [
-  { id: "cgSgspJ2msm6clMCkdW9", name: "Jessica", desc: "Игривый, тёплый, дружелюбный (Рекомендуется)" },
-  { id: "EXAVITQu4vr4xnSDxMaL", name: "Sarah", desc: "Мягкий, уверенный, естественный" },
+  { id: "EXAVITQu4vr4xnSDxMaL", name: "Sarah", desc: "Мягкий, уверенный, естественный (Рекомендуется)" },
+  { id: "cgSgspJ2msm6clMCkdW9", name: "Jessica", desc: "Игривый, тёплый, дружелюбный" },
   { id: "XrExE9yKIg1WjnnlVkGX", name: "Matilda", desc: "Литературный, тёплый, спокойный" },
   { id: "Xb7hH8MSUJpSbSDYk0k2", name: "Alice", desc: "Чёткий, образовательный, ясный" },
   { id: "21m00Tcm4TlvDq8ikWAM", name: "Rachel", desc: "Спокойный, медитативный, классический" },
@@ -83,7 +83,7 @@ app.post('/api/tts', async (req, res) => {
 
     const selectedVoiceId = voiceId || DEFAULT_FEMALE_VOICE_ID;
 
-    const elevenRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}`, {
+    let elevenRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}`, {
       method: "POST",
       headers: {
         "xi-api-key": ELEVENLABS_API_KEY.trim(),
@@ -101,6 +101,29 @@ app.post('/api/tts', async (req, res) => {
         }
       })
     });
+
+    // Fallback if requested voice fails with 402 or 4xx
+    if (!elevenRes.ok && selectedVoiceId !== "EXAVITQu4vr4xnSDxMaL") {
+      console.warn(`ElevenLabs voice ${selectedVoiceId} returned ${elevenRes.status}, falling back to verified voice EXAVITQu4vr4xnSDxMaL...`);
+      elevenRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL`, {
+        method: "POST",
+        headers: {
+          "xi-api-key": ELEVENLABS_API_KEY.trim(),
+          "Content-Type": "application/json",
+          "Accept": "audio/mpeg"
+        },
+        body: JSON.stringify({
+          text: cleanText,
+          model_id: "eleven_multilingual_v2",
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.85,
+            style: 0.2,
+            use_speaker_boost: true
+          }
+        })
+      });
+    }
 
     if (!elevenRes.ok) {
       const errText = await elevenRes.text();
@@ -325,51 +348,86 @@ If no new idiom fits this specific turn, return "new_phrases": [].`;
       ...messages.slice(-6).map(m => ({ role: m.role, content: m.content }))
     ];
 
-    const endpoint = LINKBUS_BASE_URL.endsWith('/chat/completions')
-      ? LINKBUS_BASE_URL
-      : `${LINKBUS_BASE_URL}/chat/completions`;
+    let parsed = null;
+    let contentStr = "";
 
-    const aiRes = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${LINKBUS_API_KEY.trim()}`,
-        "User-Agent": "Mozilla/5.0 (compatible; TalkingoServer/1.0)"
-      },
-      body: JSON.stringify({
-        model: model,
-        messages: apiMessages,
-        temperature: 0.7,
-        max_tokens: 1000
-      })
-    });
+    // 1. Try Linkbus with a strict 3-second timeout
+    if (LINKBUS_API_KEY && LINKBUS_API_KEY.trim()) {
+      try {
+        const endpoint = LINKBUS_BASE_URL.endsWith('/chat/completions')
+          ? LINKBUS_BASE_URL
+          : `${LINKBUS_BASE_URL}/chat/completions`;
 
-    if (!aiRes.ok) {
-      const errText = await aiRes.text();
-      console.error(`Linkbus API returned ${aiRes.status}:`, errText);
-      return res.status(aiRes.status).json({
-        error: `AI provider error: ${aiRes.status}`,
-        details: errText
-      });
+        const aiRes = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${LINKBUS_API_KEY.trim()}`,
+            "User-Agent": "Mozilla/5.0 (compatible; TalkingoServer/1.0)"
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: apiMessages,
+            temperature: 0.7,
+            max_tokens: 1000
+          }),
+          signal: AbortSignal.timeout(3000)
+        });
+
+        if (aiRes.ok) {
+          const data = await aiRes.json();
+          const msg = data.choices?.[0]?.message;
+          contentStr = msg?.content?.trim() || msg?.reasoning_content?.trim() || "";
+          try {
+            const clean = contentStr.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
+            parsed = JSON.parse(clean);
+          } catch {
+            const firstBrace = contentStr.indexOf('{');
+            const lastBrace = contentStr.lastIndexOf('}');
+            if (firstBrace !== -1 && lastBrace > firstBrace) {
+              try {
+                parsed = JSON.parse(contentStr.substring(firstBrace, lastBrace + 1));
+              } catch {}
+            }
+          }
+        } else {
+          const errText = await aiRes.text();
+          console.warn(`Linkbus returned ${aiRes.status}, falling back to Talkingo literary engine:`, errText.substring(0, 100));
+        }
+      } catch (linkbusErr) {
+        console.warn("Linkbus fetch error or timeout, falling back to Talkingo literary engine:", linkbusErr.message);
+      }
     }
 
-    const data = await aiRes.json();
-    const msg = data.choices?.[0]?.message;
-    const contentStr = msg?.content?.trim() || msg?.reasoning_content?.trim() || "";
+    // 2. Fallback to high-speed Talkingo Supabase talk function (Pushkin/Twain/Sokpakbaev engine)
+    if (!parsed || (!parsed.spoken && (!parsed.new_phrases || parsed.new_phrases.length === 0))) {
+      try {
+        const supabaseRes = await fetch("https://tvicfbkeuiuwonhzpaxj.supabase.co/functions/v1/talk", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2aWNmYmtldWl1d29uaHpwYXhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NDYyNjcsImV4cCI6MjA5NjEyMjI2N30.x3L9b1wx2XiUXVmKKDhrmt-PoqK0j3Og6HHSI_ove9I"
+          },
+          body: JSON.stringify({
+            messages: messages.slice(-5).map(m => ({ role: m.role, content: m.content })),
+            langCode: language.toUpperCase(),
+            character: charName.split(' ')[0]
+          }),
+          signal: AbortSignal.timeout(6000)
+        });
 
-    let parsed = null;
-    try {
-      const clean = contentStr.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
-      parsed = JSON.parse(clean);
-    } catch {
-      const firstBrace = contentStr.indexOf('{');
-      const lastBrace = contentStr.lastIndexOf('}');
-      if (firstBrace !== -1 && lastBrace > firstBrace) {
-        try {
-          parsed = JSON.parse(contentStr.substring(firstBrace, lastBrace + 1));
-        } catch {
-          parsed = null;
+        if (supabaseRes.ok) {
+          const sData = await supabaseRes.json();
+          if (sData && (sData.spoken || sData.new_phrases)) {
+            parsed = {
+              spoken: sData.spoken,
+              tip: sData.tip || null,
+              new_phrases: Array.isArray(sData.new_phrases) ? sData.new_phrases : []
+            };
+          }
         }
+      } catch (supaErr) {
+        console.warn("Supabase talk fallback failed:", supaErr.message);
       }
     }
 
